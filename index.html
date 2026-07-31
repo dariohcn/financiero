@@ -250,10 +250,134 @@
     }
 
     .properties {
+      --text: #172237;
+      --muted: #66758a;
+      --line: rgba(21, 37, 60, 0.13);
       grid-column: 3;
       grid-row: 2;
-      border-left: 1px solid var(--line);
+      border-left: 1px solid #d7e0eb;
+      background: linear-gradient(180deg, #ffffff 0%, #f6f8fc 100%);
+      color: var(--text);
+      box-shadow: -10px 0 30px rgba(23, 40, 67, 0.08);
+      scrollbar-color: rgba(70, 91, 120, 0.28) transparent;
     }
+
+    .properties .panel-section {
+      padding: 16px;
+      border-bottom-color: #e4e9f1;
+    }
+
+    .properties .panel-title h2 {
+      color: #172237;
+      letter-spacing: 0.10em;
+    }
+
+    .properties .panel-title span {
+      color: #748198;
+    }
+
+    .properties .field label {
+      color: #66758a;
+    }
+
+    .properties .field input,
+    .properties .field select,
+    .properties .field textarea {
+      border-color: #d8e0eb;
+      background: #ffffff;
+      color: #172237;
+      box-shadow: 0 1px 2px rgba(19, 33, 54, 0.03);
+    }
+
+    .properties .field input:hover,
+    .properties .field select:hover,
+    .properties .field textarea:hover {
+      border-color: rgba(58, 139, 253, 0.58);
+      background: #ffffff;
+    }
+
+    .properties .field select option {
+      background: #ffffff;
+      color: #172237;
+    }
+
+    .properties .properties-empty {
+      color: #748198;
+      background: #ffffff;
+      border: 1px dashed #d9e1eb;
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .properties .properties-empty strong {
+      color: #172237;
+    }
+
+    .properties .property-button {
+      border-color: #d8e0eb;
+      background: #ffffff;
+      color: #172237;
+      box-shadow: 0 2px 7px rgba(23, 40, 67, 0.05);
+    }
+
+    .properties .property-button:hover {
+      border-color: rgba(58, 139, 253, 0.52);
+      background: #eef5ff;
+    }
+
+    .properties .metric-card {
+      border-color: #dfe6ef;
+      background: #ffffff;
+      box-shadow: 0 5px 14px rgba(25, 43, 70, 0.06);
+    }
+
+    .properties .metric-card span {
+      color: #718096;
+    }
+
+    .properties .metric-card strong {
+      color: #16233a;
+    }
+
+    .properties .metric-card.balance-card {
+      grid-column: 1 / -1;
+      padding: 14px 15px;
+      border-color: rgba(58, 139, 253, 0.24);
+      background: linear-gradient(135deg, #eef6ff 0%, #ffffff 58%, #edfdf7 100%);
+      box-shadow: 0 8px 22px rgba(41, 103, 184, 0.10);
+    }
+
+    .properties .metric-card.balance-card span {
+      color: #42658f;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .properties .metric-card.balance-card strong {
+      margin-top: 7px;
+      font-size: 24px;
+      color: #0f4fa8;
+    }
+
+    .metric-positive { color: #11835f !important; }
+    .metric-negative { color: #c54250 !important; }
+
+    .properties .chart {
+      border-color: #dfe6ef;
+      background-color: #ffffff;
+      background-image: linear-gradient(rgba(37, 59, 91, 0.06) 1px, transparent 1px);
+      box-shadow: 0 5px 14px rgba(25, 43, 70, 0.05);
+    }
+
+    .properties .record-item {
+      border-color: #dfe6ef;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(25, 43, 70, 0.05);
+    }
+
+    .properties .record-item strong { color: #172237; }
+    .properties .record-item span { color: #67758b; }
 
     .panel-section {
       padding: 18px;
@@ -925,7 +1049,7 @@
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 9px;
+      gap: 10px;
     }
 
     .metric-card {
@@ -1313,6 +1437,17 @@
             <label for="initialCapitalInput">Capital inicial USD</label>
             <input id="initialCapitalInput" type="number" min="0" step="1000" value="1000000">
           </div>
+          <div>
+            <label for="openingTimeInput">Hora de apertura</label>
+            <select id="openingTimeInput" aria-label="Hora de apertura"></select>
+          </div>
+          <div>
+            <label for="closingTimeInput">Hora de cierre</label>
+            <select id="closingTimeInput" aria-label="Hora de cierre"></select>
+          </div>
+        </div>
+        <div style="margin-top:9px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.04);color:var(--muted);font-size:9px;line-height:1.5;">
+          La jornada puede configurarse entre las 07:00 y las 19:00. Los tiempos de llegada y atención se expresan en minutos simulados.
         </div>
       </section>
 
@@ -1339,7 +1474,8 @@
           <strong id="scenarioTitle">Entidad financiera · recorrido de usuarios por áreas</strong>
         </div>
         <div class="workspace-summary-actions">
-          <span class="capital-badge" id="capitalBadge">Capital inicial: $1.000.000,00</span>
+          <span class="capital-badge" id="scheduleBadge">Horario: 07:00–19:00</span>
+          <span class="capital-badge" id="capitalBadge">Capital disponible: $1.000.000,00</span>
           <span class="ready-badge"><i></i> Modelo listo</span>
           <button id="quickRunBtn" class="quick-run-button">▶ Ejecutar simulación</button>
         </div>
@@ -1393,13 +1529,20 @@
         </div>
 
         <div class="metrics-grid">
-          <div class="metric-card"><span>Tiempo simulado</span><strong id="metricTime">0.0 s</strong></div>
+          <div class="metric-card"><span>Hora simulada</span><strong id="metricTime">07:00</strong></div>
           <div class="metric-card"><span>Personas ingresadas</span><strong id="metricCreated">0</strong></div>
           <div class="metric-card"><span>Registros guardados</span><strong id="metricCompleted">0</strong></div>
           <div class="metric-card"><span>En sistema</span><strong id="metricWip">0</strong></div>
           <div class="metric-card"><span>Cola máxima</span><strong id="metricMaxQueue">0</strong></div>
           <div class="metric-card"><span>Personal total</span><strong id="metricStaff">0</strong></div>
-          <div class="metric-card"><span>Capital inicial</span><strong id="metricCapital">$1,00 M</strong></div>
+          <div class="metric-card balance-card"><span>Capital disponible</span><strong id="metricCapital">$1,00 M</strong></div>
+          <div class="metric-card"><span>Variación neta</span><strong id="metricNetChange">$0</strong></div>
+          <div class="metric-card"><span>Créditos desembolsados</span><strong id="metricCreditDisbursed">$0</strong></div>
+          <div class="metric-card"><span>Interés por cobrar</span><strong id="metricInterestReceivable">$0</strong></div>
+          <div class="metric-card"><span>Créditos aprobados</span><strong id="metricCreditApproved">0</strong></div>
+          <div class="metric-card"><span>Créditos rechazados</span><strong id="metricCreditRejected">0</strong></div>
+          <div class="metric-card"><span>Depósitos acumulados</span><strong id="metricDeposits">$0</strong></div>
+          <div class="metric-card"><span>Retiros acumulados</span><strong id="metricWithdrawals">$0</strong></div>
         </div>
 
         <div class="chart" aria-label="Gráfico de trámites finalizados">
@@ -1441,7 +1584,7 @@
 
       <div class="status-right">
         <span>Motor: flujo discreto de usuarios</span>
-        <span id="clockStatus">t = 0.0 s</span>
+        <span id="clockStatus">07:00 h</span>
       </div>
     </footer>
   </div>
@@ -1453,7 +1596,7 @@
 
     const TRANSACTION_TYPES = {
       credit: { label: "Solicitud de crédito", code: "CR", color: "#8b6df6", minAmount: 1000, maxAmount: 25000 },
-      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486", minAmount: 20, maxAmount: 5000 },
+      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486", minAmount: 1, maxAmount: 5000 },
       withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67", minAmount: 20, maxAmount: 2000 },
       transfer: { label: "Transferencia", code: "TR", color: "#19a7bd", minAmount: 10, maxAmount: 5000 },
       payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b", minAmount: 5, maxAmount: 500 },
@@ -1511,6 +1654,14 @@
           department: "Atención al cliente",
           procedure: "Recepción de trámite",
           observations: "",
+          processRole: "standard",
+          creditApprovalRate: 75,
+          creditMinIncome: 600,
+          creditMaxDebtRatio: 40,
+          creditMinEmploymentMonths: 6,
+          creditMaxIncomeMultiple: 12,
+          creditAnnualInterestRate: 14,
+          creditTermMonths: 24,
           color: "#3a8bfd"
         }
       },
@@ -1578,18 +1729,32 @@
       recordsCount: document.getElementById("recordsCount"),
       businessNameInput: document.getElementById("businessNameInput"),
       initialCapitalInput: document.getElementById("initialCapitalInput"),
+      openingTimeInput: document.getElementById("openingTimeInput"),
+      closingTimeInput: document.getElementById("closingTimeInput"),
+      scheduleBadge: document.getElementById("scheduleBadge"),
       capitalBadge: document.getElementById("capitalBadge"),
       scenarioTitle: document.getElementById("scenarioTitle"),
-      metricCapital: document.getElementById("metricCapital")
+      metricCapital: document.getElementById("metricCapital"),
+      metricNetChange: document.getElementById("metricNetChange"),
+      metricCreditDisbursed: document.getElementById("metricCreditDisbursed"),
+      metricInterestReceivable: document.getElementById("metricInterestReceivable"),
+      metricCreditApproved: document.getElementById("metricCreditApproved"),
+      metricCreditRejected: document.getElementById("metricCreditRejected"),
+      metricDeposits: document.getElementById("metricDeposits"),
+      metricWithdrawals: document.getElementById("metricWithdrawals")
     };
 
     const state = {
       nodes: [],
       edges: [],
       records: [],
+      capitalLedger: [],
       scenario: {
         businessName: "Entidad financiera",
-        initialCapital: 1000000
+        initialCapital: 1000000,
+        currentCapital: 1000000,
+        openingTime: "07:00",
+        closingTime: "19:00"
       },
       selected: null,
       connectionMode: false,
@@ -1616,6 +1781,15 @@
         completed: 0,
         rejected: 0,
         maxQueue: 0,
+        creditApproved: 0,
+        creditRejected: 0,
+        depositTotal: 0,
+        withdrawalTotal: 0,
+        creditDisbursed: 0,
+        interestReceivable: 0,
+        paymentTotal: 0,
+        transferInTotal: 0,
+        transferOutTotal: 0,
         history: []
       },
       nextHistoryTime: 0
@@ -1648,16 +1822,71 @@
       return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback;
     }
 
+    function timeStringToMinutes(value) {
+      const match = /^(\d{2}):(\d{2})$/.exec(String(value || ""));
+      if (!match) return 0;
+      return Number(match[1]) * 60 + Number(match[2]);
+    }
+
+    function minutesToClock(totalMinutes) {
+      const normalized = Math.max(0, Math.round(Number(totalMinutes) || 0));
+      const hours = Math.floor(normalized / 60) % 24;
+      const minutes = normalized % 60;
+      return String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0");
+    }
+
+    function sessionStartMinutes() {
+      return timeStringToMinutes(state.scenario?.openingTime || "07:00");
+    }
+
+    function sessionEndMinutes() {
+      return timeStringToMinutes(state.scenario?.closingTime || "19:00");
+    }
+
+    function sessionDurationMinutes() {
+      return Math.max(1, sessionEndMinutes() - sessionStartMinutes());
+    }
+
+    function simulationClock(simMinute = state.simTime) {
+      return minutesToClock(sessionStartMinutes() + Math.max(0, Number(simMinute) || 0));
+    }
+
+    function populateScheduleSelectors() {
+      if (!dom.openingTimeInput || !dom.closingTimeInput) return;
+      const options = [];
+      for (let minutes = 7 * 60; minutes <= 19 * 60; minutes += 30) {
+        const value = minutesToClock(minutes);
+        options.push(`<option value="${value}">${value}</option>`);
+      }
+      const html = options.join("");
+      dom.openingTimeInput.innerHTML = html;
+      dom.closingTimeInput.innerHTML = html;
+    }
+
     function updateScenarioUi() {
       const name = String(state.scenario?.businessName || "Entidad financiera").trim() || "Entidad financiera";
       const capital = Math.max(0, Number(state.scenario?.initialCapital) || 0);
+      let openingTime = String(state.scenario?.openingTime || "07:00");
+      let closingTime = String(state.scenario?.closingTime || "19:00");
+      if (timeStringToMinutes(openingTime) < 7 * 60 || timeStringToMinutes(openingTime) > 19 * 60) openingTime = "07:00";
+      if (timeStringToMinutes(closingTime) < 7 * 60 || timeStringToMinutes(closingTime) > 19 * 60) closingTime = "19:00";
+      if (timeStringToMinutes(closingTime) <= timeStringToMinutes(openingTime)) closingTime = "19:00";
       state.scenario.businessName = name;
       state.scenario.initialCapital = capital;
+      if (!Number.isFinite(Number(state.scenario.currentCapital))) {
+        state.scenario.currentCapital = capital;
+      }
+      state.scenario.currentCapital = Math.max(0, Number(state.scenario.currentCapital) || 0);
+      state.scenario.openingTime = openingTime;
+      state.scenario.closingTime = closingTime;
       if (dom.businessNameInput && dom.businessNameInput.value !== name) dom.businessNameInput.value = name;
       if (dom.initialCapitalInput && Number(dom.initialCapitalInput.value) !== capital) dom.initialCapitalInput.value = String(capital);
+      if (dom.openingTimeInput) dom.openingTimeInput.value = openingTime;
+      if (dom.closingTimeInput) dom.closingTimeInput.value = closingTime;
       if (dom.scenarioTitle) dom.scenarioTitle.textContent = name + " · recorrido de usuarios por áreas";
-      if (dom.capitalBadge) dom.capitalBadge.textContent = "Capital inicial: " + formatCurrency(capital);
-      if (dom.metricCapital) dom.metricCapital.textContent = compactCurrency(capital);
+      if (dom.scheduleBadge) dom.scheduleBadge.textContent = "Horario: " + openingTime + "–" + closingTime;
+      if (dom.capitalBadge) dom.capitalBadge.textContent = "Capital disponible: " + formatCurrency(state.scenario.currentCapital);
+      if (dom.metricCapital) dom.metricCapital.textContent = compactCurrency(state.scenario.currentCapital);
     }
 
     function getTransactionConfig(type) {
@@ -1674,10 +1903,12 @@
     }
 
     function compactCurrency(value) {
-      const amount = Math.max(0, Number(value) || 0);
-      if (amount >= 1000000) return "$" + formatNumber(amount / 1000000, 1) + "M";
-      if (amount >= 1000) return "$" + formatNumber(amount / 1000, amount >= 10000 ? 0 : 1) + "K";
-      return "$" + formatNumber(amount, amount % 1 ? 2 : 0);
+      const rawAmount = Number(value) || 0;
+      const sign = rawAmount < 0 ? "-" : "";
+      const amount = Math.abs(rawAmount);
+      if (amount >= 1000000) return sign + "$" + formatNumber(amount / 1000000, 1) + "M";
+      if (amount >= 1000) return sign + "$" + formatNumber(amount / 1000, amount >= 10000 ? 0 : 1) + "K";
+      return sign + "$" + formatNumber(amount, amount % 1 ? 2 : 0);
     }
 
     function randomAmount(min, max) {
@@ -1690,9 +1921,12 @@
       const transaction = getTransactionConfig(type);
       const mode = props.amountMode || "automatic";
       if (type === "inquiry" && mode === "automatic") return 0;
-      if (mode === "fixed") return Math.max(0, Number(props.amountFixed) || 0);
-      if (mode === "random") return randomAmount(props.amountMin, props.amountMax);
-      return randomAmount(transaction.minAmount, transaction.maxAmount);
+      let amount = 0;
+      if (mode === "fixed") amount = Math.max(0, Number(props.amountFixed) || 0);
+      else if (mode === "random") amount = randomAmount(props.amountMin, props.amountMax);
+      else amount = randomAmount(transaction.minAmount, transaction.maxAmount);
+      if (type === "deposit") amount = Math.max(1, amount);
+      return amount;
     }
 
     function amountConfigurationSummary(props) {
@@ -1876,6 +2110,9 @@
           metricLabel = "Atendidos";
           metricValue = runtime.completed;
           details = `<b>Depto.:</b> ${escapeHtml(node.props.department || "Área")}<br><b>Trámite:</b> ${escapeHtml(node.props.procedure || "Atención")}`;
+          if (node.props.processRole === "credit_evaluation") {
+            details += `<br><b>Tasa:</b> ${formatNumber(node.props.creditAnnualInterestRate ?? 14, 1)}% anual · ${Math.max(1, Number(node.props.creditTermMonths) || 24)} meses`;
+          }
           quickControls = `
             <div class="node-controls">
               <button class="mini-step" data-action="decrease" title="Reducir personal">−</button>
@@ -2152,11 +2389,11 @@
         fields += `
           <div class="field-row">
             <div class="field">
-              <label for="propInterval">Intervalo llegada</label>
+              <label for="propInterval">Intervalo de llegada (min)</label>
               <input id="propInterval" type="number" min="0.1" step="0.1" value="${Number(node.props.interval) || 4}">
             </div>
             <div class="field">
-              <label for="propStartAt">Inicio</label>
+              <label for="propStartAt">Inicio desde apertura (min)</label>
               <input id="propStartAt" type="number" min="0" step="0.1" value="${Number(node.props.startAt) || 0}">
             </div>
           </div>
@@ -2209,7 +2446,7 @@
             </div>
           ` : `
             <div style="margin:-5px 0 13px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.04);color:var(--muted);font-size:9px;line-height:1.5;">
-              Crédito: USD 1.000–25.000 · Depósito: USD 20–5.000 · Retiro: USD 20–2.000 · Transferencia: USD 10–5.000 · Pago: USD 5–500 · Consulta: USD 0.
+              Crédito: USD 1.000–25.000 · Depósito: USD 1–5.000 · Retiro: USD 20–2.000 · Transferencia: USD 10–5.000 · Pago: USD 5–500 · Consulta: USD 0.
             </div>
           `}
           ${(node.props.transactionMode || "mixed") === "mixed" ? `
@@ -2266,7 +2503,7 @@
           </div>
           <div class="field-row">
             <div class="field">
-              <label for="propServiceTime">Tiempo atención</label>
+              <label for="propServiceTime">Tiempo de atención (min)</label>
               <input id="propServiceTime" type="number" min="0.1" step="0.1" value="${Number(node.props.serviceTime) || 6}">
             </div>
             <div class="field">
@@ -2274,6 +2511,53 @@
               <input id="propProcedure" type="text" value="${escapeHtml(node.props.procedure || "Recepción de trámite")}">
             </div>
           </div>
+          <div class="field">
+            <label for="propProcessRole">Función del área</label>
+            <select id="propProcessRole">
+              <option value="standard" ${(node.props.processRole || "standard") === "standard" ? "selected" : ""}>Atención general</option>
+              <option value="transaction_processing" ${node.props.processRole === "transaction_processing" ? "selected" : ""}>Procesamiento de transacciones</option>
+              <option value="credit_evaluation" ${node.props.processRole === "credit_evaluation" ? "selected" : ""}>Evaluación de crédito</option>
+            </select>
+          </div>
+          ${node.props.processRole === "credit_evaluation" ? `
+            <div class="field-row">
+              <div class="field">
+                <label for="propCreditApprovalRate">Aprobación base (%)</label>
+                <input id="propCreditApprovalRate" type="number" min="0" max="100" step="1" value="${Number(node.props.creditApprovalRate ?? 75)}">
+              </div>
+              <div class="field">
+                <label for="propCreditMinIncome">Ingreso mínimo USD</label>
+                <input id="propCreditMinIncome" type="number" min="0" step="10" value="${Number(node.props.creditMinIncome ?? 600)}">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="propCreditMaxDebtRatio">Deuda máxima / ingreso (%)</label>
+                <input id="propCreditMaxDebtRatio" type="number" min="0" max="100" step="1" value="${Number(node.props.creditMaxDebtRatio ?? 40)}">
+              </div>
+              <div class="field">
+                <label for="propCreditMinEmploymentMonths">Antigüedad mínima (meses)</label>
+                <input id="propCreditMinEmploymentMonths" type="number" min="0" step="1" value="${Number(node.props.creditMinEmploymentMonths ?? 6)}">
+              </div>
+            </div>
+            <div class="field">
+              <label for="propCreditMaxIncomeMultiple">Monto máximo / ingreso mensual (veces)</label>
+              <input id="propCreditMaxIncomeMultiple" type="number" min="1" step="1" value="${Number(node.props.creditMaxIncomeMultiple ?? 12)}">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="propCreditAnnualInterestRate">Tasa de interés anual (%)</label>
+                <input id="propCreditAnnualInterestRate" type="number" min="0" max="100" step="0.1" value="${Number(node.props.creditAnnualInterestRate ?? 14)}">
+              </div>
+              <div class="field">
+                <label for="propCreditTermMonths">Plazo del crédito (meses)</label>
+                <input id="propCreditTermMonths" type="number" min="1" max="360" step="1" value="${Number(node.props.creditTermMonths ?? 24)}">
+              </div>
+            </div>
+            <div style="margin:-4px 0 13px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#f5f8fc;color:var(--muted);font-size:9px;line-height:1.5;">
+              Se registra si el crédito fue aprobado o rechazado y la razón: documentación incompleta, historial negativo, ingreso insuficiente, endeudamiento alto, poca antigüedad laboral o monto solicitado elevado.
+            </div>
+          ` : ""}
           <div class="field">
             <label for="propObservations">Observaciones</label>
             <textarea id="propObservations">${escapeHtml(node.props.observations || "")}</textarea>
@@ -2395,6 +2679,20 @@
         bindNumericInput("propCapacity", value => node.props.capacity = Math.max(1, Math.floor(value)));
         bindNumericInput("propServiceTime", value => node.props.serviceTime = Math.max(0.1, value));
         bindTextInput("propProcedure", value => node.props.procedure = value || "Recepción de trámite");
+        document.getElementById("propProcessRole")?.addEventListener("change", event => {
+          node.props.processRole = ["credit_evaluation", "transaction_processing"].includes(event.target.value)
+            ? event.target.value
+            : "standard";
+          renderProperties();
+          renderNodes();
+        });
+        bindNumericInput("propCreditApprovalRate", value => node.props.creditApprovalRate = clamp(value, 0, 100));
+        bindNumericInput("propCreditMinIncome", value => node.props.creditMinIncome = Math.max(0, value));
+        bindNumericInput("propCreditMaxDebtRatio", value => node.props.creditMaxDebtRatio = clamp(value, 0, 100));
+        bindNumericInput("propCreditMinEmploymentMonths", value => node.props.creditMinEmploymentMonths = Math.max(0, Math.floor(value)));
+        bindNumericInput("propCreditMaxIncomeMultiple", value => node.props.creditMaxIncomeMultiple = Math.max(1, value));
+        bindNumericInput("propCreditAnnualInterestRate", value => node.props.creditAnnualInterestRate = clamp(value, 0, 100));
+        bindNumericInput("propCreditTermMonths", value => node.props.creditTermMonths = clamp(Math.floor(value), 1, 360));
         bindTextArea("propObservations", value => node.props.observations = value);
       }
 
@@ -2434,6 +2732,17 @@
           <span>${item.code} · ${item.label}</span>
         </label>
       `).join("");
+      const isCreditEvaluation = fromNode?.type === "process" && fromNode?.props?.processRole === "credit_evaluation";
+      const selectedCreditOutcomes = new Set(Array.isArray(edge.creditOutcomes) ? edge.creditOutcomes : []);
+      const creditOutcomeChecks = [
+        ["approved", "Crédito aprobado"],
+        ["rejected", "Crédito rechazado"]
+      ].map(([value, label]) => `
+        <label style="display:flex;align-items:center;gap:8px;min-height:34px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.04);color:var(--text);font-size:10px;text-transform:none;letter-spacing:0;">
+          <input class="edge-credit-outcome-check" type="checkbox" value="${value}" ${selectedCreditOutcomes.has(value) ? "checked" : ""} style="width:15px;height:15px;min-height:0;padding:0;">
+          <span>${label}</span>
+        </label>
+      `).join("");
 
       dom.propertiesContent.innerHTML = `
         <div class="field">
@@ -2464,6 +2773,12 @@
             </div>
           </div>
         `}
+        ${isCreditEvaluation ? `
+          <div class="field">
+            <label>Resultado de crédito para esta ruta</label>
+            <div style="display:grid;gap:7px;">${creditOutcomeChecks}</div>
+          </div>
+        ` : ""}
         <div class="property-actions" style="grid-template-columns:1fr;">
           <button class="property-button danger" id="deletePropertyBtn">Eliminar conexión</button>
         </div>
@@ -2483,6 +2798,16 @@
               .map(item => item.value)
               .filter(type => TRANSACTION_TYPES[type]);
             renderEdges();
+          });
+        });
+      }
+
+      if (isCreditEvaluation) {
+        dom.propertiesContent.querySelectorAll(".edge-credit-outcome-check").forEach(input => {
+          input.addEventListener("change", () => {
+            edge.creditOutcomes = Array.from(dom.propertiesContent.querySelectorAll(".edge-credit-outcome-check:checked"))
+              .map(item => item.value)
+              .filter(value => value === "approved" || value === "rejected");
           });
         });
       }
@@ -2681,7 +3006,24 @@
       state.nextEventId = 1;
       state.simTime = 0;
       state.nextHistoryTime = 0;
-      state.metrics = { created: 0, completed: 0, rejected: 0, maxQueue: 0, history: [] };
+      state.scenario.currentCapital = Math.max(0, Number(state.scenario.initialCapital) || 0);
+      state.capitalLedger = [];
+      state.metrics = {
+        created: 0,
+        completed: 0,
+        rejected: 0,
+        maxQueue: 0,
+        creditApproved: 0,
+        creditRejected: 0,
+        depositTotal: 0,
+        withdrawalTotal: 0,
+        creditDisbursed: 0,
+        interestReceivable: 0,
+        paymentTotal: 0,
+        transferInTotal: 0,
+        transferOutTotal: 0,
+        history: []
+      };
       state.records = [];
       renderAll();
     }
@@ -2715,6 +3057,10 @@
         return;
       }
       if (state.running) return;
+      if (sessionEndMinutes() <= sessionStartMinutes()) {
+        showToast("La hora de cierre debe ser posterior a la hora de apertura.", "warning");
+        return;
+      }
       if (!validateModel()) return;
       initializeRuntime();
       state.running = true;
@@ -2768,6 +3114,11 @@
       state.lastFrame = timestamp;
       const simDelta = realDelta * state.speed;
       state.simTime += simDelta;
+      if (state.simTime >= sessionDurationMinutes()) {
+        state.simTime = sessionDurationMinutes();
+        finalizeAtClosing();
+        return;
+      }
       generateSourceEntities();
       processScheduledEvents();
       updateMovingEntities();
@@ -2795,6 +3146,7 @@
           const transactionType = chooseTransactionType(node.props);
           const transaction = getTransactionConfig(transactionType);
           const amountUsd = chooseTransactionAmount(transactionType, node.props);
+          const creditProfile = transactionType === "credit" ? createCreditProfile() : null;
           const entity = {
             id: state.nextEntityId++,
             label,
@@ -2808,6 +3160,23 @@
             queueEnteredAt: null,
             route: [],
             steps: [],
+            timeline: [],
+            creditProfile,
+            creditOutcome: "",
+            creditReason: "",
+            creditAnnualInterestRate: 0,
+            creditTermMonths: 0,
+            creditMonthlyPayment: 0,
+            creditTotalInterest: 0,
+            creditTotalPayable: 0,
+            operationOutcome: "",
+            operationReason: "",
+            transferDirection: transactionType === "transfer" ? (Math.random() < 0.5 ? "incoming" : "outgoing") : "",
+            capitalEffect: 0,
+            capitalBefore: null,
+            capitalAfter: null,
+            capitalMovement: "",
+            financialPosted: false,
             finalStatus: "En proceso"
           };
           runtime.completed += 1;
@@ -2819,6 +3188,214 @@
         }
         state.sourceSchedule.set(node.id, nextTime);
       });
+    }
+
+    function createCreditProfile() {
+      const monthlyIncome = randomAmount(450, 5000);
+      const currentMonthlyDebt = randomAmount(0, Math.max(50, monthlyIncome * 0.7));
+      const employmentMonths = Math.floor(randomAmount(1, 120));
+      const documentsComplete = Math.random() >= 0.12;
+      const historyRandom = Math.random();
+      const creditHistory = historyRandom < 0.12 ? "Negativo" : (historyRandom < 0.38 ? "Regular" : "Bueno");
+      return { monthlyIncome, currentMonthlyDebt, employmentMonths, documentsComplete, creditHistory };
+    }
+
+    function calculateCreditTerms(principal, annualRate, termMonths) {
+      const amount = Math.max(0, Number(principal) || 0);
+      const annual = clamp(Number(annualRate) || 0, 0, 100);
+      const months = clamp(Math.floor(Number(termMonths) || 1), 1, 360);
+      const monthlyRate = annual / 100 / 12;
+      let monthlyPayment = amount / months;
+      if (monthlyRate > 0) {
+        const factor = Math.pow(1 + monthlyRate, months);
+        monthlyPayment = amount * (monthlyRate * factor) / Math.max(0.0000001, factor - 1);
+      }
+      const totalPayable = monthlyPayment * months;
+      return {
+        annualRate,
+        termMonths: months,
+        monthlyPayment,
+        totalInterest: Math.max(0, totalPayable - amount),
+        totalPayable
+      };
+    }
+
+    function postCapitalMovement(entity, amount, movementType, description) {
+      if (entity.financialPosted) return true;
+      const effect = Number(amount) || 0;
+      const before = Math.max(0, Number(state.scenario.currentCapital) || 0);
+      if (effect < 0 && before + effect < 0) return false;
+      const after = Math.max(0, before + effect);
+      state.scenario.currentCapital = after;
+      entity.financialPosted = true;
+      entity.capitalEffect = effect;
+      entity.capitalBefore = before;
+      entity.capitalAfter = after;
+      entity.capitalMovement = description || movementType;
+      state.capitalLedger.unshift({
+        personId: entity.label,
+        transactionType: entity.transactionType,
+        movementType,
+        description: entity.capitalMovement,
+        amount: effect,
+        before,
+        after,
+        minute: Number(state.simTime.toFixed(1)),
+        clock: simulationClock()
+      });
+      if (state.capitalLedger.length > 500) state.capitalLedger.pop();
+      entity.timeline.push({
+        event: "Movimiento de capital",
+        clock: simulationClock(),
+        minute: Number(state.simTime.toFixed(1)),
+        movement: entity.capitalMovement,
+        effect,
+        capitalBefore: before,
+        capitalAfter: after
+      });
+      updateScenarioUi();
+      updateMetrics();
+      return true;
+    }
+
+    function processFinancialTransaction(entity, node) {
+      if (entity.financialPosted || entity.transactionType === "credit" || entity.transactionType === "inquiry") return;
+      const amount = Math.max(0, Number(entity.amountUsd) || 0);
+      let effect = 0;
+      let description = entity.transactionLabel || "Transacción";
+
+      if (entity.transactionType === "deposit") {
+        effect = amount;
+        state.metrics.depositTotal += amount;
+      } else if (entity.transactionType === "withdrawal") {
+        effect = -amount;
+      } else if (entity.transactionType === "payment") {
+        effect = amount;
+        state.metrics.paymentTotal += amount;
+      } else if (entity.transactionType === "transfer") {
+        effect = entity.transferDirection === "incoming" ? amount : -amount;
+        description = entity.transferDirection === "incoming" ? "Transferencia entrante" : "Transferencia saliente";
+      }
+
+      if (!postCapitalMovement(entity, effect, entity.transactionType, description)) {
+        entity.operationOutcome = "rejected";
+        entity.operationReason = "Liquidez disponible insuficiente para completar la operación";
+        entity.finalStatus = "Operación rechazada";
+        state.metrics.rejected += 1;
+        if (entity.transactionType === "withdrawal") state.metrics.withdrawalTotal += 0;
+        entity.timeline.push({
+          event: "Operación rechazada",
+          clock: simulationClock(),
+          minute: Number(state.simTime.toFixed(1)),
+          reason: entity.operationReason
+        });
+        return;
+      }
+
+      entity.operationOutcome = "completed";
+      entity.operationReason = "Operación procesada correctamente";
+      if (entity.transactionType === "withdrawal") state.metrics.withdrawalTotal += amount;
+      if (entity.transactionType === "transfer") {
+        if (entity.transferDirection === "incoming") state.metrics.transferInTotal += amount;
+        else state.metrics.transferOutTotal += amount;
+      }
+    }
+
+    function evaluateCredit(entity, node) {
+      const profile = entity.creditProfile || createCreditProfile();
+      entity.creditProfile = profile;
+      const minIncome = Math.max(0, Number(node.props.creditMinIncome ?? 600));
+      const maxDebtRatio = clamp(Number(node.props.creditMaxDebtRatio ?? 40), 0, 100);
+      const minEmploymentMonths = Math.max(0, Number(node.props.creditMinEmploymentMonths ?? 6));
+      const maxIncomeMultiple = Math.max(1, Number(node.props.creditMaxIncomeMultiple ?? 12));
+      const approvalRate = clamp(Number(node.props.creditApprovalRate ?? 75), 0, 100);
+      const annualRate = clamp(Number(node.props.creditAnnualInterestRate ?? 14), 0, 100);
+      const termMonths = clamp(Math.floor(Number(node.props.creditTermMonths ?? 24)), 1, 360);
+      const terms = calculateCreditTerms(entity.amountUsd, annualRate, termMonths);
+
+      entity.creditAnnualInterestRate = terms.annualRate;
+      entity.creditTermMonths = terms.termMonths;
+      entity.creditMonthlyPayment = terms.monthlyPayment;
+      entity.creditTotalInterest = terms.totalInterest;
+      entity.creditTotalPayable = terms.totalPayable;
+
+      const projectedDebtRatio = ((profile.currentMonthlyDebt + terms.monthlyPayment) / Math.max(1, profile.monthlyIncome)) * 100;
+      let reason = "";
+      if (!profile.documentsComplete) reason = "Documentación incompleta";
+      else if (profile.creditHistory === "Negativo") reason = "Historial crediticio negativo";
+      else if (profile.monthlyIncome < minIncome) reason = "Ingreso mensual insuficiente";
+      else if (projectedDebtRatio > maxDebtRatio) reason = "La cuota estimada supera la capacidad de pago";
+      else if (profile.employmentMonths < minEmploymentMonths) reason = "Antigüedad laboral insuficiente";
+      else if (entity.amountUsd > profile.monthlyIncome * maxIncomeMultiple) reason = "Monto solicitado elevado respecto del ingreso";
+      else if (entity.amountUsd > Math.max(0, Number(state.scenario.currentCapital) || 0)) reason = "Fondos disponibles insuficientes para desembolsar el crédito";
+      else if (Math.random() * 100 > approvalRate) reason = "Política interna de riesgo";
+
+      if (reason) {
+        entity.creditOutcome = "rejected";
+        entity.creditReason = reason;
+        entity.operationOutcome = "rejected";
+        entity.operationReason = reason;
+        entity.finalStatus = "Crédito rechazado";
+        state.metrics.creditRejected += 1;
+      } else {
+        entity.creditOutcome = "approved";
+        entity.creditReason = "Cumple los criterios simulados";
+        entity.operationOutcome = "completed";
+        entity.operationReason = "Crédito aprobado y desembolsado";
+        entity.finalStatus = "Crédito aprobado";
+        state.metrics.creditApproved += 1;
+        state.metrics.creditDisbursed += Math.max(0, Number(entity.amountUsd) || 0);
+        state.metrics.interestReceivable += terms.totalInterest;
+        postCapitalMovement(entity, -Math.max(0, Number(entity.amountUsd) || 0), "credit_disbursement", "Desembolso de crédito");
+      }
+
+      entity.timeline.push({
+        event: "Evaluación de crédito",
+        clock: simulationClock(),
+        minute: Number(state.simTime.toFixed(1)),
+        outcome: entity.creditOutcome,
+        reason: entity.creditReason,
+        annualInterestRate: terms.annualRate,
+        termMonths: terms.termMonths,
+        monthlyPayment: Number(terms.monthlyPayment.toFixed(2)),
+        totalInterest: Number(terms.totalInterest.toFixed(2)),
+        totalPayable: Number(terms.totalPayable.toFixed(2)),
+        projectedDebtRatio: Number(projectedDebtRatio.toFixed(2))
+      });
+    }
+
+    function finalizeAtClosing() {
+      const collected = new Map();
+      state.movingEntities.forEach(move => collected.set(move.entity.label, move.entity));
+      state.events.forEach(event => {
+        if (event.payload?.entity) collected.set(event.payload.entity.label, event.payload.entity);
+      });
+      state.nodeRuntime.forEach(runtime => {
+        runtime.queue.forEach(entity => collected.set(entity.label, entity));
+      });
+
+      collected.forEach(entity => {
+        if (!state.records.some(record => record.personId === entity.label)) {
+          entity.finalStatus = "Pendiente al cierre";
+          entity.creditReason = entity.creditReason || "Jornada finalizada antes de completar el trámite";
+          saveRecord(entity, { props: { finalStatus: "Pendiente al cierre" } });
+        }
+      });
+
+      state.events = [];
+      state.movingEntities.forEach(move => move.element.remove());
+      state.movingEntities = [];
+      state.nodeRuntime.forEach(runtime => {
+        runtime.queue = [];
+        runtime.busy = 0;
+      });
+      state.running = false;
+      state.paused = false;
+      updateRunStatus();
+      renderNodes();
+      updateMetrics();
+      updateStatus("Jornada finalizada a las " + state.scenario.closingTime + ". Los trámites pendientes fueron registrados.");
+      showToast("La jornada de simulación finalizó.", "success");
     }
 
     function scheduleEvent(time, type, payload) {
@@ -2867,6 +3444,10 @@
       let edge = outgoing[0];
       if (node.type === "decision" && outgoing.length > 1) {
         edge = chooseDecisionEdge(node, outgoing, entity);
+      } else if (node.type === "process" && node.props.processRole === "credit_evaluation" && entity.transactionType === "credit" && entity.creditOutcome) {
+        edge = outgoing.find(item => Array.isArray(item.creditOutcomes) && item.creditOutcomes.includes(entity.creditOutcome))
+          || outgoing.find(item => !Array.isArray(item.creditOutcomes) || item.creditOutcomes.length === 0)
+          || outgoing[0];
       }
       animateEntity(node.id, edge.to, entity);
     }
@@ -2929,14 +3510,25 @@
 
     function registerVisit(entity, node, stageLabel = "Paso") {
       entity.route.push(node.name);
-      entity.steps.push({
+      const eventData = {
         nodeId: node.id,
         nodeName: node.name,
         type: node.type,
         department: node.props.department || "",
         procedure: node.props.procedure || node.props.finalStatus || "",
         stage: stageLabel,
-        time: Number(state.simTime.toFixed(1))
+        time: Number(state.simTime.toFixed(1)),
+        clock: simulationClock()
+      };
+      entity.steps.push(eventData);
+      entity.timeline = Array.isArray(entity.timeline) ? entity.timeline : [];
+      entity.timeline.push({
+        event: stageLabel,
+        area: node.name,
+        department: eventData.department,
+        procedure: eventData.procedure,
+        minute: eventData.time,
+        clock: eventData.clock
       });
     }
 
@@ -2986,6 +3578,9 @@
     }
 
     function saveRecord(entity, sinkNode) {
+      const startMinute = Number(entity.createdAt.toFixed(1));
+      const endMinute = Number(state.simTime.toFixed(1));
+      const profile = entity.creditProfile || null;
       const record = {
         personId: entity.label,
         personType: entity.personType,
@@ -2993,11 +3588,37 @@
         transactionLabel: entity.transactionLabel || getTransactionConfig(entity.transactionType).label,
         transactionCode: entity.transactionCode || getTransactionConfig(entity.transactionType).code,
         amountUsd: Math.max(0, Number(entity.amountUsd) || 0),
-        startTime: Number(entity.createdAt.toFixed(1)),
-        endTime: Number(state.simTime.toFixed(1)),
-        finalStatus: sinkNode.props.finalStatus || entity.finalStatus || "Completado",
+        startTime: startMinute,
+        endTime: endMinute,
+        startClock: simulationClock(startMinute),
+        endClock: simulationClock(endMinute),
+        durationMinutes: Math.max(0, Number((endMinute - startMinute).toFixed(1))),
+        finalStatus: (entity.operationOutcome === "rejected" || entity.creditOutcome === "rejected")
+          ? (entity.finalStatus || "Operación rechazada")
+          : (sinkNode.props.finalStatus || entity.finalStatus || "Completado"),
+        creditOutcome: entity.creditOutcome || "",
+        creditReason: entity.creditReason || "",
+        monthlyIncome: profile ? Number(profile.monthlyIncome.toFixed(2)) : "",
+        currentMonthlyDebt: profile ? Number(profile.currentMonthlyDebt.toFixed(2)) : "",
+        employmentMonths: profile ? profile.employmentMonths : "",
+        documentsComplete: profile ? (profile.documentsComplete ? "Sí" : "No") : "",
+        creditHistory: profile ? profile.creditHistory : "",
+        creditAnnualInterestRate: Number(entity.creditAnnualInterestRate || 0),
+        creditTermMonths: Number(entity.creditTermMonths || 0),
+        creditMonthlyPayment: Number(entity.creditMonthlyPayment || 0),
+        creditTotalInterest: Number(entity.creditTotalInterest || 0),
+        creditTotalPayable: Number(entity.creditTotalPayable || 0),
+        operationOutcome: entity.operationOutcome || "",
+        operationReason: entity.operationReason || "",
+        transferDirection: entity.transferDirection || "",
+        capitalEffect: Number(entity.capitalEffect || 0),
+        capitalBefore: entity.capitalBefore === null ? "" : Number(entity.capitalBefore || 0),
+        capitalAfter: entity.capitalAfter === null ? "" : Number(entity.capitalAfter || 0),
+        capitalMovement: entity.capitalMovement || "",
         route: entity.route.join(" → "),
-        steps: clone(entity.steps)
+        areasVisited: entity.route.length,
+        steps: clone(entity.steps),
+        timeline: clone(entity.timeline || [])
       };
       state.records.unshift(record);
       if (state.records.length > 300) state.records.pop();
@@ -3055,6 +3676,21 @@
       const runtime = ensureNodeRuntime(node);
       runtime.busy = Math.max(0, runtime.busy - 1);
       runtime.completed += 1;
+      if (node.props.processRole === "credit_evaluation" && entity.transactionType === "credit" && !entity.creditOutcome) {
+        evaluateCredit(entity, node);
+      }
+      if (node.props.processRole === "transaction_processing" && !entity.financialPosted) {
+        processFinancialTransaction(entity, node);
+      }
+      entity.timeline = Array.isArray(entity.timeline) ? entity.timeline : [];
+      entity.timeline.push({
+        event: "Fin de atención",
+        area: node.name,
+        department: node.props.department || "",
+        procedure: node.props.procedure || "",
+        minute: Number(state.simTime.toFixed(1)),
+        clock: simulationClock()
+      });
       routeFromNode(node, entity);
 
       while (runtime.queue.length > 0 && processHasCapacity(node)) {
@@ -3100,14 +3736,27 @@
 
     function updateMetrics() {
       const wip = Math.max(0, state.metrics.created - state.metrics.completed - state.metrics.rejected);
-      dom.metricTime.textContent = formatNumber(state.simTime, 1) + " s";
+      dom.metricTime.textContent = simulationClock();
       dom.metricCreated.textContent = state.metrics.created.toLocaleString("es-EC");
       dom.metricCompleted.textContent = state.metrics.completed.toLocaleString("es-EC");
       dom.metricWip.textContent = wip.toLocaleString("es-EC");
       dom.metricMaxQueue.textContent = state.metrics.maxQueue.toLocaleString("es-EC");
       dom.metricStaff.textContent = totalStaff().toLocaleString("es-EC");
-      if (dom.metricCapital) dom.metricCapital.textContent = compactCurrency(state.scenario.initialCapital);
-      dom.clockStatus.textContent = "t = " + formatNumber(state.simTime, 1) + " s";
+      const currentCapital = Math.max(0, Number(state.scenario.currentCapital) || 0);
+      const netChange = currentCapital - Math.max(0, Number(state.scenario.initialCapital) || 0);
+      if (dom.metricCapital) dom.metricCapital.textContent = compactCurrency(currentCapital);
+      if (dom.metricNetChange) {
+        dom.metricNetChange.textContent = (netChange >= 0 ? "+" : "") + compactCurrency(netChange);
+        dom.metricNetChange.classList.toggle("metric-positive", netChange > 0);
+        dom.metricNetChange.classList.toggle("metric-negative", netChange < 0);
+      }
+      if (dom.metricCreditDisbursed) dom.metricCreditDisbursed.textContent = compactCurrency(state.metrics.creditDisbursed);
+      if (dom.metricInterestReceivable) dom.metricInterestReceivable.textContent = compactCurrency(state.metrics.interestReceivable);
+      if (dom.metricCreditApproved) dom.metricCreditApproved.textContent = state.metrics.creditApproved.toLocaleString("es-EC");
+      if (dom.metricCreditRejected) dom.metricCreditRejected.textContent = state.metrics.creditRejected.toLocaleString("es-EC");
+      if (dom.metricDeposits) dom.metricDeposits.textContent = compactCurrency(state.metrics.depositTotal);
+      if (dom.metricWithdrawals) dom.metricWithdrawals.textContent = compactCurrency(state.metrics.withdrawalTotal);
+      dom.clockStatus.textContent = simulationClock() + " h";
     }
 
     function renderRecords() {
@@ -3125,8 +3774,15 @@
           <span><b>Usuario:</b> ${escapeHtml(record.personType)}</span>
           <span><b>Trámite:</b> ${escapeHtml(record.transactionLabel || "No especificado")}</span>
           <span><b>Monto USD:</b> ${escapeHtml(formatCurrency(record.amountUsd || 0))}</span>
+          ${record.creditOutcome ? `<span><b>Resultado de crédito:</b> ${record.creditOutcome === "approved" ? "Aprobado" : "Rechazado"}</span>` : ""}
+          ${record.creditReason ? `<span><b>Motivo:</b> ${escapeHtml(record.creditReason)}</span>` : ""}
+          ${record.operationReason && !record.creditReason ? `<span><b>Resultado:</b> ${escapeHtml(record.operationReason)}</span>` : ""}
+          ${record.monthlyIncome !== "" ? `<span><b>Ingreso / deuda:</b> ${formatCurrency(record.monthlyIncome)} / ${formatCurrency(record.currentMonthlyDebt)}</span>` : ""}
+          ${record.creditOutcome === "approved" ? `<span><b>Tasa / plazo:</b> ${formatNumber(record.creditAnnualInterestRate,1)}% anual · ${record.creditTermMonths} meses</span><span><b>Cuota / interés:</b> ${formatCurrency(record.creditMonthlyPayment)} / ${formatCurrency(record.creditTotalInterest)}</span>` : ""}
+          ${record.capitalAfter !== "" ? `<span><b>Efecto en capital:</b> ${record.capitalEffect >= 0 ? "+" : ""}${formatCurrency(record.capitalEffect)} · saldo ${formatCurrency(record.capitalAfter)}</span>` : ""}
+          ${record.transferDirection ? `<span><b>Dirección:</b> ${record.transferDirection === "incoming" ? "Entrante" : "Saliente"}</span>` : ""}
           <span><b>Ruta:</b> ${escapeHtml(record.route)}</span>
-          <span><b>Tiempo:</b> ${formatNumber(record.startTime,1)} s → ${formatNumber(record.endTime,1)} s</span>
+          <span><b>Horario:</b> ${escapeHtml(record.startClock || simulationClock(record.startTime))} → ${escapeHtml(record.endClock || simulationClock(record.endTime))} · ${formatNumber(record.durationMinutes ?? (record.endTime-record.startTime),1)} min</span>
         `;
         dom.recordsList.appendChild(item);
       });
@@ -3164,7 +3820,7 @@
 
     function saveModel() {
       const payload = {
-        version: 6,
+        version: 8,
         savedAt: new Date().toISOString(),
         scenario: state.scenario,
         nodes: state.nodes,
@@ -3183,7 +3839,7 @@
 
     function exportModel() {
       const payload = {
-        version: 6,
+        version: 8,
         exportedAt: new Date().toISOString(),
         scenario: state.scenario,
         nodes: state.nodes,
@@ -3199,7 +3855,16 @@
         return;
       }
       const rows = [
-        ["persona", "tipo_usuario", "tramite_financiero", "codigo_tramite", "monto_usd", "hora_ingreso", "hora_salida", "estado_final", "ruta"]
+        [
+          "persona", "tipo_usuario", "tramite_financiero", "codigo_tramite", "monto_usd",
+          "hora_ingreso", "hora_salida", "duracion_minutos", "estado_final",
+          "resultado_credito", "motivo_credito", "ingreso_mensual_usd", "deuda_mensual_usd",
+          "antiguedad_laboral_meses", "documentos_completos", "historial_crediticio",
+          "tasa_interes_anual_pct", "plazo_meses", "cuota_mensual_usd", "interes_total_usd", "total_pagar_usd",
+          "resultado_operacion", "motivo_operacion", "direccion_transferencia",
+          "efecto_capital_usd", "capital_antes_usd", "capital_despues_usd", "movimiento_capital",
+          "areas_visitadas", "ruta", "detalle_etapas"
+        ]
       ];
       state.records.forEach(record => {
         rows.push([
@@ -3208,10 +3873,32 @@
           record.transactionLabel || "No especificado",
           record.transactionCode || "",
           Number(record.amountUsd || 0).toFixed(2),
-          record.startTime,
-          record.endTime,
+          record.startClock || simulationClock(record.startTime),
+          record.endClock || simulationClock(record.endTime),
+          Number(record.durationMinutes || 0).toFixed(1),
           record.finalStatus,
-          record.route
+          record.creditOutcome === "approved" ? "Aprobado" : (record.creditOutcome === "rejected" ? "Rechazado" : ""),
+          record.creditReason || "",
+          record.monthlyIncome,
+          record.currentMonthlyDebt,
+          record.employmentMonths,
+          record.documentsComplete,
+          record.creditHistory,
+          Number(record.creditAnnualInterestRate || 0).toFixed(2),
+          record.creditTermMonths || "",
+          Number(record.creditMonthlyPayment || 0).toFixed(2),
+          Number(record.creditTotalInterest || 0).toFixed(2),
+          Number(record.creditTotalPayable || 0).toFixed(2),
+          record.operationOutcome || "",
+          record.operationReason || "",
+          record.transferDirection || "",
+          Number(record.capitalEffect || 0).toFixed(2),
+          record.capitalBefore === "" ? "" : Number(record.capitalBefore || 0).toFixed(2),
+          record.capitalAfter === "" ? "" : Number(record.capitalAfter || 0).toFixed(2),
+          record.capitalMovement || "",
+          record.areasVisited || 0,
+          record.route,
+          JSON.stringify(record.timeline || [])
         ]);
       });
       const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
@@ -3239,7 +3926,10 @@
       stopSimulation(false);
       state.scenario = {
         businessName: String(payload.scenario?.businessName || "Entidad financiera"),
-        initialCapital: Math.max(0, Number(payload.scenario?.initialCapital ?? 1000000) || 0)
+        initialCapital: Math.max(0, Number(payload.scenario?.initialCapital ?? 1000000) || 0),
+        currentCapital: Math.max(0, Number(payload.scenario?.initialCapital ?? 1000000) || 0),
+        openingTime: String(payload.scenario?.openingTime || "07:00"),
+        closingTime: String(payload.scenario?.closingTime || "19:00")
       };
       state.nodes = payload.nodes
         .filter(node => NODE_TYPES[node.type])
@@ -3262,22 +3952,29 @@
           weight: Math.max(0, Number(edge.weight) || 0),
           transactionTypes: Array.isArray(edge.transactionTypes)
             ? edge.transactionTypes.filter(type => TRANSACTION_TYPES[type])
+            : [],
+          creditOutcomes: Array.isArray(edge.creditOutcomes)
+            ? edge.creditOutcomes.filter(value => value === "approved" || value === "rejected")
             : []
         }));
 
       state.selected = null;
       state.connectionOrigin = null;
       initializeRuntime();
+      updateScenarioUi();
       fitView();
       updateStatus("Modelo cargado.");
     }
 
     function loadExampleModel(showNotification = true) {
       const example = {
-        version: 6,
+        version: 8,
         scenario: {
           businessName: "Entidad financiera",
-          initialCapital: 1000000
+          initialCapital: 1000000,
+          currentCapital: 1000000,
+          openingTime: "07:00",
+          closingTime: "19:00"
         },
         nodes: [
           {
@@ -3337,7 +4034,21 @@
             name: "Crédito",
             x: 1180,
             y: 130,
-            props: { serviceTime: 8, capacity: 2, department: "Departamento de crédito", procedure: "Recepción de solicitud", observations: "" }
+            props: {
+              serviceTime: 8,
+              capacity: 2,
+              department: "Departamento de crédito",
+              procedure: "Evaluación de solicitud",
+              observations: "",
+              processRole: "credit_evaluation",
+              creditApprovalRate: 75,
+              creditMinIncome: 600,
+              creditMaxDebtRatio: 40,
+              creditMinEmploymentMonths: 6,
+              creditMaxIncomeMultiple: 12,
+              creditAnnualInterestRate: 14,
+              creditTermMonths: 24
+            }
           },
           {
             id: "process-service",
@@ -3345,7 +4056,7 @@
             name: "Servicio al cliente",
             x: 1180,
             y: 320,
-            props: { serviceTime: 6, capacity: 3, department: "Servicio al cliente", procedure: "Consulta y actualización", observations: "" }
+            props: { serviceTime: 6, capacity: 3, department: "Servicio al cliente", procedure: "Consulta y actualización", observations: "", processRole: "transaction_processing" }
           },
           {
             id: "process-cashier",
@@ -3353,7 +4064,7 @@
             name: "Caja",
             x: 1180,
             y: 510,
-            props: { serviceTime: 4, capacity: 2, department: "Tesorería", procedure: "Pago o validación", observations: "" }
+            props: { serviceTime: 4, capacity: 2, department: "Tesorería", procedure: "Pago, depósito, retiro o transferencia", observations: "", processRole: "transaction_processing" }
           },
           {
             id: "process-archive",
@@ -3374,10 +4085,10 @@
           {
             id: "sink-exit",
             type: "sink",
-            name: "Salida sin completar",
+            name: "Crédito rechazado / salida alterna",
             x: 1180,
             y: 730,
-            props: { finalStatus: "No completado", department: "Cierre", procedure: "Fin alternativo" }
+            props: { finalStatus: "No completado", department: "Cierre", procedure: "Crédito rechazado o trámite no concluido" }
           }
         ],
         edges: [
@@ -3388,7 +4099,8 @@
           { id: "e5", from: "decision-flow", to: "process-service", weight: 3, transactionTypes: ["transfer", "inquiry"] },
           { id: "e6", from: "decision-flow", to: "process-cashier", weight: 2, transactionTypes: ["deposit", "withdrawal", "payment"] },
           { id: "e7", from: "decision-flow", to: "sink-exit", weight: 1, transactionTypes: [] },
-          { id: "e8", from: "process-credit", to: "process-archive", weight: 1 },
+          { id: "e8", from: "process-credit", to: "process-archive", weight: 1, creditOutcomes: ["approved"] },
+          { id: "e8r", from: "process-credit", to: "sink-exit", weight: 1, creditOutcomes: ["rejected"] },
           { id: "e9", from: "process-service", to: "process-archive", weight: 1 },
           { id: "e10", from: "process-cashier", to: "process-archive", weight: 1 },
           { id: "e11", from: "process-archive", to: "sink-success", weight: 1 }
@@ -3452,9 +4164,40 @@
       updateScenarioUi();
     });
 
-    dom.initialCapitalInput?.addEventListener("input", event => {
+    dom.initialCapitalInput?.addEventListener("change", event => {
+      if (state.running) {
+        showToast("Detenga la simulación antes de cambiar el capital inicial.", "warning");
+        event.target.value = String(state.scenario.initialCapital);
+        return;
+      }
       state.scenario.initialCapital = Math.max(0, Number(event.target.value) || 0);
+      state.scenario.currentCapital = state.scenario.initialCapital;
       updateScenarioUi();
+      updateMetrics();
+    });
+
+    dom.openingTimeInput?.addEventListener("change", event => {
+      const value = event.target.value;
+      if (timeStringToMinutes(value) >= timeStringToMinutes(state.scenario.closingTime)) {
+        showToast("La apertura debe ser anterior al cierre.", "warning");
+        updateScenarioUi();
+        return;
+      }
+      state.scenario.openingTime = value;
+      updateScenarioUi();
+      updateMetrics();
+    });
+
+    dom.closingTimeInput?.addEventListener("change", event => {
+      const value = event.target.value;
+      if (timeStringToMinutes(value) <= timeStringToMinutes(state.scenario.openingTime)) {
+        showToast("El cierre debe ser posterior a la apertura.", "warning");
+        updateScenarioUi();
+        return;
+      }
+      state.scenario.closingTime = value;
+      updateScenarioUi();
+      updateMetrics();
     });
 
     dom.playBtn.addEventListener("click", startSimulation);
@@ -3525,6 +4268,7 @@
     });
 
     function initializeApp() {
+      populateScheduleSelectors();
       updateRunStatus();
       updateScenarioUi();
       loadExampleModel(false);
