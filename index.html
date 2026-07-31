@@ -716,10 +716,10 @@
       position: absolute;
       display: grid;
       place-items: center;
-      width: 18px;
-      height: 18px;
-      margin-left: -9px;
-      margin-top: -9px;
+      width: 20px;
+      height: 20px;
+      margin-left: -10px;
+      margin-top: -10px;
       border: 2px solid #ffffff;
       border-radius: 999px;
       background: linear-gradient(145deg, #1f4a8f, #173563);
@@ -727,6 +727,27 @@
       color: #ffffff;
       font-size: 10px;
       line-height: 1;
+    }
+
+    .entity::after {
+      content: attr(data-code);
+      position: absolute;
+      left: 13px;
+      top: -8px;
+      min-width: 19px;
+      height: 14px;
+      display: grid;
+      place-items: center;
+      padding: 0 4px;
+      border: 1.5px solid #ffffff;
+      border-radius: 999px;
+      background: var(--transaction-color, #3a8bfd);
+      box-shadow: 0 3px 8px rgba(20, 34, 55, 0.24);
+      color: #ffffff;
+      font-size: 6px;
+      font-weight: 900;
+      letter-spacing: .03em;
+      white-space: nowrap;
     }
 
     .empty-state {
@@ -1134,6 +1155,18 @@
       </section>
 
       <section class="panel-section">
+        <div class="panel-title"><h2>Trámites</h2><span>Etiqueta del usuario</span></div>
+        <div style="display:grid;gap:7px;font-size:10px;">
+          <div><b style="color:#8b6df6;">CR</b> · Solicitud de crédito</div>
+          <div><b style="color:#20b486;">DP</b> · Depósito de dinero</div>
+          <div><b style="color:#ef5b67;">RT</b> · Retiro de dinero</div>
+          <div><b style="color:#19a7bd;">TR</b> · Transferencia</div>
+          <div><b style="color:#f2a93b;">PG</b> · Pago de servicios</div>
+          <div><b style="color:#9aabc0;">CS</b> · Consulta financiera</div>
+        </div>
+      </section>
+
+      <section class="panel-section">
         <div class="panel-title"><h2>Modelo</h2></div>
         <button class="property-button" id="loadExampleBtn" style="width: 100%;">Cargar ejemplo</button>
         <button class="property-button" id="clearModelBtn" style="width: 100%; margin-top: 8px;">Limpiar lienzo</button>
@@ -1258,6 +1291,15 @@
   <script>
     "use strict";
 
+    const TRANSACTION_TYPES = {
+      credit: { label: "Solicitud de crédito", code: "CR", color: "#8b6df6" },
+      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486" },
+      withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67" },
+      transfer: { label: "Transferencia", code: "TR", color: "#19a7bd" },
+      payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b" },
+      inquiry: { label: "Consulta financiera", code: "CS", color: "#617089" }
+    };
+
     const NODE_TYPES = {
       source: {
         label: "Entrada",
@@ -1268,7 +1310,17 @@
           interval: 4,
           startAt: 0,
           maxEntities: 0,
-          personType: "Ciudadano"
+          personType: "Ciudadano",
+          transactionMode: "mixed",
+          transactionType: "credit",
+          transactionWeights: {
+            credit: 30,
+            deposit: 25,
+            withdrawal: 20,
+            transfer: 10,
+            payment: 10,
+            inquiry: 5
+          }
         }
       },
       queue: {
@@ -1302,7 +1354,8 @@
         defaultName: "Derivación",
         props: {
           department: "Flujo",
-          procedure: "Asignación de ruta"
+          procedure: "Asignación de ruta",
+          routingMode: "transaction"
         }
       },
       sink: {
@@ -1409,6 +1462,38 @@
       });
     }
 
+    function getTransactionConfig(type) {
+      return TRANSACTION_TYPES[type] || TRANSACTION_TYPES.inquiry;
+    }
+
+    function chooseTransactionType(props) {
+      if ((props.transactionMode || "mixed") === "fixed") {
+        return TRANSACTION_TYPES[props.transactionType] ? props.transactionType : "credit";
+      }
+
+      const defaults = NODE_TYPES.source.props.transactionWeights;
+      const weights = { ...defaults, ...(props.transactionWeights || {}) };
+      const entries = Object.keys(TRANSACTION_TYPES).map(type => ({
+        type,
+        weight: Math.max(0, Number(weights[type]) || 0)
+      }));
+      const total = entries.reduce((sum, item) => sum + item.weight, 0);
+      if (total <= 0) return "inquiry";
+
+      let random = Math.random() * total;
+      for (const item of entries) {
+        random -= item.weight;
+        if (random <= 0) return item.type;
+      }
+      return entries[entries.length - 1].type;
+    }
+
+    function transactionOptions(selected) {
+      return Object.entries(TRANSACTION_TYPES)
+        .map(([value, item]) => `<option value="${value}" ${selected === value ? "selected" : ""}>${item.label}</option>`)
+        .join("");
+    }
+
     function showToast(message, type = "success") {
       const toast = document.createElement("div");
       toast.className = "toast " + type;
@@ -1471,7 +1556,13 @@
         return null;
       }
 
-      const edge = { id: uid("edge"), from, to, weight: Math.max(0, Number(weight) || 0) };
+      const edge = {
+        id: uid("edge"),
+        from,
+        to,
+        weight: Math.max(0, Number(weight) || 0),
+        transactionTypes: []
+      };
       state.edges.push(edge);
       renderEdges();
       updateModelStatus();
@@ -1533,7 +1624,10 @@
           statusValue = String(runtime.completed);
           metricLabel = "Ingresos";
           metricValue = runtime.completed;
-          details = `<b>Tipo:</b> ${escapeHtml(node.props.personType || "Ciudadano")}<br><b>Intervalo:</b> ${formatNumber(node.props.interval || 4, 1)} s`;
+          const transactionText = (node.props.transactionMode || "mixed") === "fixed"
+            ? getTransactionConfig(node.props.transactionType || "credit").label
+            : "Mezcla configurable";
+          details = `<b>Usuario:</b> ${escapeHtml(node.props.personType || "Ciudadano")}<br><b>Trámite:</b> ${escapeHtml(transactionText)}`;
         } else if (node.type === "queue") {
           statusValue = String(runtime.queue.length);
           metricLabel = "En espera";
@@ -1555,7 +1649,10 @@
           statusValue = String(runtime.completed);
           metricLabel = "Derivadas";
           metricValue = runtime.completed;
-          details = `<b>Departamento:</b> ${escapeHtml(node.props.department || "Flujo")}<br><b>Uso:</b> ${escapeHtml(node.props.procedure || "Derivación")}`;
+          const routingText = (node.props.routingMode || "probability") === "transaction"
+            ? "Según tipo de trámite"
+            : "Según probabilidad";
+          details = `<b>Departamento:</b> ${escapeHtml(node.props.department || "Flujo")}<br><b>Ruta:</b> ${escapeHtml(routingText)}`;
         } else if (node.type === "sink") {
           statusValue = String(runtime.completed);
           metricLabel = "Finalizadas";
@@ -1677,12 +1774,14 @@
         group.appendChild(hit);
 
         if (fromNode.type === "decision") {
+          const labelText = formatDecisionLabel(edge, fromNode);
+          const labelWidth = Math.max(48, Math.min(112, labelText.length * 7 + 16));
           const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
           const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
           rect.setAttribute("class", "edge-label-bg");
-          rect.setAttribute("x", mid.x - 24);
+          rect.setAttribute("x", mid.x - labelWidth / 2);
           rect.setAttribute("y", mid.y - 12);
-          rect.setAttribute("width", 48);
+          rect.setAttribute("width", labelWidth);
           rect.setAttribute("height", 24);
           rect.setAttribute("rx", 8);
 
@@ -1690,7 +1789,7 @@
           text.setAttribute("class", "edge-label");
           text.setAttribute("x", mid.x);
           text.setAttribute("y", mid.y + 0.5);
-          text.textContent = formatDecisionWeight(edge);
+          text.textContent = labelText;
 
           labelGroup.appendChild(rect);
           labelGroup.appendChild(text);
@@ -1706,7 +1805,13 @@
       });
     }
 
-    function formatDecisionWeight(edge) {
+    function formatDecisionLabel(edge, fromNode) {
+      if ((fromNode?.props?.routingMode || "probability") === "transaction") {
+        const types = Array.isArray(edge.transactionTypes) ? edge.transactionTypes : [];
+        if (types.length === 0) return "RESTO";
+        return types.map(type => getTransactionConfig(type).code).join("/");
+      }
+
       const siblings = getOutgoing(edge.from);
       const total = siblings.reduce((sum, item) => sum + Math.max(0, Number(item.weight) || 0), 0);
       const percent = total > 0 ? ((Number(edge.weight) || 0) / total) * 100 : 0;
@@ -1823,6 +1928,37 @@
               <input id="propPersonType" type="text" value="${escapeHtml(node.props.personType || "Ciudadano")}">
             </div>
           </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="propTransactionMode">Asignación del trámite</label>
+              <select id="propTransactionMode">
+                <option value="mixed" ${(node.props.transactionMode || "mixed") === "mixed" ? "selected" : ""}>Mezcla por probabilidad</option>
+                <option value="fixed" ${node.props.transactionMode === "fixed" ? "selected" : ""}>Un trámite fijo</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="propTransactionType">Trámite fijo</label>
+              <select id="propTransactionType">${transactionOptions(node.props.transactionType || "credit")}</select>
+            </div>
+          </div>
+          ${(node.props.transactionMode || "mixed") === "mixed" ? `
+            <div class="field">
+              <label>Pesos de cada trámite</label>
+              <div style="color:var(--muted);font-size:10px;line-height:1.5;margin-bottom:8px;">Los valores funcionan como pesos relativos y no necesitan sumar 100.</div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="weightCredit">Crédito</label><input id="weightCredit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.credit ?? 30)}"></div>
+              <div class="field"><label for="weightDeposit">Depósito</label><input id="weightDeposit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.deposit ?? 25)}"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="weightWithdrawal">Retiro</label><input id="weightWithdrawal" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.withdrawal ?? 20)}"></div>
+              <div class="field"><label for="weightTransfer">Transferencia</label><input id="weightTransfer" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.transfer ?? 10)}"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="weightPayment">Pago</label><input id="weightPayment" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.payment ?? 10)}"></div>
+              <div class="field"><label for="weightInquiry">Consulta</label><input id="weightInquiry" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.inquiry ?? 5)}"></div>
+            </div>
+          ` : ""}
         `;
       }
 
@@ -1887,8 +2023,17 @@
             </div>
           </div>
           <div class="field">
-            <label>Probabilidades</label>
-            <div style="color:var(--muted); font-size:10px; line-height:1.55;">Seleccione cada conexión saliente para editar su peso probabilístico. No es necesario que sumen 100; el simulador las normaliza automáticamente.</div>
+            <label for="propRoutingMode">Forma de derivación</label>
+            <select id="propRoutingMode">
+              <option value="transaction" ${(node.props.routingMode || "transaction") === "transaction" ? "selected" : ""}>Según tipo de trámite</option>
+              <option value="probability" ${node.props.routingMode === "probability" ? "selected" : ""}>Según probabilidad</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Configuración de las rutas</label>
+            <div style="color:var(--muted); font-size:10px; line-height:1.55;">
+              Seleccione cada conexión saliente. En modo trámite podrá asignar crédito, depósito, retiro u otras operaciones a cada destino. En modo probabilidad podrá editar sus pesos.
+            </div>
           </div>
         `;
       }
@@ -1931,6 +2076,25 @@
         bindNumericInput("propStartAt", value => node.props.startAt = Math.max(0, value));
         bindNumericInput("propMaxEntities", value => node.props.maxEntities = Math.max(0, Math.floor(value)));
         bindTextInput("propPersonType", value => node.props.personType = value || "Ciudadano");
+        document.getElementById("propTransactionMode")?.addEventListener("change", event => {
+          node.props.transactionMode = event.target.value === "fixed" ? "fixed" : "mixed";
+          renderNodes();
+          renderProperties();
+        });
+        document.getElementById("propTransactionType")?.addEventListener("change", event => {
+          node.props.transactionType = TRANSACTION_TYPES[event.target.value] ? event.target.value : "credit";
+          renderNodes();
+        });
+        node.props.transactionWeights = {
+          ...NODE_TYPES.source.props.transactionWeights,
+          ...(node.props.transactionWeights || {})
+        };
+        bindNumericInput("weightCredit", value => node.props.transactionWeights.credit = Math.max(0, value));
+        bindNumericInput("weightDeposit", value => node.props.transactionWeights.deposit = Math.max(0, value));
+        bindNumericInput("weightWithdrawal", value => node.props.transactionWeights.withdrawal = Math.max(0, value));
+        bindNumericInput("weightTransfer", value => node.props.transactionWeights.transfer = Math.max(0, value));
+        bindNumericInput("weightPayment", value => node.props.transactionWeights.payment = Math.max(0, value));
+        bindNumericInput("weightInquiry", value => node.props.transactionWeights.inquiry = Math.max(0, value));
       }
 
       if (node.type === "queue") {
@@ -1950,6 +2114,12 @@
       if (node.type === "decision") {
         bindTextInput("propDepartment", value => node.props.department = value || "Flujo");
         bindTextInput("propProcedure", value => node.props.procedure = value || "Asignación de ruta");
+        document.getElementById("propRoutingMode")?.addEventListener("change", event => {
+          node.props.routingMode = event.target.value === "probability" ? "probability" : "transaction";
+          renderNodes();
+          renderEdges();
+          renderProperties();
+        });
       }
 
       if (node.type === "sink") {
@@ -1968,7 +2138,15 @@
       const fromNode = getNode(edge.from);
       const toNode = getNode(edge.to);
       dom.selectionType.textContent = "Conexión";
-      const showWeight = fromNode && fromNode.type === "decision";
+      const isDecision = fromNode && fromNode.type === "decision";
+      const routingMode = fromNode?.props?.routingMode || "probability";
+      const selectedTypes = new Set(Array.isArray(edge.transactionTypes) ? edge.transactionTypes : []);
+      const transactionChecks = Object.entries(TRANSACTION_TYPES).map(([type, item]) => `
+        <label style="display:flex;align-items:center;gap:8px;min-height:34px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.04);color:var(--text);font-size:10px;text-transform:none;letter-spacing:0;">
+          <input class="edge-transaction-check" type="checkbox" value="${type}" ${selectedTypes.has(type) ? "checked" : ""} style="width:15px;height:15px;min-height:0;padding:0;">
+          <span>${item.code} · ${item.label}</span>
+        </label>
+      `).join("");
 
       dom.propertiesContent.innerHTML = `
         <div class="field">
@@ -1979,16 +2157,23 @@
           <label>Destino</label>
           <input type="text" value="${escapeHtml(toNode?.name || "No disponible")}" disabled>
         </div>
-        ${showWeight ? `
+        ${isDecision && routingMode === "probability" ? `
           <div class="field">
             <label for="propWeight">Peso probabilístico</label>
             <input id="propWeight" type="number" min="0" step="0.1" value="${Number(edge.weight) || 0}">
           </div>
+          <div style="color:var(--muted);font-size:10px;line-height:1.5;">Los pesos se normalizan automáticamente entre todas las salidas del bloque.</div>
+        ` : isDecision && routingMode === "transaction" ? `
+          <div class="field">
+            <label>Trámites enviados por esta ruta</label>
+            <div style="display:grid;gap:7px;">${transactionChecks}</div>
+          </div>
+          <div style="color:var(--muted);font-size:10px;line-height:1.5;">Si no selecciona ningún trámite, esta conexión funcionará como ruta para los casos restantes.</div>
         ` : `
           <div class="field">
             <label>Ruta</label>
             <div style="padding:10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.055);font-size:10px;color:var(--muted);line-height:1.55;">
-              Esta conexión traslada personas desde un bloque al siguiente. Si desea editar probabilidades, seleccione una conexión saliente de un bloque de decisión.
+              Esta conexión traslada personas desde un bloque al siguiente.
             </div>
           </div>
         `}
@@ -1997,10 +2182,21 @@
         </div>
       `;
 
-      if (showWeight) {
+      if (isDecision && routingMode === "probability") {
         bindNumericInput("propWeight", value => {
           edge.weight = Math.max(0, value);
           renderEdges();
+        });
+      }
+
+      if (isDecision && routingMode === "transaction") {
+        dom.propertiesContent.querySelectorAll(".edge-transaction-check").forEach(input => {
+          input.addEventListener("change", () => {
+            edge.transactionTypes = Array.from(dom.propertiesContent.querySelectorAll(".edge-transaction-check:checked"))
+              .map(item => item.value)
+              .filter(type => TRANSACTION_TYPES[type]);
+            renderEdges();
+          });
         });
       }
       document.getElementById("deletePropertyBtn")?.addEventListener("click", deleteSelected);
@@ -2256,10 +2452,16 @@
 
         while (state.simTime >= nextTime && (maxEntities === 0 || runtime.completed < maxEntities) && guard < 100) {
           const label = "P-" + String(state.nextEntityId).padStart(4, "0");
+          const transactionType = chooseTransactionType(node.props);
+          const transaction = getTransactionConfig(transactionType);
           const entity = {
             id: state.nextEntityId++,
             label,
             personType: node.props.personType || "Ciudadano",
+            transactionType,
+            transactionLabel: transaction.label,
+            transactionCode: transaction.code,
+            transactionColor: transaction.color,
             createdAt: nextTime,
             queueEnteredAt: null,
             route: [],
@@ -2321,8 +2523,23 @@
         return;
       }
       let edge = outgoing[0];
-      if (node.type === "decision" && outgoing.length > 1) edge = chooseWeightedEdge(outgoing);
+      if (node.type === "decision" && outgoing.length > 1) {
+        edge = chooseDecisionEdge(node, outgoing, entity);
+      }
       animateEntity(node.id, edge.to, entity);
+    }
+
+    function chooseDecisionEdge(node, edges, entity) {
+      if ((node.props.routingMode || "probability") === "transaction") {
+        const exact = edges.find(edge =>
+          Array.isArray(edge.transactionTypes) && edge.transactionTypes.includes(entity.transactionType)
+        );
+        if (exact) return exact;
+
+        const fallback = edges.find(edge => !Array.isArray(edge.transactionTypes) || edge.transactionTypes.length === 0);
+        if (fallback) return fallback;
+      }
+      return chooseWeightedEdge(edges);
     }
 
     function chooseWeightedEdge(edges) {
@@ -2349,7 +2566,9 @@
       const element = document.createElement("div");
       element.className = "entity";
       element.textContent = "👤";
-      element.title = entity.label;
+      element.dataset.code = entity.transactionCode || "TR";
+      element.style.setProperty("--transaction-color", entity.transactionColor || "#3a8bfd");
+      element.title = `${entity.label} · ${entity.transactionLabel || "Trámite financiero"}`;
       element.style.left = start.x + "px";
       element.style.top = start.y + "px";
       dom.entityLayer.appendChild(element);
@@ -2428,6 +2647,9 @@
       const record = {
         personId: entity.label,
         personType: entity.personType,
+        transactionType: entity.transactionType,
+        transactionLabel: entity.transactionLabel || getTransactionConfig(entity.transactionType).label,
+        transactionCode: entity.transactionCode || getTransactionConfig(entity.transactionType).code,
         startTime: Number(entity.createdAt.toFixed(1)),
         endTime: Number(state.simTime.toFixed(1)),
         finalStatus: sinkNode.props.finalStatus || entity.finalStatus || "Completado",
@@ -2556,7 +2778,8 @@
         item.className = "record-item";
         item.innerHTML = `
           <strong>${escapeHtml(record.personId)} · ${escapeHtml(record.finalStatus)}</strong>
-          <span><b>Tipo:</b> ${escapeHtml(record.personType)}</span>
+          <span><b>Usuario:</b> ${escapeHtml(record.personType)}</span>
+          <span><b>Trámite:</b> ${escapeHtml(record.transactionLabel || "No especificado")}</span>
           <span><b>Ruta:</b> ${escapeHtml(record.route)}</span>
           <span><b>Tiempo:</b> ${formatNumber(record.startTime,1)} s → ${formatNumber(record.endTime,1)} s</span>
         `;
@@ -2596,7 +2819,7 @@
 
     function saveModel() {
       const payload = {
-        version: 3,
+        version: 4,
         savedAt: new Date().toISOString(),
         nodes: state.nodes,
         edges: state.edges
@@ -2614,7 +2837,7 @@
 
     function exportModel() {
       const payload = {
-        version: 3,
+        version: 4,
         exportedAt: new Date().toISOString(),
         nodes: state.nodes,
         edges: state.edges
@@ -2629,12 +2852,14 @@
         return;
       }
       const rows = [
-        ["persona", "tipo", "hora_ingreso", "hora_salida", "estado_final", "ruta"]
+        ["persona", "tipo_usuario", "tramite_financiero", "codigo_tramite", "hora_ingreso", "hora_salida", "estado_final", "ruta"]
       ];
       state.records.forEach(record => {
         rows.push([
           record.personId,
           record.personType,
+          record.transactionLabel || "No especificado",
+          record.transactionCode || "",
           record.startTime,
           record.endTime,
           record.finalStatus,
@@ -2682,7 +2907,10 @@
           id: edge.id || uid("edge"),
           from: edge.from,
           to: edge.to,
-          weight: Math.max(0, Number(edge.weight) || 0)
+          weight: Math.max(0, Number(edge.weight) || 0),
+          transactionTypes: Array.isArray(edge.transactionTypes)
+            ? edge.transactionTypes.filter(type => TRANSACTION_TYPES[type])
+            : []
         }));
 
       state.selected = null;
@@ -2694,7 +2922,7 @@
 
     function loadExampleModel(showNotification = true) {
       const example = {
-        version: 3,
+        version: 4,
         nodes: [
           {
             id: "source-entry",
@@ -2702,7 +2930,22 @@
             name: "Ingreso principal",
             x: 90,
             y: 320,
-            props: { interval: 4, startAt: 0, maxEntities: 0, personType: "Usuario" }
+            props: {
+              interval: 4,
+              startAt: 0,
+              maxEntities: 0,
+              personType: "Cliente",
+              transactionMode: "mixed",
+              transactionType: "credit",
+              transactionWeights: {
+                credit: 30,
+                deposit: 25,
+                withdrawal: 20,
+                transfer: 10,
+                payment: 10,
+                inquiry: 5
+              }
+            }
           },
           {
             id: "queue-reception",
@@ -2726,7 +2969,7 @@
             name: "Derivación de trámite",
             x: 890,
             y: 320,
-            props: { department: "Flujo", procedure: "Asignar siguiente área" }
+            props: { department: "Flujo", procedure: "Asignar siguiente área", routingMode: "transaction" }
           },
           {
             id: "process-credit",
@@ -2781,10 +3024,10 @@
           { id: "e1", from: "source-entry", to: "queue-reception", weight: 1 },
           { id: "e2", from: "queue-reception", to: "process-reception", weight: 1 },
           { id: "e3", from: "process-reception", to: "decision-flow", weight: 1 },
-          { id: "e4", from: "decision-flow", to: "process-credit", weight: 4 },
-          { id: "e5", from: "decision-flow", to: "process-service", weight: 3 },
-          { id: "e6", from: "decision-flow", to: "process-cashier", weight: 2 },
-          { id: "e7", from: "decision-flow", to: "sink-exit", weight: 1 },
+          { id: "e4", from: "decision-flow", to: "process-credit", weight: 4, transactionTypes: ["credit"] },
+          { id: "e5", from: "decision-flow", to: "process-service", weight: 3, transactionTypes: ["transfer", "inquiry"] },
+          { id: "e6", from: "decision-flow", to: "process-cashier", weight: 2, transactionTypes: ["deposit", "withdrawal", "payment"] },
+          { id: "e7", from: "decision-flow", to: "sink-exit", weight: 1, transactionTypes: [] },
           { id: "e8", from: "process-credit", to: "process-archive", weight: 1 },
           { id: "e9", from: "process-service", to: "process-archive", weight: 1 },
           { id: "e10", from: "process-cashier", to: "process-archive", weight: 1 },
