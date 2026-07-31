@@ -1574,6 +1574,196 @@
       .workspace-summary-actions .capital-badge:nth-of-type(1) { display: inline-flex; }
     }
 
+
+
+    /* Módulos avanzados de decisión: añadidos sin modificar la estructura base */
+    .advanced-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .advanced-grid .field-compact {
+      min-width: 0;
+    }
+
+    .field-compact label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .025em;
+      text-transform: uppercase;
+    }
+
+    .field-compact input,
+    .field-compact select {
+      width: 100%;
+      min-height: 36px;
+      padding: 0 9px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #ffffff;
+      color: var(--dark-text);
+    }
+
+    .module-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .decision-panel {
+      display: grid;
+      gap: 9px;
+    }
+
+    .decision-insight {
+      padding: 10px 11px;
+      border: 1px solid #dfe7f1;
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      background: #f8fbff;
+      color: #43536a;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .decision-insight.warning { border-left-color: var(--warning); background: #fffbf2; }
+    .decision-insight.danger { border-left-color: var(--danger); background: #fff7f8; }
+    .decision-insight.success { border-left-color: var(--success); background: #f4fcf8; }
+
+    .snapshot-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 9px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .snapshot-card {
+      padding: 10px;
+      border: 1px solid #dde6f0;
+      border-radius: 11px;
+      background: #ffffff;
+      color: var(--dark-text);
+    }
+
+    .snapshot-card strong { display: block; font-size: 11px; }
+    .snapshot-card span { display: block; margin-top: 3px; color: var(--dark-muted); font-size: 9px; line-height: 1.45; }
+
+    .advanced-kpi-card {
+      background: linear-gradient(145deg, #ffffff, #f8fbff) !important;
+      border-color: #dfe8f3 !important;
+    }
+
+    .advanced-kpi-card strong { color: #14233b !important; }
+
+    .comparison-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: rgba(8, 19, 35, .68);
+      backdrop-filter: blur(5px);
+    }
+
+    .comparison-modal.open { display: flex; }
+
+    .comparison-dialog {
+      width: min(1080px, 96vw);
+      max-height: 88vh;
+      overflow: auto;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 28px 80px rgba(0,0,0,.32);
+      color: var(--dark-text);
+    }
+
+    .comparison-header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid #e2e8f0;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(10px);
+    }
+
+    .comparison-header h3 { margin: 0; font-size: 15px; }
+    .comparison-header p { margin: 4px 0 0; color: var(--dark-muted); font-size: 10px; }
+
+    .comparison-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: #eef3f8;
+      color: var(--dark-text);
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .comparison-body { padding: 16px 18px 20px; }
+
+    .comparison-table-wrap { overflow-x: auto; }
+    .comparison-table {
+      width: 100%;
+      min-width: 820px;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 10px;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 10px;
+      border-right: 1px solid #e3eaf2;
+      border-bottom: 1px solid #e3eaf2;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .comparison-table th:first-child,
+    .comparison-table td:first-child { text-align: left; border-left: 1px solid #e3eaf2; }
+    .comparison-table thead th { background: #f4f7fb; font-weight: 900; }
+    .comparison-table thead tr:first-child th { border-top: 1px solid #e3eaf2; }
+
+    .event-banner {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      z-index: 19;
+      transform: translateX(-50%);
+      display: none;
+      max-width: calc(100% - 36px);
+      padding: 9px 13px;
+      border: 1px solid rgba(239,91,103,.30);
+      border-radius: 999px;
+      background: rgba(255,247,248,.95);
+      box-shadow: 0 10px 24px rgba(28,42,61,.16);
+      color: #a82d3b;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .event-banner.show { display: block; }
+
+    @media (max-width: 620px) {
+      .advanced-grid,
+      .module-actions { grid-template-columns: 1fr; }
+      .comparison-modal { padding: 8px; }
+      .comparison-dialog { max-height: 94vh; border-radius: 13px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1790,6 +1980,48 @@
         </div>
       </section>
 
+
+
+      <section class="panel-section">
+        <div class="panel-title"><h2>Configuración avanzada</h2><span>Decisiones</span></div>
+        <div class="advanced-grid">
+          <div class="field-compact"><label for="minimumReserveInput">Reserva mínima USD</label><input id="minimumReserveInput" type="number" min="0" step="1000" value="250000"></div>
+          <div class="field-compact"><label for="vaultCashInput">Efectivo en bóveda USD</label><input id="vaultCashInput" type="number" min="0" step="1000" value="300000"></div>
+          <div class="field-compact"><label for="cashDeskInput">Efectivo en cajas USD</label><input id="cashDeskInput" type="number" min="0" step="1000" value="100000"></div>
+          <div class="field-compact"><label for="commissionRateInput">Comisión servicios (%)</label><input id="commissionRateInput" type="number" min="0" max="100" step="0.1" value="1.5"></div>
+          <div class="field-compact"><label for="defaultRiskInput">Mora mensual (%)</label><input id="defaultRiskInput" type="number" min="0" max="100" step="0.1" value="8"></div>
+          <div class="field-compact"><label for="recoveryRateInput">Recuperación cobranza (%)</label><input id="recoveryRateInput" type="number" min="0" max="100" step="1" value="45"></div>
+          <div class="field-compact"><label for="appointmentRateInput">Usuarios con cita (%)</label><input id="appointmentRateInput" type="number" min="0" max="100" step="1" value="25"></div>
+          <div class="field-compact"><label for="priorityRateInput">Atención prioritaria (%)</label><input id="priorityRateInput" type="number" min="0" max="100" step="1" value="10"></div>
+          <div class="field-compact"><label for="digitalShareInput">Canal digital (%)</label><input id="digitalShareInput" type="number" min="0" max="100" step="1" value="20"></div>
+          <div class="field-compact"><label for="outageRateInput">Falla operativa diaria (%)</label><input id="outageRateInput" type="number" min="0" max="100" step="0.1" value="3"></div>
+          <div class="field-compact"><label for="outageMinutesInput">Duración falla (min)</label><input id="outageMinutesInput" type="number" min="1" max="240" step="1" value="20"></div>
+          <div class="field-compact"><label for="amlThresholdInput">Revisión por monto USD</label><input id="amlThresholdInput" type="number" min="0" step="100" value="10000"></div>
+        </div>
+        <div class="module-actions">
+          <button class="property-button" id="addVaultAreaBtn">+ Bóveda y caja</button>
+          <button class="property-button" id="addCollectionsAreaBtn">+ Cobranza</button>
+          <button class="property-button" id="addDigitalAreaBtn">+ Canal digital</button>
+          <button class="property-button" id="addComplianceAreaBtn">+ Cumplimiento</button>
+        </div>
+        <div class="scenario-note" style="margin-top:10px;">
+          El simulador separa liquidez, depósitos de clientes, cartera, interés, costos y patrimonio. Los nuevos módulos son opcionales y no alteran las rutas existentes hasta que usted los conecte.
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-title"><h2>Escenarios</h2><span>Comparación</span></div>
+        <div class="scenario-fields">
+          <div><label for="scenarioSnapshotNameInput">Nombre del resultado</label><input id="scenarioSnapshotNameInput" type="text" value="Escenario base" maxlength="50"></div>
+        </div>
+        <div class="module-actions">
+          <button class="property-button" id="saveScenarioSnapshotBtn">Guardar resultado</button>
+          <button class="property-button" id="compareScenariosBtn">Comparar</button>
+        </div>
+        <button class="property-button danger" id="clearScenariosBtn" style="width:100%;margin-top:8px;">Eliminar comparaciones</button>
+        <div id="snapshotList" class="snapshot-list"></div>
+      </section>
+
       <section class="panel-section">
         <div class="panel-title"><h2>Modelo</h2></div>
         <button class="property-button" id="loadExampleBtn" style="width: 100%;">Cargar ejemplo</button>
@@ -1819,6 +2051,8 @@
           <button id="quickRunBtn" class="quick-run-button">▶ Ejecutar simulación</button>
         </div>
       </div>
+
+      <div class="event-banner" id="eventBanner"></div>
 
       <div class="canvas-toolbar">
         <button class="canvas-tool" id="zoomOutBtn" title="Alejar">−</button>
@@ -1886,6 +2120,19 @@
           <div class="metric-card"><span>Créditos rechazados</span><strong id="metricCreditRejected">0</strong></div>
           <div class="metric-card"><span>Depósitos acumulados</span><strong id="metricDeposits">$0</strong></div>
           <div class="metric-card"><span>Retiros acumulados</span><strong id="metricWithdrawals">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Efectivo en cajas</span><strong id="metricCashDesk">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Efectivo en bóveda</span><strong id="metricVaultCash">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Depósitos de clientes</span><strong id="metricClientDeposits">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Cartera de créditos</span><strong id="metricLoanPortfolio">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Cartera en mora</span><strong id="metricOverduePortfolio">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Recuperado por cobranza</span><strong id="metricRecovered">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Ingresos por comisiones</span><strong id="metricCommissionIncome">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Costo de personal</span><strong id="metricStaffCost">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Patrimonio estimado</span><strong id="metricEquity">$0</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Satisfacción promedio</span><strong id="metricSatisfaction">—</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>NPS simulado</span><strong id="metricNps">—</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Utilización del personal</span><strong id="metricUtilization">0%</strong></div>
+          <div class="metric-card advanced-kpi-card"><span>Operaciones en revisión</span><strong id="metricComplianceFlags">0</strong></div>
         </div>
 
         <div class="chart" aria-label="Gráfico de trámites finalizados">
@@ -1900,6 +2147,14 @@
             <path id="chartLine" class="chart-line" d=""></path>
           </svg>
         </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-title">
+          <h2>Apoyo para decisiones</h2>
+          <span>Automático</span>
+        </div>
+        <div id="decisionInsights" class="decision-panel"></div>
       </section>
 
       <section class="panel-section">
@@ -1930,6 +2185,22 @@
         <span id="clockStatus">08:00 h</span>
       </div>
     </footer>
+  </div>
+
+
+  <div class="comparison-modal" id="comparisonModal" role="dialog" aria-modal="true" aria-labelledby="comparisonTitle">
+    <div class="comparison-dialog">
+      <div class="comparison-header">
+        <div>
+          <h3 id="comparisonTitle">Comparación de escenarios</h3>
+          <p>Contraste personal, servicio, liquidez, créditos, costos y satisfacción.</p>
+        </div>
+        <button class="comparison-close" id="closeComparisonBtn" aria-label="Cerrar">×</button>
+      </div>
+      <div class="comparison-body">
+        <div id="comparisonContent" class="comparison-table-wrap"></div>
+      </div>
+    </div>
   </div>
 
   <div class="toast-container" id="toastContainer"></div>
@@ -2050,6 +2321,13 @@
           angerAfterMinutes: 12,
           abandonAfterMinutes: 35,
           abandonProbability: 25,
+          staffCostPerHour: 5,
+          shiftStart: "08:00",
+          shiftEnd: "19:00",
+          lunchStart: "13:00",
+          lunchMinutes: 60,
+          cashMinimum: 5000,
+          cashMaximum: 50000,
           color: "#3a8bfd"
         }
       },
@@ -2140,7 +2418,38 @@
       metricCreditApproved: document.getElementById("metricCreditApproved"),
       metricCreditRejected: document.getElementById("metricCreditRejected"),
       metricDeposits: document.getElementById("metricDeposits"),
-      metricWithdrawals: document.getElementById("metricWithdrawals")
+      metricWithdrawals: document.getElementById("metricWithdrawals"),
+      minimumReserveInput: document.getElementById("minimumReserveInput"),
+      vaultCashInput: document.getElementById("vaultCashInput"),
+      cashDeskInput: document.getElementById("cashDeskInput"),
+      commissionRateInput: document.getElementById("commissionRateInput"),
+      defaultRiskInput: document.getElementById("defaultRiskInput"),
+      recoveryRateInput: document.getElementById("recoveryRateInput"),
+      appointmentRateInput: document.getElementById("appointmentRateInput"),
+      priorityRateInput: document.getElementById("priorityRateInput"),
+      digitalShareInput: document.getElementById("digitalShareInput"),
+      outageRateInput: document.getElementById("outageRateInput"),
+      outageMinutesInput: document.getElementById("outageMinutesInput"),
+      amlThresholdInput: document.getElementById("amlThresholdInput"),
+      scenarioSnapshotNameInput: document.getElementById("scenarioSnapshotNameInput"),
+      snapshotList: document.getElementById("snapshotList"),
+      comparisonModal: document.getElementById("comparisonModal"),
+      comparisonContent: document.getElementById("comparisonContent"),
+      eventBanner: document.getElementById("eventBanner"),
+      decisionInsights: document.getElementById("decisionInsights"),
+      metricCashDesk: document.getElementById("metricCashDesk"),
+      metricVaultCash: document.getElementById("metricVaultCash"),
+      metricClientDeposits: document.getElementById("metricClientDeposits"),
+      metricLoanPortfolio: document.getElementById("metricLoanPortfolio"),
+      metricOverduePortfolio: document.getElementById("metricOverduePortfolio"),
+      metricRecovered: document.getElementById("metricRecovered"),
+      metricCommissionIncome: document.getElementById("metricCommissionIncome"),
+      metricStaffCost: document.getElementById("metricStaffCost"),
+      metricEquity: document.getElementById("metricEquity"),
+      metricSatisfaction: document.getElementById("metricSatisfaction"),
+      metricNps: document.getElementById("metricNps"),
+      metricUtilization: document.getElementById("metricUtilization"),
+      metricComplianceFlags: document.getElementById("metricComplianceFlags")
     };
 
     const state = {
@@ -2158,8 +2467,37 @@
         simulationLength: 1,
         operatingDays: [0, 1, 2, 3, 4, 5, 6],
         openingTime: "08:00",
-        closingTime: "19:00"
+        closingTime: "19:00",
+        minimumReserve: 250000,
+        initialVaultCash: 300000,
+        initialCashDesk: 100000,
+        commissionRate: 1.5,
+        monthlyDefaultRate: 8,
+        recoveryRate: 45,
+        appointmentRate: 25,
+        priorityRate: 10,
+        digitalShare: 20,
+        dailyOutageRate: 3,
+        outageMinutes: 20,
+        amlThreshold: 10000
       },
+      financial: {
+        cashDesk: 100000,
+        vaultCash: 300000,
+        clientDeposits: 0,
+        investmentLiability: 0,
+        loanPortfolio: 0,
+        overduePortfolio: 0,
+        recoveredTotal: 0,
+        commissionIncome: 0,
+        interestCollected: 0,
+        staffCost: 0,
+        operatingCost: 0
+      },
+      loanAccounts: [],
+      scenarioSnapshots: [],
+      currentSimulationDay: -1,
+      operationalEvent: null,
       selected: null,
       connectionMode: false,
       connectionOrigin: null,
@@ -2197,6 +2535,16 @@
         delayedEvents: 0,
         angryUsers: 0,
         abandonedUsers: 0,
+        satisfactionTotal: 0,
+        satisfactionSamples: 0,
+        promoters: 0,
+        detractors: 0,
+        staffBusyMinutes: 0,
+        staffCapacityMinutes: 0,
+        complianceFlags: 0,
+        blockedOperations: 0,
+        loanPaymentsReceived: 0,
+        delinquentLoans: 0,
         history: []
       },
       nextHistoryTime: 0
@@ -2354,6 +2702,7 @@
     }
 
     function updateScenarioUi() {
+      ensureAdvancedScenario();
       const name = String(state.scenario?.businessName || "Entidad financiera").trim() || "Entidad financiera";
       const capital = Math.max(0, Number(state.scenario?.initialCapital) || 0);
       let startDate = String(state.scenario?.startDate || new Date().toISOString().slice(0, 10));
@@ -2384,6 +2733,18 @@
       state.scenario.openingTime = openingTime;
       state.scenario.closingTime = closingTime;
 
+      if (dom.minimumReserveInput) dom.minimumReserveInput.value = String(state.scenario.minimumReserve);
+      if (dom.vaultCashInput && !state.running) dom.vaultCashInput.value = String(state.scenario.initialVaultCash);
+      if (dom.cashDeskInput && !state.running) dom.cashDeskInput.value = String(state.scenario.initialCashDesk);
+      if (dom.commissionRateInput) dom.commissionRateInput.value = String(state.scenario.commissionRate);
+      if (dom.defaultRiskInput) dom.defaultRiskInput.value = String(state.scenario.monthlyDefaultRate);
+      if (dom.recoveryRateInput) dom.recoveryRateInput.value = String(state.scenario.recoveryRate);
+      if (dom.appointmentRateInput) dom.appointmentRateInput.value = String(state.scenario.appointmentRate);
+      if (dom.priorityRateInput) dom.priorityRateInput.value = String(state.scenario.priorityRate);
+      if (dom.digitalShareInput) dom.digitalShareInput.value = String(state.scenario.digitalShare);
+      if (dom.outageRateInput) dom.outageRateInput.value = String(state.scenario.dailyOutageRate);
+      if (dom.outageMinutesInput) dom.outageMinutesInput.value = String(state.scenario.outageMinutes);
+      if (dom.amlThresholdInput) dom.amlThresholdInput.value = String(state.scenario.amlThreshold);
       if (dom.businessNameInput && dom.businessNameInput.value !== name) dom.businessNameInput.value = name;
       if (dom.initialCapitalInput && Number(dom.initialCapitalInput.value) !== capital) dom.initialCapitalInput.value = String(capital);
       if (dom.simulationStartDateInput) dom.simulationStartDateInput.value = startDate;
@@ -2436,6 +2797,321 @@
       if (amount >= 1000000) return sign + "$" + formatNumber(amount / 1000000, 1) + "M";
       if (amount >= 1000) return sign + "$" + formatNumber(amount / 1000, amount >= 10000 ? 0 : 1) + "K";
       return sign + "$" + formatNumber(amount, amount % 1 ? 2 : 0);
+    }
+
+
+    function ensureAdvancedScenario() {
+      const defaults = {
+        minimumReserve: 250000,
+        initialVaultCash: 300000,
+        initialCashDesk: 100000,
+        commissionRate: 1.5,
+        monthlyDefaultRate: 8,
+        recoveryRate: 45,
+        appointmentRate: 25,
+        priorityRate: 10,
+        digitalShare: 20,
+        dailyOutageRate: 3,
+        outageMinutes: 20,
+        amlThreshold: 10000
+      };
+      Object.entries(defaults).forEach(([key, value]) => {
+        if (!Number.isFinite(Number(state.scenario?.[key]))) state.scenario[key] = value;
+      });
+      state.scenario.minimumReserve = Math.max(0, Number(state.scenario.minimumReserve) || 0);
+      state.scenario.initialVaultCash = Math.max(0, Number(state.scenario.initialVaultCash) || 0);
+      state.scenario.initialCashDesk = Math.max(0, Number(state.scenario.initialCashDesk) || 0);
+      state.scenario.commissionRate = clamp(Number(state.scenario.commissionRate) || 0, 0, 100);
+      state.scenario.monthlyDefaultRate = clamp(Number(state.scenario.monthlyDefaultRate) || 0, 0, 100);
+      state.scenario.recoveryRate = clamp(Number(state.scenario.recoveryRate) || 0, 0, 100);
+      state.scenario.appointmentRate = clamp(Number(state.scenario.appointmentRate) || 0, 0, 100);
+      state.scenario.priorityRate = clamp(Number(state.scenario.priorityRate) || 0, 0, 100);
+      state.scenario.digitalShare = clamp(Number(state.scenario.digitalShare) || 0, 0, 100);
+      state.scenario.dailyOutageRate = clamp(Number(state.scenario.dailyOutageRate) || 0, 0, 100);
+      state.scenario.outageMinutes = clamp(Math.floor(Number(state.scenario.outageMinutes) || 20), 1, 240);
+      state.scenario.amlThreshold = Math.max(0, Number(state.scenario.amlThreshold) || 0);
+    }
+
+    function resetAdvancedFinancialState() {
+      ensureAdvancedScenario();
+      state.financial = {
+        cashDesk: Math.max(0, Number(state.scenario.initialCashDesk) || 0),
+        vaultCash: Math.max(0, Number(state.scenario.initialVaultCash) || 0),
+        clientDeposits: 0,
+        investmentLiability: 0,
+        loanPortfolio: 0,
+        overduePortfolio: 0,
+        recoveredTotal: 0,
+        commissionIncome: 0,
+        interestCollected: 0,
+        staffCost: 0,
+        operatingCost: 0
+      };
+      state.loanAccounts = [];
+      state.currentSimulationDay = -1;
+      state.operationalEvent = null;
+    }
+
+    function estimatedEquity() {
+      const assets = Math.max(0, Number(state.scenario.currentCapital) || 0)
+        + Math.max(0, Number(state.financial.loanPortfolio) || 0)
+        + Math.max(0, Number(state.metrics.interestReceivable) || 0);
+      const liabilities = Math.max(0, Number(state.financial.clientDeposits) || 0)
+        + Math.max(0, Number(state.financial.investmentLiability) || 0);
+      return assets - liabilities - Math.max(0, Number(state.financial.staffCost) || 0) - Math.max(0, Number(state.financial.operatingCost) || 0);
+    }
+
+    function transferVaultToCashDesk(requiredAmount) {
+      const required = Math.max(0, Number(requiredAmount) || 0);
+      if (state.financial.cashDesk >= required) return true;
+      const shortage = required - state.financial.cashDesk;
+      const transfer = Math.min(shortage, state.financial.vaultCash);
+      state.financial.vaultCash -= transfer;
+      state.financial.cashDesk += transfer;
+      return state.financial.cashDesk >= required;
+    }
+
+    function balanceCashDesk() {
+      const maxCash = Math.max(1000, ...state.nodes.filter(node => node.type === "process" && node.props.processRole === "transaction_processing").map(node => Number(node.props.cashMaximum) || 50000));
+      const minCash = Math.max(0, ...state.nodes.filter(node => node.type === "process" && node.props.processRole === "transaction_processing").map(node => Number(node.props.cashMinimum) || 5000));
+      if (state.financial.cashDesk > maxCash) {
+        const excess = state.financial.cashDesk - maxCash;
+        state.financial.cashDesk -= excess;
+        state.financial.vaultCash += excess;
+      } else if (state.financial.cashDesk < minCash && state.financial.vaultCash > 0) {
+        const transfer = Math.min(minCash - state.financial.cashDesk, state.financial.vaultCash);
+        state.financial.vaultCash -= transfer;
+        state.financial.cashDesk += transfer;
+      }
+    }
+
+    function isOperationalEventActive() {
+      return state.operationalEvent && state.simTime >= state.operationalEvent.start && state.simTime < state.operationalEvent.end;
+    }
+
+    function processSimulationDayEvents() {
+      const day = simulationDayIndex();
+      if (day === state.currentSimulationDay) {
+        if (state.operationalEvent && state.simTime >= state.operationalEvent.end) {
+          state.operationalEvent = null;
+          if (dom.eventBanner) dom.eventBanner.classList.remove("show");
+        }
+        return;
+      }
+      state.currentSimulationDay = day;
+      state.operationalEvent = null;
+      if (dom.eventBanner) dom.eventBanner.classList.remove("show");
+      if (Math.random() * 100 < state.scenario.dailyOutageRate) {
+        const duration = Math.min(sessionDurationMinutes(), Math.max(1, Number(state.scenario.outageMinutes) || 20));
+        const dayStart = day * sessionDurationMinutes();
+        const latestStart = Math.max(0, sessionDurationMinutes() - duration);
+        const start = dayStart + randomAmount(0, latestStart);
+        state.operationalEvent = { type: "system_outage", start, end: start + duration, label: "Falla temporal del sistema" };
+      }
+      processLoanPortfolioForDay(day);
+    }
+
+    function processLoanPortfolioForDay(dayIndex) {
+      const date = simulationDate(dayIndex * sessionDurationMinutes());
+      state.loanAccounts.forEach(loan => {
+        if (loan.status === "paid") return;
+        const elapsedDays = Math.max(0, Math.floor((date - parseLocalDate(loan.startDate)) / 86400000));
+        const installmentNumber = Math.floor(elapsedDays / 30);
+        if (installmentNumber <= 0 || installmentNumber <= loan.installmentsProcessed) return;
+        loan.installmentsProcessed = installmentNumber;
+        const principalOutstanding = Math.max(0, Number(loan.outstandingPrincipal) || 0);
+        if (principalOutstanding <= 0) { loan.status = "paid"; return; }
+        const monthlyInterest = principalOutstanding * (Number(loan.annualRate) || 0) / 100 / 12;
+        const expectedPayment = Math.min(Number(loan.monthlyPayment) || 0, principalOutstanding + monthlyInterest);
+        const goesLate = Math.random() * 100 < state.scenario.monthlyDefaultRate;
+        if (goesLate) {
+          loan.status = "overdue";
+          loan.overdueAmount += expectedPayment;
+          state.financial.overduePortfolio += expectedPayment;
+          state.metrics.delinquentLoans += 1;
+          if (Math.random() * 100 < state.scenario.recoveryRate) {
+            const recovery = Math.min(loan.overdueAmount, expectedPayment * randomAmount(.35, 1));
+            loan.overdueAmount -= recovery;
+            state.financial.overduePortfolio = Math.max(0, state.financial.overduePortfolio - recovery);
+            state.financial.recoveredTotal += recovery;
+            state.metrics.loanPaymentsReceived += recovery;
+            state.scenario.currentCapital += recovery;
+            if (loan.overdueAmount <= .01) loan.status = "current";
+          }
+          return;
+        }
+        const interestPaid = Math.min(expectedPayment, monthlyInterest);
+        const principalPaid = Math.max(0, expectedPayment - interestPaid);
+        loan.outstandingPrincipal = Math.max(0, principalOutstanding - principalPaid);
+        state.financial.loanPortfolio = Math.max(0, state.financial.loanPortfolio - principalPaid);
+        state.metrics.interestReceivable = Math.max(0, state.metrics.interestReceivable - interestPaid);
+        state.financial.interestCollected += interestPaid;
+        state.metrics.loanPaymentsReceived += expectedPayment;
+        state.scenario.currentCapital += expectedPayment;
+        loan.status = loan.outstandingPrincipal <= .01 ? "paid" : "current";
+      });
+    }
+
+    function isNodeOnShift(node) {
+      if (!node || node.type !== "process") return true;
+      const now = timeStringToMinutes(simulationClock());
+      const shiftStart = timeStringToMinutes(node.props.shiftStart || state.scenario.openingTime);
+      const shiftEnd = timeStringToMinutes(node.props.shiftEnd || state.scenario.closingTime);
+      if (now < shiftStart || now >= shiftEnd) return false;
+      const lunchStart = timeStringToMinutes(node.props.lunchStart || "13:00");
+      const lunchMinutes = Math.max(0, Number(node.props.lunchMinutes) || 0);
+      if (lunchMinutes > 0 && now >= lunchStart && now < lunchStart + lunchMinutes) return false;
+      if (isOperationalEventActive() && ["standard", "credit_evaluation", "transaction_processing", "banking_services", "digital", "compliance"].includes(node.props.processRole || "standard")) return false;
+      return true;
+    }
+
+    function accumulateAdvancedMetrics(minutes) {
+      const delta = Math.max(0, Number(minutes) || 0);
+      state.nodes.filter(node => node.type === "process").forEach(node => {
+        const runtime = ensureNodeRuntime(node);
+        const capacity = Math.max(1, Number(node.props.capacity) || 1);
+        if (isNodeOnShift(node)) {
+          state.metrics.staffCapacityMinutes += capacity * delta;
+          state.metrics.staffBusyMinutes += Math.min(capacity, runtime.busy) * delta;
+          const cost = Math.max(0, Number(node.props.staffCostPerHour) || 0) * capacity * delta / 60;
+          state.financial.staffCost += cost;
+        }
+      });
+      balanceCashDesk();
+      if (state.operationalEvent && isOperationalEventActive() && dom.eventBanner) {
+        dom.eventBanner.textContent = `⚠ ${state.operationalEvent.label} · ${formatNumber(state.operationalEvent.end - state.simTime, 0)} min restantes`;
+        dom.eventBanner.classList.add("show");
+      }
+    }
+
+    function enqueueEntity(runtime, entity) {
+      const priorityScore = entity.priorityLevel === "priority" ? 2 : (entity.hasAppointment ? 1 : 0);
+      const index = runtime.queue.findIndex(item => {
+        const itemScore = item.priorityLevel === "priority" ? 2 : (item.hasAppointment ? 1 : 0);
+        return itemScore < priorityScore;
+      });
+      if (index === -1) runtime.queue.push(entity);
+      else runtime.queue.splice(index, 0, entity);
+    }
+
+    function calculateSatisfaction(entity) {
+      const wait = Math.max(0, Number(entity.totalWaitMinutes) || 0);
+      const duration = Math.max(0, state.simTime - Number(entity.createdAt || 0));
+      let score = 5;
+      if (wait > 5) score -= 1;
+      if (wait > 15) score -= 1;
+      if (wait > 30) score -= 1;
+      if (entity.mood === "angry") score -= 1;
+      if (entity.operationOutcome === "rejected" || entity.creditOutcome === "rejected") score -= 1;
+      if (entity.operationOutcome === "abandoned") score = 1;
+      if (entity.hasAppointment && wait <= 5) score += .25;
+      if (duration > 90) score -= .5;
+      return clamp(Math.round(score * 10) / 10, 1, 5);
+    }
+
+    function npsCategory(score) {
+      if (score >= 4.5) return "Promotor";
+      if (score <= 3) return "Detractor";
+      return "Pasivo";
+    }
+
+    function renderDecisionInsights() {
+      if (!dom.decisionInsights) return;
+      const completed = Math.max(1, state.metrics.completed);
+      const avgWait = state.records.length ? state.records.reduce((sum, record) => sum + Number(record.waitingMinutes || 0), 0) / state.records.length : 0;
+      const approvalTotal = state.metrics.creditApproved + state.metrics.creditRejected;
+      const approvalRate = approvalTotal ? state.metrics.creditApproved / approvalTotal * 100 : 0;
+      const utilization = state.metrics.staffCapacityMinutes ? state.metrics.staffBusyMinutes / state.metrics.staffCapacityMinutes * 100 : 0;
+      const reserveGap = Math.max(0, state.scenario.minimumReserve - Number(state.scenario.currentCapital || 0));
+      const insights = [];
+      if (reserveGap > 0) insights.push(["danger", `La liquidez está ${formatCurrency(reserveGap)} por debajo de la reserva mínima configurada.`]);
+      else insights.push(["success", `La reserva mínima está cubierta. Excedente disponible: ${formatCurrency(Math.max(0, state.scenario.currentCapital - state.scenario.minimumReserve))}.`]);
+      if (avgWait > 15) insights.push(["warning", `Espera promedio de ${formatNumber(avgWait,1)} min. Revise personal, turnos o capacidad de las áreas congestionadas.`]);
+      else if (state.records.length) insights.push(["success", `La espera promedio es ${formatNumber(avgWait,1)} min; el nivel de servicio se mantiene controlado.`]);
+      if (utilization < 35 && state.simTime > 60) insights.push(["warning", `Utilización del personal de ${formatNumber(utilization,0)}%. Puede probar un escenario con menos personal.`]);
+      if (utilization > 85) insights.push(["danger", `Utilización del personal de ${formatNumber(utilization,0)}%. Existe riesgo de congestión y demoras.`]);
+      if (approvalTotal && approvalRate < 20) insights.push(["warning", `Aprobación crediticia de ${formatNumber(approvalRate,1)}%. Revise plazos, tasas y criterios de riesgo.`]);
+      if (state.financial.overduePortfolio > 0) insights.push(["danger", `Cartera en mora: ${formatCurrency(state.financial.overduePortfolio)}. Evalúe cobranza y refinanciamiento.`]);
+      if (!insights.length) insights.push(["success", "Ejecute la simulación para generar recomendaciones basadas en los resultados."]);
+      dom.decisionInsights.innerHTML = insights.slice(0, 5).map(([type, message]) => `<div class="decision-insight ${type}">${escapeHtml(message)}</div>`).join("");
+    }
+
+    function currentScenarioSnapshot(name) {
+      const records = state.records.length;
+      const avgWait = records ? state.records.reduce((sum, record) => sum + Number(record.waitingMinutes || 0), 0) / records : 0;
+      const satisfaction = state.metrics.satisfactionSamples ? state.metrics.satisfactionTotal / state.metrics.satisfactionSamples : 0;
+      const nps = state.metrics.satisfactionSamples ? (state.metrics.promoters - state.metrics.detractors) / state.metrics.satisfactionSamples * 100 : 0;
+      const utilization = state.metrics.staffCapacityMinutes ? state.metrics.staffBusyMinutes / state.metrics.staffCapacityMinutes * 100 : 0;
+      return {
+        id: uid("scenario"),
+        name: String(name || "Escenario").trim() || "Escenario",
+        savedAt: new Date().toISOString(),
+        staff: totalStaff(),
+        completed: state.metrics.completed,
+        avgWait,
+        angry: state.metrics.angryUsers,
+        abandoned: state.metrics.abandonedUsers,
+        capital: Number(state.scenario.currentCapital) || 0,
+        equity: estimatedEquity(),
+        creditApproved: state.metrics.creditApproved,
+        creditRejected: state.metrics.creditRejected,
+        overduePortfolio: state.financial.overduePortfolio,
+        staffCost: state.financial.staffCost,
+        satisfaction,
+        nps,
+        utilization
+      };
+    }
+
+    function saveScenarioSnapshot() {
+      const snapshot = currentScenarioSnapshot(dom.scenarioSnapshotNameInput?.value || "Escenario");
+      state.scenarioSnapshots.unshift(snapshot);
+      if (state.scenarioSnapshots.length > 8) state.scenarioSnapshots.pop();
+      safeStorage.set("simuladorBancarioNeodatScenariosV13", JSON.stringify(state.scenarioSnapshots));
+      renderSnapshotList();
+      showToast("Resultado guardado para comparación.");
+    }
+
+    function renderSnapshotList() {
+      if (!dom.snapshotList) return;
+      if (!state.scenarioSnapshots.length) {
+        dom.snapshotList.innerHTML = `<div class="snapshot-card"><strong>Sin escenarios guardados</strong><span>Ejecute una simulación y guarde su resultado.</span></div>`;
+        return;
+      }
+      dom.snapshotList.innerHTML = state.scenarioSnapshots.map(item => `
+        <div class="snapshot-card">
+          <strong>${escapeHtml(item.name)}</strong>
+          <span>${item.completed} finalizados · espera ${formatNumber(item.avgWait,1)} min · capital ${formatCurrency(item.capital)}</span>
+          <span>Personal ${item.staff} · satisfacción ${item.satisfaction ? formatNumber(item.satisfaction,1) + "/5" : "—"}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderScenarioComparison() {
+      if (!dom.comparisonContent) return;
+      if (!state.scenarioSnapshots.length) {
+        dom.comparisonContent.innerHTML = `<div class="decision-insight warning">No existen escenarios guardados para comparar.</div>`;
+        return;
+      }
+      const metrics = [
+        ["Personal", "staff", value => formatNumber(value,0)],
+        ["Trámites finalizados", "completed", value => formatNumber(value,0)],
+        ["Espera promedio", "avgWait", value => formatNumber(value,1) + " min"],
+        ["Usuarios molestos", "angry", value => formatNumber(value,0)],
+        ["Abandonos", "abandoned", value => formatNumber(value,0)],
+        ["Capital disponible", "capital", formatCurrency],
+        ["Patrimonio estimado", "equity", formatCurrency],
+        ["Créditos aprobados", "creditApproved", value => formatNumber(value,0)],
+        ["Créditos rechazados", "creditRejected", value => formatNumber(value,0)],
+        ["Cartera en mora", "overduePortfolio", formatCurrency],
+        ["Costo de personal", "staffCost", formatCurrency],
+        ["Satisfacción", "satisfaction", value => value ? formatNumber(value,1) + "/5" : "—"],
+        ["NPS", "nps", value => formatNumber(value,0)],
+        ["Utilización", "utilization", value => formatNumber(value,0) + "%"]
+      ];
+      const header = `<tr><th>KPI</th>${state.scenarioSnapshots.map(item => `<th>${escapeHtml(item.name)}</th>`).join("")}</tr>`;
+      const body = metrics.map(([label, key, formatter]) => `<tr><td>${label}</td>${state.scenarioSnapshots.map(item => `<td>${formatter(Number(item[key]) || 0)}</td>`).join("")}</tr>`).join("");
+      dom.comparisonContent.innerHTML = `<table class="comparison-table"><thead>${header}</thead><tbody>${body}</tbody></table>`;
     }
 
     function randomAmount(min, max) {
@@ -3094,6 +3770,10 @@
               <option value="transaction_processing" ${node.props.processRole === "transaction_processing" ? "selected" : ""}>Procesamiento de transacciones</option>
               <option value="credit_evaluation" ${node.props.processRole === "credit_evaluation" ? "selected" : ""}>Evaluación de crédito</option>
               <option value="banking_services" ${node.props.processRole === "banking_services" ? "selected" : ""}>Servicios bancarios</option>
+              <option value="vault" ${node.props.processRole === "vault" ? "selected" : ""}>Bóveda y tesorería</option>
+              <option value="collections" ${node.props.processRole === "collections" ? "selected" : ""}>Cobranza y recuperación</option>
+              <option value="digital" ${node.props.processRole === "digital" ? "selected" : ""}>Canal digital</option>
+              <option value="compliance" ${node.props.processRole === "compliance" ? "selected" : ""}>Cumplimiento y revisión</option>
             </select>
           </div>
           ${node.props.processRole === "credit_evaluation" ? `
@@ -3146,6 +3826,19 @@
               Se registra si el crédito fue aprobado o rechazado y la razón: documentación incompleta, historial negativo, ingreso insuficiente, endeudamiento alto, poca antigüedad laboral o monto solicitado elevado.
             </div>
           ` : ""}
+          <div class="field-row">
+            <div class="field"><label for="propShiftStart">Inicio de turno</label><input id="propShiftStart" type="time" min="08:00" max="19:00" step="1800" value="${escapeHtml(node.props.shiftStart || "08:00")}"></div>
+            <div class="field"><label for="propShiftEnd">Fin de turno</label><input id="propShiftEnd" type="time" min="08:00" max="19:00" step="1800" value="${escapeHtml(node.props.shiftEnd || "19:00")}"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="propLunchStart">Inicio de almuerzo</label><input id="propLunchStart" type="time" min="08:00" max="19:00" step="1800" value="${escapeHtml(node.props.lunchStart || "13:00")}"></div>
+            <div class="field"><label for="propLunchMinutes">Almuerzo (min)</label><input id="propLunchMinutes" type="number" min="0" max="180" step="5" value="${Number(node.props.lunchMinutes ?? 60)}"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="propStaffCost">Costo por funcionario/hora USD</label><input id="propStaffCost" type="number" min="0" step="0.1" value="${Number(node.props.staffCostPerHour ?? 5)}"></div>
+            <div class="field"><label for="propCashMinimum">Efectivo mínimo USD</label><input id="propCashMinimum" type="number" min="0" step="100" value="${Number(node.props.cashMinimum ?? 5000)}"></div>
+          </div>
+          <div class="field"><label for="propCashMaximum">Efectivo máximo antes de enviar a bóveda USD</label><input id="propCashMaximum" type="number" min="0" step="100" value="${Number(node.props.cashMaximum ?? 50000)}"></div>
           <div class="field"><label for="propTargetWait">Tiempo objetivo para iniciar atención (min)</label><input id="propTargetWait" type="number" min="0" step="1" value="${Number(node.props.targetWaitMinutes ?? 5)}"></div>
           <div class="field-row">
             <div class="field"><label for="propAngerAfter">Demora para molestarse (min)</label><input id="propAngerAfter" type="number" min="1" step="1" value="${Number(node.props.angerAfterMinutes ?? 12)}"></div>
@@ -3288,7 +3981,7 @@
         bindNumericInput("propServiceTime", value => node.props.serviceTime = Math.max(0.1, value));
         bindTextInput("propProcedure", value => node.props.procedure = value || "Recepción de trámite");
         document.getElementById("propProcessRole")?.addEventListener("change", event => {
-          node.props.processRole = ["credit_evaluation", "transaction_processing", "banking_services"].includes(event.target.value)
+          node.props.processRole = ["credit_evaluation", "transaction_processing", "banking_services", "vault", "collections", "digital", "compliance"].includes(event.target.value)
             ? event.target.value
             : "standard";
           renderProperties();
@@ -3308,6 +4001,13 @@
           bindNumericInput("rate" + cap, value => node.props.creditRates[type] = clamp(value, 0, 100));
           bindNumericInput("term" + cap, value => node.props.creditTerms[type] = clamp(Math.floor(value), 1, 360));
         });
+        bindTextInput("propShiftStart", value => node.props.shiftStart = value || "08:00");
+        bindTextInput("propShiftEnd", value => node.props.shiftEnd = value || "19:00");
+        bindTextInput("propLunchStart", value => node.props.lunchStart = value || "13:00");
+        bindNumericInput("propLunchMinutes", value => node.props.lunchMinutes = clamp(value, 0, 180));
+        bindNumericInput("propStaffCost", value => node.props.staffCostPerHour = Math.max(0, value));
+        bindNumericInput("propCashMinimum", value => node.props.cashMinimum = Math.max(0, value));
+        bindNumericInput("propCashMaximum", value => node.props.cashMaximum = Math.max(Number(node.props.cashMinimum) || 0, value));
         bindNumericInput("propTargetWait", value => node.props.targetWaitMinutes = Math.max(0, value));
         bindNumericInput("propAngerAfter", value => node.props.angerAfterMinutes = Math.max(1, value));
         bindNumericInput("propAbandonAfter", value => node.props.abandonAfterMinutes = Math.max(1, value));
@@ -3627,6 +4327,7 @@
       state.nextHistoryTime = 0;
       state.scenario.currentCapital = Math.max(0, Number(state.scenario.initialCapital) || 0);
       state.capitalLedger = [];
+      resetAdvancedFinancialState();
       state.metrics = {
         created: 0,
         completed: 0,
@@ -3644,6 +4345,16 @@
         delayedEvents: 0,
         angryUsers: 0,
         abandonedUsers: 0,
+        satisfactionTotal: 0,
+        satisfactionSamples: 0,
+        promoters: 0,
+        detractors: 0,
+        staffBusyMinutes: 0,
+        staffCapacityMinutes: 0,
+        complianceFlags: 0,
+        blockedOperations: 0,
+        loanPaymentsReceived: 0,
+        delinquentLoans: 0,
         history: []
       };
       state.records = [];
@@ -3744,6 +4455,8 @@
       while (state.simTime < targetTime && guard < 5000) {
         const step = Math.min(1, targetTime - state.simTime);
         state.simTime += step;
+        processSimulationDayEvents();
+        accumulateAdvancedMetrics(step);
         generateSourceEntities();
         processScheduledEvents();
         updateMovingEntities();
@@ -3792,6 +4505,10 @@
             id: state.nextEntityId++,
             label,
             personType: node.props.personType || "Ciudadano",
+            hasAppointment: Math.random() * 100 < state.scenario.appointmentRate,
+            priorityLevel: Math.random() * 100 < state.scenario.priorityRate ? "priority" : "standard",
+            serviceChannel: Math.random() * 100 < state.scenario.digitalShare ? "Digital" : "Presencial",
+            complianceFlag: effectiveAmount >= state.scenario.amlThreshold,
             transactionType,
             transactionLabel: transaction.label,
             transactionCode: transaction.code,
@@ -3918,23 +4635,51 @@
       let effect = 0;
       let description = entity.transactionLabel || "Transacción";
 
+      const commission = amount * clamp(Number(state.scenario.commissionRate) || 0, 0, 100) / 100;
+      if (entity.complianceFlag) {
+        state.metrics.complianceFlags += 1;
+        entity.timeline.push({ event: "Revisión de cumplimiento", dateTime: simulationDateTime(), amount, reason: "Monto igual o superior al umbral configurado" });
+      }
+
       if (entity.transactionType === "deposit") {
         effect = amount;
         state.metrics.depositTotal += amount;
+        state.financial.clientDeposits += amount;
+        state.financial.cashDesk += amount;
       } else if (entity.transactionType === "withdrawal") {
+        if (state.financial.clientDeposits < amount) {
+          entity.operationOutcome = "rejected";
+          entity.operationReason = "Saldo agregado de depósitos insuficiente para respaldar el retiro";
+          entity.finalStatus = "Operación rechazada";
+          state.metrics.rejected += 1;
+          return;
+        }
+        if (!transferVaultToCashDesk(amount)) {
+          entity.operationOutcome = "rejected";
+          entity.operationReason = "Efectivo insuficiente en cajas y bóveda";
+          entity.finalStatus = "Operación rechazada";
+          state.metrics.rejected += 1;
+          return;
+        }
         effect = -amount;
+        state.financial.clientDeposits = Math.max(0, state.financial.clientDeposits - amount);
+        state.financial.cashDesk = Math.max(0, state.financial.cashDesk - amount);
       } else if (entity.transactionType === "payment") {
         effect = amount;
         state.metrics.paymentTotal += amount;
+        state.financial.commissionIncome += commission;
       } else if (entity.transactionType === "transfer") {
         effect = entity.transferDirection === "incoming" ? amount : -amount;
         description = entity.transferDirection === "incoming" ? "Transferencia entrante" : "Transferencia saliente";
+        state.financial.commissionIncome += commission;
       } else if (entity.transactionType === "insurance") {
         effect = amount;
         description = "Prima de seguro recibida";
+        state.financial.commissionIncome += commission;
       } else if (entity.transactionType === "investment") {
         effect = amount;
         description = "Fondo de inversión recibido";
+        state.financial.investmentLiability += amount;
       }
 
       if (!postCapitalMovement(entity, effect, entity.transactionType, description)) {
@@ -4019,6 +4764,21 @@
         state.metrics.creditApproved += 1;
         state.metrics.creditDisbursed += Math.max(0, Number(entity.amountUsd) || 0);
         state.metrics.interestReceivable += terms.totalInterest;
+        state.financial.loanPortfolio += Math.max(0, Number(entity.amountUsd) || 0);
+        state.loanAccounts.push({
+          id: uid("loan"),
+          personId: entity.label,
+          creditType: entity.creditType,
+          principal: Math.max(0, Number(entity.amountUsd) || 0),
+          outstandingPrincipal: Math.max(0, Number(entity.amountUsd) || 0),
+          annualRate: terms.annualRate,
+          termMonths: terms.termMonths,
+          monthlyPayment: terms.monthlyPayment,
+          startDate: formatDateIso(simulationDate()),
+          installmentsProcessed: 0,
+          overdueAmount: 0,
+          status: "current"
+        });
         postCapitalMovement(entity, -Math.max(0, Number(entity.amountUsd) || 0), "credit_disbursement", "Desembolso de crédito");
       }
 
@@ -4198,7 +4958,18 @@
       const outgoing = getOutgoing(node.id);
       if (outgoing.length === 0) {
         state.metrics.rejected += 1;
+        state.metrics.completed += 1;
         entity.finalStatus = "Sin destino";
+        entity.operationOutcome = entity.operationOutcome || "rejected";
+        entity.operationReason = entity.operationReason || `No existe una conexión de salida desde ${node.name}`;
+        entity.timeline.push({
+          event: "Trámite finalizado sin destino",
+          date: formatDateIso(simulationDate()),
+          clock: simulationClock(),
+          area: node.name,
+          reason: entity.operationReason
+        });
+        saveRecord(entity, { props: { finalStatus: "Sin destino" } });
         showToast(`La persona ${entity.label} quedó sin destino desde "${node.name}".`, "error");
         return;
       }
@@ -4309,13 +5080,24 @@
         if (runtime.queue.length >= capacity) {
           runtime.rejected += 1;
           state.metrics.rejected += 1;
+          state.metrics.completed += 1;
           entity.finalStatus = "Cola llena";
+          entity.operationOutcome = "rejected";
+          entity.operationReason = `La cola ${node.name} alcanzó su capacidad máxima`;
+          entity.timeline.push({
+            event: "Rechazo por cola llena",
+            date: formatDateIso(simulationDate()),
+            clock: simulationClock(),
+            area: node.name,
+            reason: entity.operationReason
+          });
+          saveRecord(entity, { props: { finalStatus: "Cola llena" } });
           showToast(`La cola "${node.name}" alcanzó su capacidad.`, "error");
           return;
         }
         entity.queueEnteredAt = state.simTime;
         entity.currentQueueNodeId = node.id;
-        runtime.queue.push(entity);
+        enqueueEntity(runtime, entity);
         state.metrics.maxQueue = Math.max(state.metrics.maxQueue, runtime.queue.length);
         attemptDispatchQueue(node);
         return;
@@ -4347,9 +5129,21 @@
       const startMinute = Number(entity.createdAt.toFixed(1));
       const endMinute = Number(state.simTime.toFixed(1));
       const profile = entity.creditProfile || null;
+      const satisfactionScore = calculateSatisfaction(entity);
+      const satisfactionCategory = npsCategory(satisfactionScore);
+      state.metrics.satisfactionTotal += satisfactionScore;
+      state.metrics.satisfactionSamples += 1;
+      if (satisfactionCategory === "Promotor") state.metrics.promoters += 1;
+      if (satisfactionCategory === "Detractor") state.metrics.detractors += 1;
       const record = {
         personId: entity.label,
         personType: entity.personType,
+        hasAppointment: entity.hasAppointment ? "Sí" : "No",
+        priorityLevel: entity.priorityLevel === "priority" ? "Prioritario" : "Regular",
+        serviceChannel: entity.serviceChannel || "Presencial",
+        complianceFlag: entity.complianceFlag ? "Sí" : "No",
+        satisfactionScore,
+        satisfactionCategory,
         transactionType: entity.transactionType,
         transactionLabel: entity.transactionLabel || getTransactionConfig(entity.transactionType).label,
         transactionCode: entity.transactionCode || getTransactionConfig(entity.transactionType).code,
@@ -4397,8 +5191,9 @@
         steps: clone(entity.steps),
         timeline: clone(entity.timeline || [])
       };
+      // Conserve todos los registros de la ejecución.
+      // El panel visual muestra solo los últimos ocho, pero la exportación incluye el historial completo.
       state.records.unshift(record);
-      if (state.records.length > 300) state.records.pop();
       renderRecords();
     }
 
@@ -4428,19 +5223,19 @@
     function processHasCapacity(node) {
       const runtime = ensureNodeRuntime(node);
       const capacity = Math.max(1, Number(node.props.capacity) || 1);
-      return runtime.busy < capacity;
+      return isNodeOnShift(node) && runtime.busy < capacity;
     }
 
     function startOrQueueProcess(node, entity) {
       const runtime = ensureNodeRuntime(node);
       const capacity = Math.max(1, Number(node.props.capacity) || 1);
-      if (runtime.busy < capacity) {
+      if (isNodeOnShift(node) && runtime.busy < capacity) {
         startProcess(node, entity);
         return;
       }
       entity.queueEnteredAt = state.simTime;
       entity.currentQueueNodeId = node.id;
-      runtime.queue.push(entity);
+      enqueueEntity(runtime, entity);
       state.metrics.maxQueue = Math.max(state.metrics.maxQueue, runtime.queue.length);
     }
 
@@ -4464,8 +5259,28 @@
       if (node.props.processRole === "transaction_processing" && !entity.financialPosted) {
         processFinancialTransaction(entity, node);
       }
-      if (node.props.processRole === "banking_services") {
+      if (node.props.processRole === "banking_services" || node.props.processRole === "digital") {
         processBankingService(entity);
+      }
+      if (node.props.processRole === "compliance" && entity.complianceFlag) {
+        entity.operationReason = entity.operationReason || "Operación revisada por cumplimiento";
+        entity.timeline.push({ event: "Cumplimiento aprobado", dateTime: simulationDateTime(), amount: entity.amountUsd });
+      }
+      if (node.props.processRole === "collections") {
+        const overdue = state.loanAccounts.filter(loan => loan.status === "overdue");
+        overdue.forEach(loan => {
+          if (Math.random() * 100 < state.scenario.recoveryRate) {
+            const recovered = Math.min(loan.overdueAmount, Math.max(0, Number(loan.monthlyPayment) || 0));
+            loan.overdueAmount = Math.max(0, loan.overdueAmount - recovered);
+            state.financial.overduePortfolio = Math.max(0, state.financial.overduePortfolio - recovered);
+            state.financial.recoveredTotal += recovered;
+            state.scenario.currentCapital += recovered;
+            if (loan.overdueAmount <= .01) loan.status = "current";
+          }
+        });
+      }
+      if (node.props.processRole === "vault") {
+        balanceCashDesk();
       }
       entity.timeline = Array.isArray(entity.timeline) ? entity.timeline : [];
       entity.timeline.push({
@@ -4550,7 +5365,24 @@
       if (dom.metricDelayed) dom.metricDelayed.textContent = state.metrics.delayedEvents.toLocaleString("es-EC");
       if (dom.metricAngry) dom.metricAngry.textContent = state.metrics.angryUsers.toLocaleString("es-EC");
       if (dom.metricAbandoned) dom.metricAbandoned.textContent = state.metrics.abandonedUsers.toLocaleString("es-EC");
+      if (dom.metricCashDesk) dom.metricCashDesk.textContent = compactCurrency(state.financial.cashDesk);
+      if (dom.metricVaultCash) dom.metricVaultCash.textContent = compactCurrency(state.financial.vaultCash);
+      if (dom.metricClientDeposits) dom.metricClientDeposits.textContent = compactCurrency(state.financial.clientDeposits);
+      if (dom.metricLoanPortfolio) dom.metricLoanPortfolio.textContent = compactCurrency(state.financial.loanPortfolio);
+      if (dom.metricOverduePortfolio) dom.metricOverduePortfolio.textContent = compactCurrency(state.financial.overduePortfolio);
+      if (dom.metricRecovered) dom.metricRecovered.textContent = compactCurrency(state.financial.recoveredTotal);
+      if (dom.metricCommissionIncome) dom.metricCommissionIncome.textContent = compactCurrency(state.financial.commissionIncome);
+      if (dom.metricStaffCost) dom.metricStaffCost.textContent = compactCurrency(state.financial.staffCost);
+      if (dom.metricEquity) dom.metricEquity.textContent = compactCurrency(estimatedEquity());
+      const satisfaction = state.metrics.satisfactionSamples ? state.metrics.satisfactionTotal / state.metrics.satisfactionSamples : 0;
+      const nps = state.metrics.satisfactionSamples ? (state.metrics.promoters - state.metrics.detractors) / state.metrics.satisfactionSamples * 100 : 0;
+      const utilization = state.metrics.staffCapacityMinutes ? state.metrics.staffBusyMinutes / state.metrics.staffCapacityMinutes * 100 : 0;
+      if (dom.metricSatisfaction) dom.metricSatisfaction.textContent = satisfaction ? formatNumber(satisfaction,1) + "/5" : "—";
+      if (dom.metricNps) dom.metricNps.textContent = state.metrics.satisfactionSamples ? formatNumber(nps,0) : "—";
+      if (dom.metricUtilization) dom.metricUtilization.textContent = formatNumber(utilization,0) + "%";
+      if (dom.metricComplianceFlags) dom.metricComplianceFlags.textContent = state.metrics.complianceFlags.toLocaleString("es-EC");
       dom.clockStatus.textContent = simulationDateTime() + " h";
+      renderDecisionInsights();
     }
 
     function renderRecords() {
@@ -4565,7 +5397,8 @@
         item.className = "record-item";
         item.innerHTML = `
           <strong>${escapeHtml(record.personId)} · ${escapeHtml(record.finalStatus)}</strong>
-          <span><b>Usuario:</b> ${escapeHtml(record.personType)}</span>
+          <span><b>Usuario:</b> ${escapeHtml(record.personType)} · ${escapeHtml(record.priorityLevel || "Regular")} · ${escapeHtml(record.serviceChannel || "Presencial")}</span>
+          <span><b>Cita:</b> ${escapeHtml(record.hasAppointment || "No")} · <b>Satisfacción:</b> ${formatNumber(record.satisfactionScore || 0,1)}/5 (${escapeHtml(record.satisfactionCategory || "—")})</span>
           <span><b>Trámite:</b> ${escapeHtml(record.transactionLabel || "No especificado")}</span>
           <span><b>Monto USD:</b> ${escapeHtml(formatCurrency(record.amountUsd || 0))}</span>
           ${record.creditTypeLabel ? `<span><b>Tipo de crédito:</b> ${escapeHtml(record.creditTypeLabel)}</span>` : ""}
@@ -4619,13 +5452,15 @@
 
     function saveModel() {
       const payload = {
-        version: 11,
+        version: 13,
         savedAt: new Date().toISOString(),
         scenario: state.scenario,
+        financial: state.financial,
+        scenarioSnapshots: state.scenarioSnapshots,
         nodes: state.nodes,
         edges: state.edges
       };
-      const saved = safeStorage.set("simuladorBancarioNeodatV11", JSON.stringify(payload));
+      const saved = safeStorage.set("simuladorBancarioNeodatV13", JSON.stringify(payload));
       if (saved) {
         showToast("Modelo guardado en este navegador.");
         updateStatus("Modelo guardado.");
@@ -4638,9 +5473,11 @@
 
     function exportModel() {
       const payload = {
-        version: 11,
+        version: 13,
         exportedAt: new Date().toISOString(),
         scenario: state.scenario,
+        financial: state.financial,
+        scenarioSnapshots: state.scenarioSnapshots,
         nodes: state.nodes,
         edges: state.edges
       };
@@ -4655,7 +5492,7 @@
       }
       const rows = [
         [
-          "persona", "tipo_usuario", "tramite_financiero", "codigo_tramite", "monto_usd", "tipo_credito",
+          "persona", "tipo_usuario", "con_cita", "prioridad", "canal", "revision_cumplimiento", "satisfaccion_1_5", "categoria_nps", "tramite_financiero", "codigo_tramite", "monto_usd", "tipo_credito",
           "fecha_ingreso", "hora_ingreso", "fecha_salida", "hora_salida", "duracion_minutos", "espera_minutos", "eventos_demora", "atencion_minutos", "estado_emocional", "estado_final",
           "resultado_credito", "motivo_credito", "ingreso_mensual_usd", "deuda_mensual_usd",
           "antiguedad_laboral_meses", "documentos_completos", "historial_crediticio",
@@ -4669,6 +5506,12 @@
         rows.push([
           record.personId,
           record.personType,
+          record.hasAppointment || "No",
+          record.priorityLevel || "Regular",
+          record.serviceChannel || "Presencial",
+          record.complianceFlag || "No",
+          Number(record.satisfactionScore || 0).toFixed(1),
+          record.satisfactionCategory || "",
           record.transactionLabel || "No especificado",
           record.transactionCode || "",
           Number(record.amountUsd || 0).toFixed(2),
@@ -4709,7 +5552,7 @@
       });
       const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
       downloadText(csv, "registros-simulacion.csv", "text/csv;charset=utf-8");
-      showToast("Registros exportados.");
+      showToast(`${state.records.length.toLocaleString("es-EC")} registros exportados.`);
     }
 
     function importModel(file) {
@@ -4744,8 +5587,21 @@
         simulationLength: clamp(Math.floor(Number(payload.scenario?.simulationLength) || 1), 1, 365),
         operatingDays: Array.isArray(payload.scenario?.operatingDays) ? payload.scenario.operatingDays : [0, 1, 2, 3, 4, 5, 6],
         openingTime: String(payload.scenario?.openingTime || "08:00"),
-        closingTime: String(payload.scenario?.closingTime || "19:00")
+        closingTime: String(payload.scenario?.closingTime || "19:00"),
+        minimumReserve: Math.max(0, Number(payload.scenario?.minimumReserve ?? 250000) || 0),
+        initialVaultCash: Math.max(0, Number(payload.scenario?.initialVaultCash ?? 300000) || 0),
+        initialCashDesk: Math.max(0, Number(payload.scenario?.initialCashDesk ?? 100000) || 0),
+        commissionRate: clamp(Number(payload.scenario?.commissionRate ?? 1.5), 0, 100),
+        monthlyDefaultRate: clamp(Number(payload.scenario?.monthlyDefaultRate ?? 8), 0, 100),
+        recoveryRate: clamp(Number(payload.scenario?.recoveryRate ?? 45), 0, 100),
+        appointmentRate: clamp(Number(payload.scenario?.appointmentRate ?? 25), 0, 100),
+        priorityRate: clamp(Number(payload.scenario?.priorityRate ?? 10), 0, 100),
+        digitalShare: clamp(Number(payload.scenario?.digitalShare ?? 20), 0, 100),
+        dailyOutageRate: clamp(Number(payload.scenario?.dailyOutageRate ?? 3), 0, 100),
+        outageMinutes: clamp(Number(payload.scenario?.outageMinutes ?? 20), 1, 240),
+        amlThreshold: Math.max(0, Number(payload.scenario?.amlThreshold ?? 10000) || 0)
       };
+      state.scenarioSnapshots = Array.isArray(payload.scenarioSnapshots) ? payload.scenarioSnapshots.slice(0, 8) : state.scenarioSnapshots;
       state.nodes = payload.nodes
         .filter(node => NODE_TYPES[node.type])
         .map(node => ({
@@ -4783,7 +5639,7 @@
 
     function loadExampleModel(showNotification = true) {
       const example = {
-        version: 11,
+        version: 13,
         scenario: {
           businessName: "Entidad financiera",
           initialCapital: 1000000,
@@ -4794,7 +5650,19 @@
           simulationLength: 5,
           operatingDays: [0, 1, 2, 3, 4, 5, 6],
           openingTime: "08:00",
-          closingTime: "19:00"
+          closingTime: "19:00",
+          minimumReserve: 250000,
+          initialVaultCash: 300000,
+          initialCashDesk: 100000,
+          commissionRate: 1.5,
+          monthlyDefaultRate: 8,
+          recoveryRate: 45,
+          appointmentRate: 25,
+          priorityRate: 10,
+          digitalShare: 20,
+          dailyOutageRate: 3,
+          outageMinutes: 20,
+          amlThreshold: 10000
         },
         nodes: [
           {
@@ -5139,6 +6007,75 @@
       }
     });
 
+
+    function bindScenarioNumberInput(element, key, options = {}) {
+      element?.addEventListener("change", event => {
+        if (state.running && options.lockDuringRun) {
+          showToast("Detenga la simulación antes de cambiar este valor.", "warning");
+          updateScenarioUi();
+          return;
+        }
+        let value = Number(event.target.value);
+        if (!Number.isFinite(value)) value = options.defaultValue ?? 0;
+        if (Number.isFinite(options.min)) value = Math.max(options.min, value);
+        if (Number.isFinite(options.max)) value = Math.min(options.max, value);
+        state.scenario[key] = value;
+        if (key === "initialVaultCash" && !state.running) state.financial.vaultCash = value;
+        if (key === "initialCashDesk" && !state.running) state.financial.cashDesk = value;
+        updateScenarioUi();
+        updateMetrics();
+      });
+    }
+
+    bindScenarioNumberInput(dom.minimumReserveInput, "minimumReserve", { min: 0, defaultValue: 250000 });
+    bindScenarioNumberInput(dom.vaultCashInput, "initialVaultCash", { min: 0, defaultValue: 300000, lockDuringRun: true });
+    bindScenarioNumberInput(dom.cashDeskInput, "initialCashDesk", { min: 0, defaultValue: 100000, lockDuringRun: true });
+    bindScenarioNumberInput(dom.commissionRateInput, "commissionRate", { min: 0, max: 100, defaultValue: 1.5 });
+    bindScenarioNumberInput(dom.defaultRiskInput, "monthlyDefaultRate", { min: 0, max: 100, defaultValue: 8 });
+    bindScenarioNumberInput(dom.recoveryRateInput, "recoveryRate", { min: 0, max: 100, defaultValue: 45 });
+    bindScenarioNumberInput(dom.appointmentRateInput, "appointmentRate", { min: 0, max: 100, defaultValue: 25 });
+    bindScenarioNumberInput(dom.priorityRateInput, "priorityRate", { min: 0, max: 100, defaultValue: 10 });
+    bindScenarioNumberInput(dom.digitalShareInput, "digitalShare", { min: 0, max: 100, defaultValue: 20 });
+    bindScenarioNumberInput(dom.outageRateInput, "dailyOutageRate", { min: 0, max: 100, defaultValue: 3 });
+    bindScenarioNumberInput(dom.outageMinutesInput, "outageMinutes", { min: 1, max: 240, defaultValue: 20 });
+    bindScenarioNumberInput(dom.amlThresholdInput, "amlThreshold", { min: 0, defaultValue: 10000 });
+
+    document.getElementById("saveScenarioSnapshotBtn")?.addEventListener("click", saveScenarioSnapshot);
+    document.getElementById("compareScenariosBtn")?.addEventListener("click", () => {
+      renderScenarioComparison();
+      dom.comparisonModal?.classList.add("open");
+    });
+    document.getElementById("clearScenariosBtn")?.addEventListener("click", () => {
+      state.scenarioSnapshots = [];
+      safeStorage.remove("simuladorBancarioNeodatScenariosV13");
+      renderSnapshotList();
+      showToast("Comparaciones eliminadas.");
+    });
+    document.getElementById("closeComparisonBtn")?.addEventListener("click", () => dom.comparisonModal?.classList.remove("open"));
+    dom.comparisonModal?.addEventListener("click", event => {
+      if (event.target === dom.comparisonModal) dom.comparisonModal.classList.remove("open");
+    });
+
+    function addAdvancedArea(role, name, department, procedure, color) {
+      const index = state.nodes.filter(node => node.type === "process").length;
+      createNode("process", 1120 + (index % 3) * 230, 120 + (index % 4) * 170, {
+        name,
+        props: {
+          ...clone(NODE_TYPES.process.props),
+          processRole: role,
+          department,
+          procedure,
+          color
+        }
+      });
+      showToast(`${name} agregada. Conéctela al flujo donde corresponda.`);
+    }
+
+    document.getElementById("addVaultAreaBtn")?.addEventListener("click", () => addAdvancedArea("vault", "Bóveda y caja", "Tesorería", "Abastecimiento y retiro de efectivo", "#0f766e"));
+    document.getElementById("addCollectionsAreaBtn")?.addEventListener("click", () => addAdvancedArea("collections", "Cobranza", "Recuperación de cartera", "Gestión de cuotas vencidas", "#b45309"));
+    document.getElementById("addDigitalAreaBtn")?.addEventListener("click", () => addAdvancedArea("digital", "Canal digital", "Banca digital", "Operaciones web y móviles", "#2563eb"));
+    document.getElementById("addComplianceAreaBtn")?.addEventListener("click", () => addAdvancedArea("compliance", "Cumplimiento", "Riesgo y cumplimiento", "Revisión de operaciones inusuales", "#7c3aed"));
+
     dom.playBtn.addEventListener("click", startSimulation);
     document.getElementById("quickRunBtn").addEventListener("click", startSimulation);
     dom.pauseBtn.addEventListener("click", pauseSimulation);
@@ -5208,17 +6145,24 @@
 
     function initializeApp() {
       populateScheduleSelectors();
+      try {
+        const savedScenarios = safeStorage.get("simuladorBancarioNeodatScenariosV13");
+        state.scenarioSnapshots = savedScenarios ? JSON.parse(savedScenarios) : [];
+      } catch (error) {
+        state.scenarioSnapshots = [];
+      }
+      renderSnapshotList();
       updateRunStatus();
       updateScenarioUi();
       loadExampleModel(false);
-      const saved = safeStorage.get("simuladorBancarioNeodatV11");
+      const saved = safeStorage.get("simuladorBancarioNeodatV13") || safeStorage.get("simuladorBancarioNeodatV12");
       if (saved) {
         try {
           applyModel(JSON.parse(saved));
           showToast("Se cargó el último modelo guardado.");
           return;
         } catch (error) {
-          safeStorage.remove("simuladorBancarioNeodatV11");
+          safeStorage.remove("simuladorBancarioNeodatV13");
           loadExampleModel(false);
         }
       }
@@ -5237,6 +6181,8 @@
       save: saveModel,
       exportModel,
       exportRecords,
+      saveScenarioSnapshot,
+      compareScenarios: () => { renderScenarioComparison(); dom.comparisonModal?.classList.add("open"); },
       loadExample: loadExampleModel
     };
   </script>
