@@ -1431,6 +1431,78 @@
       line-height: 1.55;
     }
 
+    .date-day-label {
+      display: block;
+      min-height: 15px;
+      margin-top: 4px;
+      color: #3f5f82;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: capitalize;
+    }
+
+    .weekday-selector {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #dbe3ed;
+      border-radius: 11px;
+      background: #f8fafc;
+    }
+
+    .weekday-selector-title {
+      display: block;
+      margin-bottom: 8px;
+      color: #53657b;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .weekday-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .weekday-grid label {
+      position: relative;
+      display: block;
+      cursor: pointer;
+    }
+
+    .weekday-grid input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .weekday-grid span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 0 7px;
+      border: 1px solid #dbe3ed;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #65758a;
+      font-size: 9px;
+      font-weight: 800;
+      transition: border-color 150ms ease, background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .weekday-grid input:checked + span {
+      border-color: rgba(58, 139, 253, .48);
+      background: #eaf3ff;
+      color: #1764c0;
+      box-shadow: inset 0 0 0 1px rgba(58, 139, 253, .12);
+    }
+
+    .weekday-grid label:hover span {
+      border-color: rgba(58, 139, 253, .42);
+    }
+
     .service-list {
       display: grid;
       gap: 8px;
@@ -1661,6 +1733,14 @@
             <div>
               <label for="simulationStartDateInput">Fecha de inicio</label>
               <input id="simulationStartDateInput" type="date">
+              <small class="date-day-label" id="startDayLabel">—</small>
+            </div>
+          </div>
+          <div class="scenario-fields">
+            <div>
+              <label for="simulationEndDateInput">Fecha de finalización</label>
+              <input id="simulationEndDateInput" type="date">
+              <small class="date-day-label" id="endDayLabel">—</small>
             </div>
           </div>
           <div class="scenario-fields">
@@ -1686,13 +1766,27 @@
           </div>
           <div class="scenario-fields">
             <div>
-              <label for="closingTimeInput">Hora de salida</label>
-              <select id="closingTimeInput" aria-label="Hora de salida"></select>
+              <label for="closingTimeInput">Hora de finalización</label>
+              <select id="closingTimeInput" aria-label="Hora de finalización"></select>
             </div>
           </div>
         </div>
+
+        <div class="weekday-selector" id="weekdaySelector">
+          <span class="weekday-selector-title">Días habilitados para la simulación</span>
+          <div class="weekday-grid">
+            <label><input type="checkbox" value="0" checked><span>Domingo</span></label>
+            <label><input type="checkbox" value="1" checked><span>Lunes</span></label>
+            <label><input type="checkbox" value="2" checked><span>Martes</span></label>
+            <label><input type="checkbox" value="3" checked><span>Miércoles</span></label>
+            <label><input type="checkbox" value="4" checked><span>Jueves</span></label>
+            <label><input type="checkbox" value="5" checked><span>Viernes</span></label>
+            <label><input type="checkbox" value="6" checked><span>Sábado</span></label>
+          </div>
+        </div>
+
         <div class="scenario-note">
-          Horario seleccionable entre 08:00 y 19:00. La simulación puede ejecutarse por días o meses. Cada registro guarda fecha, hora de entrada, hora de salida, espera, atención, estado emocional, operación y efecto sobre el capital.
+          Seleccione la fecha inicial, la fecha final, los días habilitados y el horario entre 08h00 y 19h00. La simulación omite automáticamente los días no seleccionados. Cada registro conserva fecha y hora de entrada, fecha y hora de salida, espera, atención, estado emocional, operación y efecto sobre el capital.
         </div>
       </section>
 
@@ -2026,8 +2120,12 @@
       openingTimeInput: document.getElementById("openingTimeInput"),
       closingTimeInput: document.getElementById("closingTimeInput"),
       simulationStartDateInput: document.getElementById("simulationStartDateInput"),
+      simulationEndDateInput: document.getElementById("simulationEndDateInput"),
       simulationUnitInput: document.getElementById("simulationUnitInput"),
       simulationLengthInput: document.getElementById("simulationLengthInput"),
+      weekdaySelector: document.getElementById("weekdaySelector"),
+      startDayLabel: document.getElementById("startDayLabel"),
+      endDayLabel: document.getElementById("endDayLabel"),
       metricDate: document.getElementById("metricDate"),
       metricDelayed: document.getElementById("metricDelayed"),
       metricAngry: document.getElementById("metricAngry"),
@@ -2055,8 +2153,10 @@
         initialCapital: 1000000,
         currentCapital: 1000000,
         startDate: new Date().toISOString().slice(0, 10),
+        endDate: new Date().toISOString().slice(0, 10),
         simulationUnit: "days",
         simulationLength: 1,
+        operatingDays: [0, 1, 2, 3, 4, 5, 6],
         openingTime: "08:00",
         closingTime: "19:00"
       },
@@ -2171,15 +2271,44 @@
       return new Intl.DateTimeFormat("es-EC", { day: "2-digit", month: "2-digit", year: "numeric" }).format(date);
     }
 
-    function simulationDaysCount() {
-      const quantity = clamp(Math.floor(Number(state.scenario?.simulationLength) || 1), 1, 365);
-      if ((state.scenario?.simulationUnit || "days") === "months") {
-        const start = parseLocalDate(state.scenario?.startDate);
-        const end = new Date(start);
-        end.setMonth(end.getMonth() + quantity);
-        return Math.max(1, Math.round((end - start) / 86400000));
+    function calculateEndDate(startDate, unit, quantity) {
+      const start = parseLocalDate(startDate);
+      const length = clamp(Math.floor(Number(quantity) || 1), 1, unit === "months" ? 12 : 365);
+      const end = new Date(start);
+      if (unit === "months") {
+        end.setMonth(end.getMonth() + length);
+        end.setDate(end.getDate() - 1);
+      } else {
+        end.setDate(end.getDate() + length - 1);
       }
-      return quantity;
+      return formatDateIso(end);
+    }
+
+    function normalizedOperatingDays() {
+      const values = Array.isArray(state.scenario?.operatingDays)
+        ? state.scenario.operatingDays.map(Number).filter(value => Number.isInteger(value) && value >= 0 && value <= 6)
+        : [];
+      return [...new Set(values)].sort((a, b) => a - b);
+    }
+
+    function simulationCalendarDates() {
+      const start = parseLocalDate(state.scenario?.startDate);
+      let end = parseLocalDate(state.scenario?.endDate || state.scenario?.startDate);
+      if (end < start) end = new Date(start);
+      const enabledDays = new Set(normalizedOperatingDays());
+      const dates = [];
+      const cursor = new Date(start);
+      let guard = 0;
+      while (cursor <= end && guard < 3700) {
+        if (enabledDays.has(cursor.getDay())) dates.push(new Date(cursor));
+        cursor.setDate(cursor.getDate() + 1);
+        guard += 1;
+      }
+      return dates;
+    }
+
+    function simulationDaysCount() {
+      return simulationCalendarDates().length;
     }
 
     function simulationTotalMinutes() {
@@ -2188,13 +2317,15 @@
 
     function simulationDayIndex(simMinute = state.simTime) {
       const duration = sessionDurationMinutes();
-      return Math.min(simulationDaysCount() - 1, Math.max(0, Math.floor(Math.max(0, Number(simMinute) || 0) / duration)));
+      const days = simulationDaysCount();
+      if (days <= 0) return 0;
+      return Math.min(days - 1, Math.max(0, Math.floor(Math.max(0, Number(simMinute) || 0) / duration)));
     }
 
     function simulationDate(simMinute = state.simTime) {
-      const date = parseLocalDate(state.scenario?.startDate);
-      date.setDate(date.getDate() + simulationDayIndex(simMinute));
-      return date;
+      const dates = simulationCalendarDates();
+      if (dates.length === 0) return parseLocalDate(state.scenario?.startDate);
+      return new Date(dates[simulationDayIndex(simMinute)]);
     }
 
     function simulationClock(simMinute = state.simTime) {
@@ -2214,7 +2345,8 @@
       const options = [];
       for (let minutes = 8 * 60; minutes <= 19 * 60; minutes += 30) {
         const value = minutesToClock(minutes);
-        options.push(`<option value="${value}">${value}</option>`);
+        const display = value.replace(":", "h");
+        options.push(`<option value="${value}">${display}</option>`);
       }
       const html = options.join("");
       dom.openingTimeInput.innerHTML = html;
@@ -2227,7 +2359,13 @@
       let startDate = String(state.scenario?.startDate || new Date().toISOString().slice(0, 10));
       if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) startDate = new Date().toISOString().slice(0, 10);
       let simulationUnit = state.scenario?.simulationUnit === "months" ? "months" : "days";
-      let simulationLength = clamp(Math.floor(Number(state.scenario?.simulationLength) || 1), 1, 365);
+      let simulationLength = clamp(Math.floor(Number(state.scenario?.simulationLength) || 1), 1, simulationUnit === "months" ? 12 : 365);
+      let endDate = String(state.scenario?.endDate || calculateEndDate(startDate, simulationUnit, simulationLength));
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(endDate) || parseLocalDate(endDate) < parseLocalDate(startDate)) {
+        endDate = calculateEndDate(startDate, simulationUnit, simulationLength);
+      }
+      let operatingDays = normalizedOperatingDays();
+      if (operatingDays.length === 0) operatingDays = [0, 1, 2, 3, 4, 5, 6];
       let openingTime = String(state.scenario?.openingTime || "08:00");
       let closingTime = String(state.scenario?.closingTime || "19:00");
       if (timeStringToMinutes(openingTime) < 8 * 60 || timeStringToMinutes(openingTime) > 19 * 60) openingTime = "08:00";
@@ -2237,8 +2375,10 @@
       state.scenario.businessName = name;
       state.scenario.initialCapital = capital;
       state.scenario.startDate = startDate;
+      state.scenario.endDate = endDate;
       state.scenario.simulationUnit = simulationUnit;
       state.scenario.simulationLength = simulationLength;
+      state.scenario.operatingDays = operatingDays;
       if (!Number.isFinite(Number(state.scenario.currentCapital))) state.scenario.currentCapital = capital;
       state.scenario.currentCapital = Math.max(0, Number(state.scenario.currentCapital) || 0);
       state.scenario.openingTime = openingTime;
@@ -2247,6 +2387,17 @@
       if (dom.businessNameInput && dom.businessNameInput.value !== name) dom.businessNameInput.value = name;
       if (dom.initialCapitalInput && Number(dom.initialCapitalInput.value) !== capital) dom.initialCapitalInput.value = String(capital);
       if (dom.simulationStartDateInput) dom.simulationStartDateInput.value = startDate;
+      if (dom.simulationEndDateInput) {
+        dom.simulationEndDateInput.min = startDate;
+        dom.simulationEndDateInput.value = endDate;
+      }
+      if (dom.startDayLabel) dom.startDayLabel.textContent = new Intl.DateTimeFormat("es-EC", { weekday: "long" }).format(parseLocalDate(startDate));
+      if (dom.endDayLabel) dom.endDayLabel.textContent = new Intl.DateTimeFormat("es-EC", { weekday: "long" }).format(parseLocalDate(endDate));
+      if (dom.weekdaySelector) {
+        dom.weekdaySelector.querySelectorAll('input[type="checkbox"]').forEach(input => {
+          input.checked = operatingDays.includes(Number(input.value));
+        });
+      }
       if (dom.simulationUnitInput) dom.simulationUnitInput.value = simulationUnit;
       if (dom.simulationLengthInput) {
         dom.simulationLengthInput.value = String(simulationLength);
@@ -2258,7 +2409,8 @@
       const periodText = simulationUnit === "months"
         ? `${simulationLength} ${simulationLength === 1 ? "mes" : "meses"}`
         : `${simulationLength} ${simulationLength === 1 ? "día" : "días"}`;
-      if (dom.scheduleBadge) dom.scheduleBadge.textContent = `${periodText} · ${openingTime}–${closingTime}`;
+      const enabledCount = operatingDays.length;
+      if (dom.scheduleBadge) dom.scheduleBadge.textContent = `${formatDisplayDate(parseLocalDate(startDate))}–${formatDisplayDate(parseLocalDate(endDate))} · ${openingTime.replace(":", "h")}–${closingTime.replace(":", "h")} · ${enabledCount} días/sem.`;
       if (dom.capitalBadge) dom.capitalBadge.textContent = "Capital disponible: " + formatCurrency(state.scenario.currentCapital);
       if (dom.metricCapital) dom.metricCapital.textContent = compactCurrency(state.scenario.currentCapital);
       if (dom.metricDate) dom.metricDate.textContent = formatDisplayDate(simulationDate());
@@ -3527,8 +3679,12 @@
         return;
       }
       if (state.running) return;
-      if (sessionEndMinutes() <= sessionStartMinutes() || simulationTotalMinutes() <= 0) {
-        showToast("La hora de cierre debe ser posterior a la hora de apertura.", "warning");
+      if (sessionEndMinutes() <= sessionStartMinutes()) {
+        showToast("La hora de finalización debe ser posterior a la hora de entrada.", "warning");
+        return;
+      }
+      if (simulationDaysCount() <= 0) {
+        showToast("El rango de fechas no contiene ningún día habilitado para simular.", "warning");
         return;
       }
       if (!validateModel()) return;
@@ -4463,13 +4619,13 @@
 
     function saveModel() {
       const payload = {
-        version: 10,
+        version: 11,
         savedAt: new Date().toISOString(),
         scenario: state.scenario,
         nodes: state.nodes,
         edges: state.edges
       };
-      const saved = safeStorage.set("simuladorBancarioNeodatV10", JSON.stringify(payload));
+      const saved = safeStorage.set("simuladorBancarioNeodatV11", JSON.stringify(payload));
       if (saved) {
         showToast("Modelo guardado en este navegador.");
         updateStatus("Modelo guardado.");
@@ -4482,7 +4638,7 @@
 
     function exportModel() {
       const payload = {
-        version: 10,
+        version: 11,
         exportedAt: new Date().toISOString(),
         scenario: state.scenario,
         nodes: state.nodes,
@@ -4579,8 +4735,14 @@
         initialCapital: Math.max(0, Number(payload.scenario?.initialCapital ?? 1000000) || 0),
         currentCapital: Math.max(0, Number(payload.scenario?.initialCapital ?? 1000000) || 0),
         startDate: String(payload.scenario?.startDate || new Date().toISOString().slice(0, 10)),
+        endDate: String(payload.scenario?.endDate || calculateEndDate(
+          String(payload.scenario?.startDate || new Date().toISOString().slice(0, 10)),
+          payload.scenario?.simulationUnit === "months" ? "months" : "days",
+          clamp(Math.floor(Number(payload.scenario?.simulationLength) || 1), 1, 365)
+        )),
         simulationUnit: payload.scenario?.simulationUnit === "months" ? "months" : "days",
         simulationLength: clamp(Math.floor(Number(payload.scenario?.simulationLength) || 1), 1, 365),
+        operatingDays: Array.isArray(payload.scenario?.operatingDays) ? payload.scenario.operatingDays : [0, 1, 2, 3, 4, 5, 6],
         openingTime: String(payload.scenario?.openingTime || "08:00"),
         closingTime: String(payload.scenario?.closingTime || "19:00")
       };
@@ -4621,14 +4783,16 @@
 
     function loadExampleModel(showNotification = true) {
       const example = {
-        version: 10,
+        version: 11,
         scenario: {
           businessName: "Entidad financiera",
           initialCapital: 1000000,
           currentCapital: 1000000,
           startDate: new Date().toISOString().slice(0, 10),
+          endDate: calculateEndDate(new Date().toISOString().slice(0, 10), "days", 5),
           simulationUnit: "days",
           simulationLength: 5,
+          operatingDays: [0, 1, 2, 3, 4, 5, 6],
           openingTime: "08:00",
           closingTime: "19:00"
         },
@@ -4874,7 +5038,7 @@
     dom.openingTimeInput?.addEventListener("change", event => {
       const value = event.target.value;
       if (timeStringToMinutes(value) >= timeStringToMinutes(state.scenario.closingTime)) {
-        showToast("La apertura debe ser anterior al cierre.", "warning");
+        showToast("La hora de entrada debe ser anterior a la hora de finalización.", "warning");
         updateScenarioUi();
         return;
       }
@@ -4886,7 +5050,7 @@
     dom.closingTimeInput?.addEventListener("change", event => {
       const value = event.target.value;
       if (timeStringToMinutes(value) <= timeStringToMinutes(state.scenario.openingTime)) {
-        showToast("El cierre debe ser posterior a la apertura.", "warning");
+        showToast("La hora de finalización debe ser posterior a la hora de entrada.", "warning");
         updateScenarioUi();
         return;
       }
@@ -4898,6 +5062,23 @@
     dom.simulationStartDateInput?.addEventListener("change", event => {
       if (state.running) { showToast("Detenga la simulación antes de cambiar la fecha.", "warning"); updateScenarioUi(); return; }
       state.scenario.startDate = event.target.value || new Date().toISOString().slice(0, 10);
+      state.scenario.endDate = calculateEndDate(state.scenario.startDate, state.scenario.simulationUnit, state.scenario.simulationLength);
+      updateScenarioUi();
+      updateMetrics();
+    });
+
+    dom.simulationEndDateInput?.addEventListener("change", event => {
+      if (state.running) { showToast("Detenga la simulación antes de cambiar la fecha final.", "warning"); updateScenarioUi(); return; }
+      const value = event.target.value || state.scenario.startDate;
+      if (parseLocalDate(value) < parseLocalDate(state.scenario.startDate)) {
+        showToast("La fecha de finalización no puede ser anterior a la fecha de inicio.", "warning");
+        updateScenarioUi();
+        return;
+      }
+      state.scenario.endDate = value;
+      const calendarDays = Math.floor((parseLocalDate(value) - parseLocalDate(state.scenario.startDate)) / 86400000) + 1;
+      state.scenario.simulationUnit = "days";
+      state.scenario.simulationLength = clamp(calendarDays, 1, 365);
       updateScenarioUi();
       updateMetrics();
     });
@@ -4906,6 +5087,7 @@
       if (state.running) { showToast("Detenga la simulación antes de cambiar el periodo.", "warning"); updateScenarioUi(); return; }
       state.scenario.simulationUnit = event.target.value === "months" ? "months" : "days";
       if (state.scenario.simulationUnit === "months" && state.scenario.simulationLength > 12) state.scenario.simulationLength = 1;
+      state.scenario.endDate = calculateEndDate(state.scenario.startDate, state.scenario.simulationUnit, state.scenario.simulationLength);
       updateScenarioUi();
       updateMetrics();
     });
@@ -4914,6 +5096,26 @@
       if (state.running) { showToast("Detenga la simulación antes de cambiar la duración.", "warning"); updateScenarioUi(); return; }
       const max = state.scenario.simulationUnit === "months" ? 12 : 365;
       state.scenario.simulationLength = clamp(Math.floor(Number(event.target.value) || 1), 1, max);
+      state.scenario.endDate = calculateEndDate(state.scenario.startDate, state.scenario.simulationUnit, state.scenario.simulationLength);
+      updateScenarioUi();
+      updateMetrics();
+    });
+
+    dom.weekdaySelector?.addEventListener("change", event => {
+      const input = event.target.closest('input[type="checkbox"]');
+      if (!input) return;
+      if (state.running) {
+        showToast("Detenga la simulación antes de cambiar los días habilitados.", "warning");
+        updateScenarioUi();
+        return;
+      }
+      const selected = [...dom.weekdaySelector.querySelectorAll('input[type="checkbox"]:checked')].map(item => Number(item.value));
+      if (selected.length === 0) {
+        input.checked = true;
+        showToast("Debe mantener al menos un día habilitado.", "warning");
+        return;
+      }
+      state.scenario.operatingDays = selected;
       updateScenarioUi();
       updateMetrics();
     });
@@ -5009,14 +5211,14 @@
       updateRunStatus();
       updateScenarioUi();
       loadExampleModel(false);
-      const saved = safeStorage.get("simuladorBancarioNeodatV10");
+      const saved = safeStorage.get("simuladorBancarioNeodatV11");
       if (saved) {
         try {
           applyModel(JSON.parse(saved));
           showToast("Se cargó el último modelo guardado.");
           return;
         } catch (error) {
-          safeStorage.remove("simuladorBancarioNeodatV10");
+          safeStorage.remove("simuladorBancarioNeodatV11");
           loadExampleModel(false);
         }
       }
