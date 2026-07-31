@@ -223,6 +223,16 @@
       border-left: 1px solid var(--line);
     }
 
+    .top-actions .tool-button {
+      width: auto;
+    }
+
+    .action-icon {
+      display: none;
+      font-size: 13px;
+      line-height: 1;
+    }
+
     .sidebar, .properties {
       min-height: 0;
       background: var(--panel);
@@ -345,47 +355,47 @@
 
     .workspace-summary {
       position: absolute;
-      top: 10px;
-      left: 210px;
-      right: 12px;
+      top: 8px;
+      left: 198px;
+      right: 8px;
       z-index: 18;
-      min-height: 52px;
+      min-height: 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      padding: 8px 10px 8px 14px;
+      gap: 10px;
+      padding: 5px 7px 5px 11px;
       border: 1px solid rgba(16, 35, 59, 0.10);
-      border-left: 4px solid var(--primary);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.88);
-      box-shadow: 0 8px 22px rgba(27, 42, 62, 0.11);
-      backdrop-filter: blur(14px);
+      border-left: 3px solid var(--primary);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.91);
+      box-shadow: 0 6px 16px rgba(27, 42, 62, 0.10);
+      backdrop-filter: blur(12px);
       color: var(--dark-text);
     }
 
     .workspace-summary > div:first-child { min-width: 0; }
     .workspace-summary strong {
       display: block;
-      margin-top: 2px;
+      margin-top: 1px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: 12px;
-      line-height: 1.25;
+      font-size: 11px;
+      line-height: 1.18;
     }
 
     .workspace-kicker {
       color: var(--dark-muted);
-      font-size: 8px;
+      font-size: 6.5px;
       font-weight: 900;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.13em;
     }
 
     .workspace-summary-actions {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 6px;
       flex: 0 0 auto;
     }
 
@@ -412,14 +422,14 @@
     }
 
     .quick-run-button {
-      min-height: 32px;
-      padding: 0 13px;
-      border-radius: 9px;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 8px;
       background: linear-gradient(145deg, var(--primary), var(--primary-strong));
-      box-shadow: 0 8px 18px rgba(23, 111, 229, 0.22);
+      box-shadow: 0 6px 14px rgba(23, 111, 229, 0.20);
       color: #ffffff;
       cursor: pointer;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 900;
       transition: transform 160ms ease, box-shadow 160ms ease;
     }
@@ -431,13 +441,13 @@
 
     .canvas-toolbar {
       position: absolute;
-      top: 10px;
-      left: 14px;
+      top: 8px;
+      left: 8px;
       z-index: 18;
       display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 6px;
+      gap: 4px;
+      padding: 4px;
       border: 1px solid rgba(16, 35, 59, 0.10);
       border-radius: 13px;
       background: rgba(255, 255, 255, 0.90);
@@ -448,8 +458,8 @@
     .canvas-tool {
       display: grid;
       place-items: center;
-      width: 34px;
-      height: 34px;
+      width: 30px;
+      height: 30px;
       border-radius: 9px;
       background: transparent;
       color: var(--dark-text);
@@ -464,7 +474,7 @@
     }
 
     .zoom-label {
-      min-width: 48px;
+      min-width: 42px;
       color: var(--dark-muted);
       text-align: center;
       font-size: 11px;
@@ -473,7 +483,7 @@
 
     .canvas-wrap {
       position: absolute;
-      top: 72px;
+      top: 56px;
       right: 0;
       bottom: 0;
       left: 0;
@@ -738,20 +748,20 @@
       content: attr(data-code);
       position: absolute;
       left: 13px;
-      top: -8px;
-      min-width: 19px;
-      height: 14px;
+      top: -9px;
+      min-width: 38px;
+      height: 16px;
       display: grid;
       place-items: center;
-      padding: 0 4px;
+      padding: 0 5px;
       border: 1.5px solid #ffffff;
       border-radius: 999px;
       background: var(--transaction-color, #3a8bfd);
       box-shadow: 0 3px 8px rgba(20, 34, 55, 0.24);
       color: #ffffff;
-      font-size: 6px;
+      font-size: 6.5px;
       font-weight: 900;
-      letter-spacing: .03em;
+      letter-spacing: .01em;
       white-space: nowrap;
     }
 
@@ -1014,9 +1024,9 @@
       .tool-button { width: 36px; padding: 0; }
     }
 
-    @media (max-width: 920px) {
-      .workspace-summary { left: 14px; right: 14px; top: 58px; }
-      .canvas-wrap { top: 120px; }
+    @media (max-width: 1100px) {
+      .workspace-summary { left: 190px; right: 8px; top: 8px; min-height: 40px; }
+      .canvas-wrap { top: 56px; }
       .ready-badge { display: none; }
       .app {
         grid-template-columns: 1fr;
@@ -1025,7 +1035,10 @@
       .topbar { grid-template-columns: minmax(0, 1fr) auto; }
       .brand { display: none; }
       .toolbar { min-width: 0; }
-      .top-actions { grid-column: 2; }
+      .top-actions { grid-column: 2; padding: 0 8px; gap: 5px; }
+      .top-actions .tool-button { width: 34px; min-height: 34px; padding: 0; }
+      .top-actions .action-label { display: none; }
+      .top-actions .action-icon { display: inline; }
       .workspace { grid-column: 1; }
       .sidebar, .properties {
         position: fixed;
@@ -1047,10 +1060,21 @@
     }
 
     @media (max-width: 620px) {
-      .workspace-summary { min-height: 48px; padding: 7px 8px 7px 11px; }
-      .canvas-wrap { top: 114px; }
-      .workspace-summary strong { max-width: 125px; }
-      .quick-run-button { padding: 0 10px; font-size: 9px; }
+      .canvas-toolbar { top: 6px; left: 6px; padding: 3px; }
+      .canvas-tool { width: 28px; height: 28px; }
+      .zoom-label { min-width: 38px; font-size: 10px; }
+      .workspace-summary {
+        top: 44px;
+        left: 6px;
+        right: 6px;
+        min-height: 38px;
+        gap: 6px;
+        padding: 4px 5px 4px 9px;
+      }
+      .canvas-wrap { top: 88px; }
+      .workspace-summary strong { max-width: 150px; font-size: 10px; }
+      .workspace-kicker { font-size: 6px; }
+      .quick-run-button { min-height: 26px; padding: 0 8px; font-size: 8px; }
       .topbar { grid-template-columns: minmax(0, 1fr); }
       .top-actions { display: none; }
       .toolbar { padding: 0 8px; }
@@ -1061,6 +1085,19 @@
       .status-center { justify-content: center; }
       .status-center > span { display: none; }
       .developer-credit { margin-left: 0; }
+      .mobile-model-actions { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (min-width: 621px) and (max-width: 1100px) and (orientation: landscape) {
+      .workspace-summary { left: 190px; top: 8px; right: 8px; }
+      .canvas-wrap { top: 56px; }
+      .sidebar, .properties { max-width: 320px; }
+    }
+
+    @media (max-width: 1100px) and (max-height: 600px) {
+      .workspace-summary { min-height: 36px; }
+      .canvas-wrap { top: 52px; }
+      .quick-run-button { min-height: 25px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1116,10 +1153,10 @@
       </div>
 
       <div class="top-actions">
-        <button class="tool-button" id="saveBtn">Guardar</button>
-        <button class="tool-button" id="exportBtn">Exportar</button>
-        <button class="tool-button" id="exportRecordsBtn">Registros</button>
-        <button class="tool-button mobile-toggle" id="openPropertiesBtn" title="Abrir propiedades">⚙</button>
+        <button class="tool-button" id="saveBtn" title="Guardar modelo" aria-label="Guardar modelo"><span class="action-icon">💾</span><span class="action-label">Guardar</span></button>
+        <button class="tool-button" id="exportBtn" title="Exportar modelo" aria-label="Exportar modelo"><span class="action-icon">⇩</span><span class="action-label">Exportar</span></button>
+        <button class="tool-button" id="exportRecordsBtn" title="Exportar registros" aria-label="Exportar registros"><span class="action-icon">▤</span><span class="action-label">Registros</span></button>
+        <button class="tool-button mobile-toggle" id="openPropertiesBtn" title="Abrir propiedades" aria-label="Abrir propiedades">⚙</button>
       </div>
     </header>
 
@@ -1205,6 +1242,11 @@
           Importar JSON
           <input type="file" id="importInput" accept=".json,application/json" hidden>
         </label>
+        <div class="mobile-model-actions" style="display:none;gap:8px;margin-top:8px;">
+          <button class="property-button" id="mobileSaveBtn">Guardar</button>
+          <button class="property-button" id="mobileExportBtn">Exportar</button>
+          <button class="property-button" id="mobileRecordsBtn">Registros</button>
+        </div>
       </section>
     </aside>
 
@@ -1326,12 +1368,12 @@
     "use strict";
 
     const TRANSACTION_TYPES = {
-      credit: { label: "Solicitud de crédito", code: "CR", color: "#8b6df6" },
-      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486" },
-      withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67" },
-      transfer: { label: "Transferencia", code: "TR", color: "#19a7bd" },
-      payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b" },
-      inquiry: { label: "Consulta financiera", code: "CS", color: "#617089" }
+      credit: { label: "Solicitud de crédito", code: "CR", color: "#8b6df6", minAmount: 1000, maxAmount: 25000 },
+      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486", minAmount: 20, maxAmount: 5000 },
+      withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67", minAmount: 20, maxAmount: 2000 },
+      transfer: { label: "Transferencia", code: "TR", color: "#19a7bd", minAmount: 10, maxAmount: 5000 },
+      payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b", minAmount: 5, maxAmount: 500 },
+      inquiry: { label: "Consulta financiera", code: "CS", color: "#617089", minAmount: 0, maxAmount: 0 }
     };
 
     const NODE_TYPES = {
@@ -1347,6 +1389,10 @@
           personType: "Ciudadano",
           transactionMode: "mixed",
           transactionType: "credit",
+          amountMode: "automatic",
+          amountFixed: 500,
+          amountMin: 20,
+          amountMax: 5000,
           transactionWeights: {
             credit: 30,
             deposit: 25,
@@ -1498,6 +1544,44 @@
 
     function getTransactionConfig(type) {
       return TRANSACTION_TYPES[type] || TRANSACTION_TYPES.inquiry;
+    }
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("es-EC", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(Number(value) || 0);
+    }
+
+    function compactCurrency(value) {
+      const amount = Math.max(0, Number(value) || 0);
+      if (amount >= 1000000) return "$" + formatNumber(amount / 1000000, 1) + "M";
+      if (amount >= 1000) return "$" + formatNumber(amount / 1000, amount >= 10000 ? 0 : 1) + "K";
+      return "$" + formatNumber(amount, amount % 1 ? 2 : 0);
+    }
+
+    function randomAmount(min, max) {
+      const low = Math.max(0, Number(min) || 0);
+      const high = Math.max(low, Number(max) || low);
+      return Math.round((low + Math.random() * (high - low)) * 100) / 100;
+    }
+
+    function chooseTransactionAmount(type, props) {
+      const transaction = getTransactionConfig(type);
+      const mode = props.amountMode || "automatic";
+      if (type === "inquiry" && mode === "automatic") return 0;
+      if (mode === "fixed") return Math.max(0, Number(props.amountFixed) || 0);
+      if (mode === "random") return randomAmount(props.amountMin, props.amountMax);
+      return randomAmount(transaction.minAmount, transaction.maxAmount);
+    }
+
+    function amountConfigurationSummary(props) {
+      const mode = props.amountMode || "automatic";
+      if (mode === "fixed") return formatCurrency(props.amountFixed || 0);
+      if (mode === "random") return `${formatCurrency(props.amountMin || 0)} – ${formatCurrency(props.amountMax || 0)}`;
+      return "Rango automático por trámite";
     }
 
     function chooseTransactionType(props) {
@@ -1661,7 +1745,7 @@
           const transactionText = (node.props.transactionMode || "mixed") === "fixed"
             ? getTransactionConfig(node.props.transactionType || "credit").label
             : "Mezcla configurable";
-          details = `<b>Usuario:</b> ${escapeHtml(node.props.personType || "Ciudadano")}<br><b>Trámite:</b> ${escapeHtml(transactionText)}`;
+          details = `<b>Usuario:</b> ${escapeHtml(node.props.personType || "Ciudadano")}<br><b>Trámite:</b> ${escapeHtml(transactionText)}<br><b>Monto USD:</b> ${escapeHtml(amountConfigurationSummary(node.props))}`;
         } else if (node.type === "queue") {
           statusValue = String(runtime.queue.length);
           metricLabel = "En espera";
@@ -1891,7 +1975,7 @@
       renderNodes();
       renderEdges();
       renderProperties();
-      if (window.innerWidth <= 920 && kind) dom.properties.classList.add("open");
+      if (window.innerWidth <= 1100 && kind) dom.properties.classList.add("open");
     }
 
     function clearSelection() {
@@ -1975,6 +2059,35 @@
               <select id="propTransactionType">${transactionOptions(node.props.transactionType || "credit")}</select>
             </div>
           </div>
+          <div class="field">
+            <label for="propAmountMode">Monto de la transacción en USD</label>
+            <select id="propAmountMode">
+              <option value="automatic" ${(node.props.amountMode || "automatic") === "automatic" ? "selected" : ""}>Automático según el trámite</option>
+              <option value="random" ${node.props.amountMode === "random" ? "selected" : ""}>Rango personalizado</option>
+              <option value="fixed" ${node.props.amountMode === "fixed" ? "selected" : ""}>Monto fijo</option>
+            </select>
+          </div>
+          ${node.props.amountMode === "fixed" ? `
+            <div class="field">
+              <label for="propAmountFixed">Monto fijo USD</label>
+              <input id="propAmountFixed" type="number" min="0" step="0.01" value="${Number(node.props.amountFixed) || 0}">
+            </div>
+          ` : node.props.amountMode === "random" ? `
+            <div class="field-row">
+              <div class="field">
+                <label for="propAmountMin">Monto mínimo USD</label>
+                <input id="propAmountMin" type="number" min="0" step="0.01" value="${Number(node.props.amountMin) || 0}">
+              </div>
+              <div class="field">
+                <label for="propAmountMax">Monto máximo USD</label>
+                <input id="propAmountMax" type="number" min="0" step="0.01" value="${Number(node.props.amountMax) || 0}">
+              </div>
+            </div>
+          ` : `
+            <div style="margin:-5px 0 13px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.04);color:var(--muted);font-size:9px;line-height:1.5;">
+              Crédito: USD 1.000–25.000 · Depósito: USD 20–5.000 · Retiro: USD 20–2.000 · Transferencia: USD 10–5.000 · Pago: USD 5–500 · Consulta: USD 0.
+            </div>
+          `}
           ${(node.props.transactionMode || "mixed") === "mixed" ? `
             <div class="field">
               <label>Pesos de cada trámite</label>
@@ -2119,6 +2232,17 @@
           node.props.transactionType = TRANSACTION_TYPES[event.target.value] ? event.target.value : "credit";
           renderNodes();
         });
+        document.getElementById("propAmountMode")?.addEventListener("change", event => {
+          node.props.amountMode = ["automatic", "random", "fixed"].includes(event.target.value) ? event.target.value : "automatic";
+          renderNodes();
+          renderProperties();
+        });
+        bindNumericInput("propAmountFixed", value => node.props.amountFixed = Math.max(0, value));
+        bindNumericInput("propAmountMin", value => {
+          node.props.amountMin = Math.max(0, value);
+          if ((Number(node.props.amountMax) || 0) < node.props.amountMin) node.props.amountMax = node.props.amountMin;
+        });
+        bindNumericInput("propAmountMax", value => node.props.amountMax = Math.max(Number(node.props.amountMin) || 0, value));
         node.props.transactionWeights = {
           ...NODE_TYPES.source.props.transactionWeights,
           ...(node.props.transactionWeights || {})
@@ -2488,6 +2612,7 @@
           const label = "P-" + String(state.nextEntityId).padStart(4, "0");
           const transactionType = chooseTransactionType(node.props);
           const transaction = getTransactionConfig(transactionType);
+          const amountUsd = chooseTransactionAmount(transactionType, node.props);
           const entity = {
             id: state.nextEntityId++,
             label,
@@ -2496,6 +2621,7 @@
             transactionLabel: transaction.label,
             transactionCode: transaction.code,
             transactionColor: transaction.color,
+            amountUsd,
             createdAt: nextTime,
             queueEnteredAt: null,
             route: [],
@@ -2600,9 +2726,9 @@
       const element = document.createElement("div");
       element.className = "entity";
       element.textContent = "👤";
-      element.dataset.code = entity.transactionCode || "TR";
+      element.dataset.code = `${entity.transactionCode || "TR"} · ${compactCurrency(entity.amountUsd)}`;
       element.style.setProperty("--transaction-color", entity.transactionColor || "#3a8bfd");
-      element.title = `${entity.label} · ${entity.transactionLabel || "Trámite financiero"}`;
+      element.title = `${entity.label} · ${entity.transactionLabel || "Trámite financiero"} · ${formatCurrency(entity.amountUsd)}`;
       element.style.left = start.x + "px";
       element.style.top = start.y + "px";
       dom.entityLayer.appendChild(element);
@@ -2684,6 +2810,7 @@
         transactionType: entity.transactionType,
         transactionLabel: entity.transactionLabel || getTransactionConfig(entity.transactionType).label,
         transactionCode: entity.transactionCode || getTransactionConfig(entity.transactionType).code,
+        amountUsd: Math.max(0, Number(entity.amountUsd) || 0),
         startTime: Number(entity.createdAt.toFixed(1)),
         endTime: Number(state.simTime.toFixed(1)),
         finalStatus: sinkNode.props.finalStatus || entity.finalStatus || "Completado",
@@ -2814,6 +2941,7 @@
           <strong>${escapeHtml(record.personId)} · ${escapeHtml(record.finalStatus)}</strong>
           <span><b>Usuario:</b> ${escapeHtml(record.personType)}</span>
           <span><b>Trámite:</b> ${escapeHtml(record.transactionLabel || "No especificado")}</span>
+          <span><b>Monto USD:</b> ${escapeHtml(formatCurrency(record.amountUsd || 0))}</span>
           <span><b>Ruta:</b> ${escapeHtml(record.route)}</span>
           <span><b>Tiempo:</b> ${formatNumber(record.startTime,1)} s → ${formatNumber(record.endTime,1)} s</span>
         `;
@@ -2853,7 +2981,7 @@
 
     function saveModel() {
       const payload = {
-        version: 4,
+        version: 5,
         savedAt: new Date().toISOString(),
         nodes: state.nodes,
         edges: state.edges
@@ -2871,7 +2999,7 @@
 
     function exportModel() {
       const payload = {
-        version: 4,
+        version: 5,
         exportedAt: new Date().toISOString(),
         nodes: state.nodes,
         edges: state.edges
@@ -2886,7 +3014,7 @@
         return;
       }
       const rows = [
-        ["persona", "tipo_usuario", "tramite_financiero", "codigo_tramite", "hora_ingreso", "hora_salida", "estado_final", "ruta"]
+        ["persona", "tipo_usuario", "tramite_financiero", "codigo_tramite", "monto_usd", "hora_ingreso", "hora_salida", "estado_final", "ruta"]
       ];
       state.records.forEach(record => {
         rows.push([
@@ -2894,6 +3022,7 @@
           record.personType,
           record.transactionLabel || "No especificado",
           record.transactionCode || "",
+          Number(record.amountUsd || 0).toFixed(2),
           record.startTime,
           record.endTime,
           record.finalStatus,
@@ -2956,7 +3085,7 @@
 
     function loadExampleModel(showNotification = true) {
       const example = {
-        version: 4,
+        version: 5,
         nodes: [
           {
             id: "source-entry",
@@ -2971,6 +3100,10 @@
               personType: "Cliente",
               transactionMode: "mixed",
               transactionType: "credit",
+              amountMode: "automatic",
+              amountFixed: 500,
+              amountMin: 20,
+              amountMax: 5000,
               transactionWeights: {
                 credit: 30,
                 deposit: 25,
@@ -3084,7 +3217,8 @@
     }
 
     function setZoom(value) {
-      state.zoom = clamp(value, 0.45, 1.6);
+      const minimumZoom = window.innerWidth <= 620 ? 0.28 : (window.innerWidth <= 1100 ? 0.36 : 0.45);
+      state.zoom = clamp(value, minimumZoom, 1.6);
       dom.canvas.style.transform = `scale(${state.zoom})`;
       dom.canvasWrap.firstElementChild.style.marginRight = ((state.zoom - 1) * 1900) + "px";
       dom.canvasWrap.firstElementChild.style.marginBottom = ((state.zoom - 1) * 1100) + "px";
@@ -3131,6 +3265,9 @@
     document.getElementById("saveBtn").addEventListener("click", saveModel);
     document.getElementById("exportBtn").addEventListener("click", exportModel);
     document.getElementById("exportRecordsBtn").addEventListener("click", exportRecords);
+    document.getElementById("mobileSaveBtn")?.addEventListener("click", saveModel);
+    document.getElementById("mobileExportBtn")?.addEventListener("click", exportModel);
+    document.getElementById("mobileRecordsBtn")?.addEventListener("click", exportRecords);
     document.getElementById("loadExampleBtn").addEventListener("click", loadExampleModel);
     document.getElementById("clearModelBtn").addEventListener("click", clearModel);
     document.getElementById("importInput").addEventListener("change", event => {
@@ -3174,7 +3311,7 @@
     });
 
     window.addEventListener("resize", () => {
-      if (window.innerWidth > 920) {
+      if (window.innerWidth > 1100) {
         dom.sidebar.classList.remove("open");
         dom.properties.classList.remove("open");
       }
