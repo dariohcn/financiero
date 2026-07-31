@@ -1302,6 +1302,206 @@
         transition-duration: 0.001ms !important;
       }
     }
+
+
+    /* ===== INTERFAZ BLANCA PROFESIONAL ===== */
+    html, body {
+      background: #eef3f8;
+      color: #172237;
+    }
+
+    .topbar {
+      border-bottom-color: #dbe3ed;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 8px 28px rgba(20, 42, 72, 0.08);
+    }
+
+    .toolbar-divider,
+    .brand,
+    .top-actions {
+      border-color: #e1e7ef;
+    }
+
+    .tool-button,
+    .speed-control {
+      border-color: #d7e0ea;
+      background: #ffffff;
+      color: #172237;
+      box-shadow: 0 2px 7px rgba(21, 41, 68, 0.05);
+    }
+
+    .tool-button:hover {
+      border-color: rgba(58, 139, 253, 0.55);
+      background: #eef5ff;
+    }
+
+    .tool-button.primary,
+    .quick-run-button {
+      color: #ffffff;
+      border-color: transparent;
+      background: linear-gradient(145deg, #3a8bfd, #176fe5);
+    }
+
+    .speed-control span { color: #65748a; }
+    .speed-control select { color: #172237; }
+    .speed-control option { background: #ffffff; color: #172237; }
+
+    .sidebar,
+    .properties {
+      background: #ffffff;
+      color: #172237;
+      border-color: #dbe3ed;
+      scrollbar-color: rgba(70, 91, 120, 0.28) transparent;
+    }
+
+    .sidebar .panel-section,
+    .properties .panel-section {
+      border-bottom-color: #e4e9f1;
+    }
+
+    .sidebar .panel-title h2,
+    .sidebar .palette-copy strong,
+    .sidebar .tip-card strong {
+      color: #172237;
+    }
+
+    .sidebar .panel-title span,
+    .sidebar .palette-copy span,
+    .sidebar .tip-card p,
+    .sidebar .scenario-fields label {
+      color: #6d7c91;
+    }
+
+    .sidebar .palette-item,
+    .sidebar .tip-card,
+    .sidebar .property-button,
+    .sidebar .scenario-fields input,
+    .sidebar .scenario-fields select,
+    .sidebar .service-card {
+      border-color: #dbe3ed;
+      background: #ffffff;
+      color: #172237;
+      box-shadow: 0 4px 14px rgba(25, 43, 70, 0.05);
+    }
+
+    .sidebar .palette-item:hover,
+    .sidebar .property-button:hover {
+      border-color: rgba(58, 139, 253, 0.52);
+      background: #eef5ff;
+    }
+
+    .workspace {
+      background: #edf2f7;
+    }
+
+    .workspace-summary,
+    .canvas-toolbar {
+      border-color: #d8e1ec;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 24px rgba(24, 45, 73, 0.10);
+    }
+
+    .statusbar {
+      border-top-color: #dbe3ed;
+      background: #ffffff;
+      color: #64748b;
+      box-shadow: 0 -5px 18px rgba(24, 45, 73, 0.06);
+    }
+
+    .status-left,
+    .status-right { border-color: #e1e7ef; }
+
+    .developer-credit { color: #49647f; }
+
+    .scenario-period-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 9px;
+    }
+
+    .scenario-note {
+      margin-top: 9px;
+      padding: 10px;
+      border: 1px solid #dbe3ed;
+      border-radius: 10px;
+      background: #f7f9fc;
+      color: #6d7c91;
+      font-size: 9px;
+      line-height: 1.55;
+    }
+
+    .service-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .service-card {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 9px;
+      align-items: center;
+      padding: 9px;
+      border: 1px solid #dbe3ed;
+      border-radius: 11px;
+    }
+
+    .service-card i {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: #eef5ff;
+      color: #176fe5;
+      font-style: normal;
+      font-size: 15px;
+    }
+
+    .service-card strong { display: block; color: #172237; font-size: 10px; }
+    .service-card span { display: block; margin-top: 2px; color: #718096; font-size: 9px; line-height: 1.35; }
+
+    .entity.angry {
+      background: linear-gradient(145deg, #f05b67, #c83e4b);
+      animation: angryPulse 700ms ease-in-out infinite alternate;
+    }
+
+    .entity.angry::after { background: #d94b58; }
+
+    @keyframes angryPulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.14); }
+    }
+
+    .mood-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 5px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #fff0f1;
+      color: #bf3c48;
+      font-size: 8px;
+      font-weight: 900;
+    }
+
+    .properties .field-help {
+      margin: -4px 0 13px;
+      padding: 9px 10px;
+      border: 1px solid #dbe3ed;
+      border-radius: 9px;
+      background: #f7f9fc;
+      color: #69788d;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 620px) {
+      .scenario-period-grid { grid-template-columns: 1fr; }
+      .workspace-summary-actions .capital-badge:nth-of-type(1) { display: inline-flex; }
+    }
+
   </style>
 </head>
 <body>
@@ -1333,6 +1533,9 @@
             <option value="5" selected>5×</option>
             <option value="10">10×</option>
             <option value="25">25×</option>
+            <option value="100">100×</option>
+            <option value="500">500×</option>
+            <option value="2000">2000×</option>
           </select>
         </div>
 
@@ -1416,14 +1619,29 @@
 
       <section class="panel-section">
         <div class="panel-title"><h2>Trámites</h2><span>Etiqueta del usuario</span></div>
-        <div style="display:grid;gap:7px;font-size:10px;">
+        <div style="display:grid;gap:7px;font-size:10px;color:#506176;">
           <div><b style="color:#8b6df6;">CR</b> · Solicitud de crédito</div>
           <div><b style="color:#20b486;">DP</b> · Depósito de dinero</div>
           <div><b style="color:#ef5b67;">RT</b> · Retiro de dinero</div>
           <div><b style="color:#19a7bd;">TR</b> · Transferencia</div>
           <div><b style="color:#f2a93b;">PG</b> · Pago de servicios</div>
-          <div><b style="color:#9aabc0;">CS</b> · Consulta financiera</div>
+          <div><b style="color:#617089;">CS</b> · Consulta financiera</div>
+          <div><b style="color:#2563eb;">AP</b> · Apertura de cuenta</div>
+          <div><b style="color:#db2777;">TJ</b> · Tarjeta bancaria</div>
+          <div><b style="color:#0f9f8f;">SG</b> · Seguro bancario</div>
+          <div><b style="color:#7c3aed;">IV</b> · Inversión o ahorro</div>
         </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-title"><h2>Servicios bancarios</h2><span>Nueva área</span></div>
+        <div class="service-list">
+          <div class="service-card"><i>🏦</i><div><strong>Apertura de cuentas</strong><span>Cuenta de ahorro o corriente.</span></div></div>
+          <div class="service-card"><i>💳</i><div><strong>Tarjetas</strong><span>Solicitud, activación o reposición.</span></div></div>
+          <div class="service-card"><i>🛡</i><div><strong>Seguros</strong><span>Seguro de vida, bienes o crédito.</span></div></div>
+          <div class="service-card"><i>📈</i><div><strong>Inversiones</strong><span>Pólizas, depósitos a plazo y ahorro.</span></div></div>
+        </div>
+        <button class="property-button" id="addBankingServicesBtn" style="width:100%;margin-top:9px;">Agregar área de servicios</button>
       </section>
 
       <section class="panel-section">
@@ -1437,17 +1655,44 @@
             <label for="initialCapitalInput">Capital inicial USD</label>
             <input id="initialCapitalInput" type="number" min="0" step="1000" value="1000000">
           </div>
-          <div>
-            <label for="openingTimeInput">Hora de apertura</label>
-            <select id="openingTimeInput" aria-label="Hora de apertura"></select>
+        </div>
+        <div class="scenario-period-grid">
+          <div class="scenario-fields">
+            <div>
+              <label for="simulationStartDateInput">Fecha de inicio</label>
+              <input id="simulationStartDateInput" type="date">
+            </div>
           </div>
-          <div>
-            <label for="closingTimeInput">Hora de cierre</label>
-            <select id="closingTimeInput" aria-label="Hora de cierre"></select>
+          <div class="scenario-fields">
+            <div>
+              <label for="simulationUnitInput">Simular por</label>
+              <select id="simulationUnitInput">
+                <option value="days">Días</option>
+                <option value="months">Meses</option>
+              </select>
+            </div>
+          </div>
+          <div class="scenario-fields">
+            <div>
+              <label for="simulationLengthInput">Cantidad</label>
+              <input id="simulationLengthInput" type="number" min="1" max="365" step="1" value="1">
+            </div>
+          </div>
+          <div class="scenario-fields">
+            <div>
+              <label for="openingTimeInput">Hora de entrada</label>
+              <select id="openingTimeInput" aria-label="Hora de entrada"></select>
+            </div>
+          </div>
+          <div class="scenario-fields">
+            <div>
+              <label for="closingTimeInput">Hora de salida</label>
+              <select id="closingTimeInput" aria-label="Hora de salida"></select>
+            </div>
           </div>
         </div>
-        <div style="margin-top:9px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.04);color:var(--muted);font-size:9px;line-height:1.5;">
-          La jornada puede configurarse entre las 07:00 y las 19:00. Los tiempos de llegada y atención se expresan en minutos simulados.
+        <div class="scenario-note">
+          Horario seleccionable entre 08:00 y 19:00. La simulación puede ejecutarse por días o meses. Cada registro guarda fecha, hora de entrada, hora de salida, espera, atención, estado emocional, operación y efecto sobre el capital.
         </div>
       </section>
 
@@ -1474,7 +1719,7 @@
           <strong id="scenarioTitle">Entidad financiera · recorrido de usuarios por áreas</strong>
         </div>
         <div class="workspace-summary-actions">
-          <span class="capital-badge" id="scheduleBadge">Horario: 07:00–19:00</span>
+          <span class="capital-badge" id="scheduleBadge">1 día · 08:00–19:00</span>
           <span class="capital-badge" id="capitalBadge">Capital disponible: $1.000.000,00</span>
           <span class="ready-badge"><i></i> Modelo listo</span>
           <button id="quickRunBtn" class="quick-run-button">▶ Ejecutar simulación</button>
@@ -1529,12 +1774,16 @@
         </div>
 
         <div class="metrics-grid">
-          <div class="metric-card"><span>Hora simulada</span><strong id="metricTime">07:00</strong></div>
+          <div class="metric-card"><span>Fecha simulada</span><strong id="metricDate">—</strong></div>
+          <div class="metric-card"><span>Hora simulada</span><strong id="metricTime">08:00</strong></div>
           <div class="metric-card"><span>Personas ingresadas</span><strong id="metricCreated">0</strong></div>
           <div class="metric-card"><span>Registros guardados</span><strong id="metricCompleted">0</strong></div>
           <div class="metric-card"><span>En sistema</span><strong id="metricWip">0</strong></div>
           <div class="metric-card"><span>Cola máxima</span><strong id="metricMaxQueue">0</strong></div>
           <div class="metric-card"><span>Personal total</span><strong id="metricStaff">0</strong></div>
+          <div class="metric-card"><span>Demoras detectadas</span><strong id="metricDelayed">0</strong></div>
+          <div class="metric-card"><span>Usuarios molestos</span><strong id="metricAngry">0</strong></div>
+          <div class="metric-card"><span>Abandonos por demora</span><strong id="metricAbandoned">0</strong></div>
           <div class="metric-card balance-card"><span>Capital disponible</span><strong id="metricCapital">$1,00 M</strong></div>
           <div class="metric-card"><span>Variación neta</span><strong id="metricNetChange">$0</strong></div>
           <div class="metric-card"><span>Créditos desembolsados</span><strong id="metricCreditDisbursed">$0</strong></div>
@@ -1584,7 +1833,7 @@
 
       <div class="status-right">
         <span>Motor: flujo discreto de usuarios</span>
-        <span id="clockStatus">07:00 h</span>
+        <span id="clockStatus">08:00 h</span>
       </div>
     </footer>
   </div>
@@ -1595,12 +1844,24 @@
     "use strict";
 
     const TRANSACTION_TYPES = {
-      credit: { label: "Solicitud de crédito", code: "CR", color: "#8b6df6", minAmount: 1000, maxAmount: 25000 },
-      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486", minAmount: 1, maxAmount: 5000 },
-      withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67", minAmount: 20, maxAmount: 2000 },
-      transfer: { label: "Transferencia", code: "TR", color: "#19a7bd", minAmount: 10, maxAmount: 5000 },
-      payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b", minAmount: 5, maxAmount: 500 },
-      inquiry: { label: "Consulta financiera", code: "CS", color: "#617089", minAmount: 0, maxAmount: 0 }
+      credit: { label: "Solicitud de crédito", code: "CR", color: "#8b6df6", minAmount: 1000, maxAmount: 120000 },
+      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486", minAmount: 1, maxAmount: 10000 },
+      withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67", minAmount: 1, maxAmount: 5000 },
+      transfer: { label: "Transferencia", code: "TR", color: "#19a7bd", minAmount: 1, maxAmount: 15000 },
+      payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b", minAmount: 1, maxAmount: 1000 },
+      inquiry: { label: "Consulta financiera", code: "CS", color: "#617089", minAmount: 0, maxAmount: 0 },
+      account: { label: "Apertura de cuenta", code: "AP", color: "#2563eb", minAmount: 0, maxAmount: 500 },
+      card: { label: "Tarjeta bancaria", code: "TJ", color: "#db2777", minAmount: 0, maxAmount: 200 },
+      insurance: { label: "Seguro bancario", code: "SG", color: "#0f9f8f", minAmount: 5, maxAmount: 500 },
+      investment: { label: "Inversión o ahorro", code: "IV", color: "#7c3aed", minAmount: 100, maxAmount: 25000 }
+    };
+
+    const CREDIT_TYPES = {
+      housing: { label: "Crédito para vivienda", code: "VIV", minAmount: 15000, maxAmount: 120000, defaultRate: 9.5, defaultTerm: 180 },
+      vehicle: { label: "Crédito para vehículo", code: "VEH", minAmount: 5000, maxAmount: 50000, defaultRate: 13.5, defaultTerm: 60 },
+      consumer: { label: "Crédito de consumo", code: "CON", minAmount: 500, maxAmount: 25000, defaultRate: 16.5, defaultTerm: 36 },
+      business: { label: "Crédito para negocio", code: "NEG", minAmount: 1000, maxAmount: 60000, defaultRate: 15.0, defaultTerm: 48 },
+      education: { label: "Crédito educativo", code: "EDU", minAmount: 1000, maxAmount: 30000, defaultRate: 11.5, defaultTerm: 60 }
     };
 
     const NODE_TYPES = {
@@ -1627,7 +1888,18 @@
             withdrawal: 20,
             transfer: 10,
             payment: 10,
-            inquiry: 5
+            inquiry: 5,
+            account: 8,
+            card: 7,
+            insurance: 5,
+            investment: 5
+          },
+          creditTypeWeights: {
+            housing: 18,
+            vehicle: 22,
+            consumer: 35,
+            business: 15,
+            education: 10
           }
         }
       },
@@ -1640,6 +1912,10 @@
           capacity: 999,
           department: "General",
           procedure: "Espera de atención",
+          targetWaitMinutes: 5,
+          angerAfterMinutes: 12,
+          abandonAfterMinutes: 30,
+          abandonProbability: 30,
           color: "#f2a93b"
         }
       },
@@ -1662,6 +1938,24 @@
           creditMaxIncomeMultiple: 12,
           creditAnnualInterestRate: 14,
           creditTermMonths: 24,
+          creditRates: {
+            housing: 9.5,
+            vehicle: 13.5,
+            consumer: 16.5,
+            business: 15,
+            education: 11.5
+          },
+          creditTerms: {
+            housing: 180,
+            vehicle: 60,
+            consumer: 36,
+            business: 48,
+            education: 60
+          },
+          targetWaitMinutes: 5,
+          angerAfterMinutes: 12,
+          abandonAfterMinutes: 35,
+          abandonProbability: 25,
           color: "#3a8bfd"
         }
       },
@@ -1731,6 +2025,13 @@
       initialCapitalInput: document.getElementById("initialCapitalInput"),
       openingTimeInput: document.getElementById("openingTimeInput"),
       closingTimeInput: document.getElementById("closingTimeInput"),
+      simulationStartDateInput: document.getElementById("simulationStartDateInput"),
+      simulationUnitInput: document.getElementById("simulationUnitInput"),
+      simulationLengthInput: document.getElementById("simulationLengthInput"),
+      metricDate: document.getElementById("metricDate"),
+      metricDelayed: document.getElementById("metricDelayed"),
+      metricAngry: document.getElementById("metricAngry"),
+      metricAbandoned: document.getElementById("metricAbandoned"),
       scheduleBadge: document.getElementById("scheduleBadge"),
       capitalBadge: document.getElementById("capitalBadge"),
       scenarioTitle: document.getElementById("scenarioTitle"),
@@ -1753,7 +2054,10 @@
         businessName: "Entidad financiera",
         initialCapital: 1000000,
         currentCapital: 1000000,
-        openingTime: "07:00",
+        startDate: new Date().toISOString().slice(0, 10),
+        simulationUnit: "days",
+        simulationLength: 1,
+        openingTime: "08:00",
         closingTime: "19:00"
       },
       selected: null,
@@ -1790,6 +2094,9 @@
         paymentTotal: 0,
         transferInTotal: 0,
         transferOutTotal: 0,
+        delayedEvents: 0,
+        angryUsers: 0,
+        abandonedUsers: 0,
         history: []
       },
       nextHistoryTime: 0
@@ -1836,7 +2143,7 @@
     }
 
     function sessionStartMinutes() {
-      return timeStringToMinutes(state.scenario?.openingTime || "07:00");
+      return timeStringToMinutes(state.scenario?.openingTime || "08:00");
     }
 
     function sessionEndMinutes() {
@@ -1847,14 +2154,65 @@
       return Math.max(1, sessionEndMinutes() - sessionStartMinutes());
     }
 
+    function parseLocalDate(value) {
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+      if (!match) return new Date();
+      return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0, 0);
+    }
+
+    function formatDateIso(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatDisplayDate(date) {
+      return new Intl.DateTimeFormat("es-EC", { day: "2-digit", month: "2-digit", year: "numeric" }).format(date);
+    }
+
+    function simulationDaysCount() {
+      const quantity = clamp(Math.floor(Number(state.scenario?.simulationLength) || 1), 1, 365);
+      if ((state.scenario?.simulationUnit || "days") === "months") {
+        const start = parseLocalDate(state.scenario?.startDate);
+        const end = new Date(start);
+        end.setMonth(end.getMonth() + quantity);
+        return Math.max(1, Math.round((end - start) / 86400000));
+      }
+      return quantity;
+    }
+
+    function simulationTotalMinutes() {
+      return simulationDaysCount() * sessionDurationMinutes();
+    }
+
+    function simulationDayIndex(simMinute = state.simTime) {
+      const duration = sessionDurationMinutes();
+      return Math.min(simulationDaysCount() - 1, Math.max(0, Math.floor(Math.max(0, Number(simMinute) || 0) / duration)));
+    }
+
+    function simulationDate(simMinute = state.simTime) {
+      const date = parseLocalDate(state.scenario?.startDate);
+      date.setDate(date.getDate() + simulationDayIndex(simMinute));
+      return date;
+    }
+
     function simulationClock(simMinute = state.simTime) {
-      return minutesToClock(sessionStartMinutes() + Math.max(0, Number(simMinute) || 0));
+      const duration = sessionDurationMinutes();
+      const raw = Math.max(0, Number(simMinute) || 0);
+      let minuteWithinDay = raw % duration;
+      if (raw > 0 && raw >= simulationTotalMinutes()) minuteWithinDay = duration;
+      return minutesToClock(sessionStartMinutes() + minuteWithinDay);
+    }
+
+    function simulationDateTime(simMinute = state.simTime) {
+      return `${formatDisplayDate(simulationDate(simMinute))} ${simulationClock(simMinute)}`;
     }
 
     function populateScheduleSelectors() {
       if (!dom.openingTimeInput || !dom.closingTimeInput) return;
       const options = [];
-      for (let minutes = 7 * 60; minutes <= 19 * 60; minutes += 30) {
+      for (let minutes = 8 * 60; minutes <= 19 * 60; minutes += 30) {
         const value = minutesToClock(minutes);
         options.push(`<option value="${value}">${value}</option>`);
       }
@@ -1866,27 +2224,44 @@
     function updateScenarioUi() {
       const name = String(state.scenario?.businessName || "Entidad financiera").trim() || "Entidad financiera";
       const capital = Math.max(0, Number(state.scenario?.initialCapital) || 0);
-      let openingTime = String(state.scenario?.openingTime || "07:00");
+      let startDate = String(state.scenario?.startDate || new Date().toISOString().slice(0, 10));
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) startDate = new Date().toISOString().slice(0, 10);
+      let simulationUnit = state.scenario?.simulationUnit === "months" ? "months" : "days";
+      let simulationLength = clamp(Math.floor(Number(state.scenario?.simulationLength) || 1), 1, 365);
+      let openingTime = String(state.scenario?.openingTime || "08:00");
       let closingTime = String(state.scenario?.closingTime || "19:00");
-      if (timeStringToMinutes(openingTime) < 7 * 60 || timeStringToMinutes(openingTime) > 19 * 60) openingTime = "07:00";
-      if (timeStringToMinutes(closingTime) < 7 * 60 || timeStringToMinutes(closingTime) > 19 * 60) closingTime = "19:00";
+      if (timeStringToMinutes(openingTime) < 8 * 60 || timeStringToMinutes(openingTime) > 19 * 60) openingTime = "08:00";
+      if (timeStringToMinutes(closingTime) < 8 * 60 || timeStringToMinutes(closingTime) > 19 * 60) closingTime = "19:00";
       if (timeStringToMinutes(closingTime) <= timeStringToMinutes(openingTime)) closingTime = "19:00";
+
       state.scenario.businessName = name;
       state.scenario.initialCapital = capital;
-      if (!Number.isFinite(Number(state.scenario.currentCapital))) {
-        state.scenario.currentCapital = capital;
-      }
+      state.scenario.startDate = startDate;
+      state.scenario.simulationUnit = simulationUnit;
+      state.scenario.simulationLength = simulationLength;
+      if (!Number.isFinite(Number(state.scenario.currentCapital))) state.scenario.currentCapital = capital;
       state.scenario.currentCapital = Math.max(0, Number(state.scenario.currentCapital) || 0);
       state.scenario.openingTime = openingTime;
       state.scenario.closingTime = closingTime;
+
       if (dom.businessNameInput && dom.businessNameInput.value !== name) dom.businessNameInput.value = name;
       if (dom.initialCapitalInput && Number(dom.initialCapitalInput.value) !== capital) dom.initialCapitalInput.value = String(capital);
+      if (dom.simulationStartDateInput) dom.simulationStartDateInput.value = startDate;
+      if (dom.simulationUnitInput) dom.simulationUnitInput.value = simulationUnit;
+      if (dom.simulationLengthInput) {
+        dom.simulationLengthInput.value = String(simulationLength);
+        dom.simulationLengthInput.max = simulationUnit === "months" ? "12" : "365";
+      }
       if (dom.openingTimeInput) dom.openingTimeInput.value = openingTime;
       if (dom.closingTimeInput) dom.closingTimeInput.value = closingTime;
       if (dom.scenarioTitle) dom.scenarioTitle.textContent = name + " · recorrido de usuarios por áreas";
-      if (dom.scheduleBadge) dom.scheduleBadge.textContent = "Horario: " + openingTime + "–" + closingTime;
+      const periodText = simulationUnit === "months"
+        ? `${simulationLength} ${simulationLength === 1 ? "mes" : "meses"}`
+        : `${simulationLength} ${simulationLength === 1 ? "día" : "días"}`;
+      if (dom.scheduleBadge) dom.scheduleBadge.textContent = `${periodText} · ${openingTime}–${closingTime}`;
       if (dom.capitalBadge) dom.capitalBadge.textContent = "Capital disponible: " + formatCurrency(state.scenario.currentCapital);
       if (dom.metricCapital) dom.metricCapital.textContent = compactCurrency(state.scenario.currentCapital);
+      if (dom.metricDate) dom.metricDate.textContent = formatDisplayDate(simulationDate());
     }
 
     function getTransactionConfig(type) {
@@ -1956,6 +2331,27 @@
         if (random <= 0) return item.type;
       }
       return entries[entries.length - 1].type;
+    }
+
+    function chooseCreditType(props) {
+      const defaults = NODE_TYPES.source.props.creditTypeWeights || {};
+      const weights = { ...defaults, ...(props.creditTypeWeights || {}) };
+      const entries = Object.keys(CREDIT_TYPES).map(type => ({
+        type,
+        weight: Math.max(0, Number(weights[type]) || 0)
+      }));
+      const total = entries.reduce((sum, item) => sum + item.weight, 0);
+      if (total <= 0) return "consumer";
+      let random = Math.random() * total;
+      for (const item of entries) {
+        random -= item.weight;
+        if (random <= 0) return item.type;
+      }
+      return "consumer";
+    }
+
+    function creditTypeLabel(type) {
+      return CREDIT_TYPES[type]?.label || CREDIT_TYPES.consumer.label;
     }
 
     function transactionOptions(selected) {
@@ -2101,17 +2497,21 @@
             : "Mezcla configurable";
           details = `<b>Usuario:</b> ${escapeHtml(node.props.personType || "Ciudadano")}<br><b>Trámite:</b> ${escapeHtml(transactionText)}<br><b>Monto USD:</b> ${escapeHtml(amountConfigurationSummary(node.props))}`;
         } else if (node.type === "queue") {
+          const angryCount = runtime.queue.filter(entity => entity.mood === "angry").length;
           statusValue = String(runtime.queue.length);
           metricLabel = "En espera";
           metricValue = runtime.queue.length;
-          details = `<b>Área:</b> ${escapeHtml(node.props.department || "General")}<br><b>Trámite:</b> ${escapeHtml(node.props.procedure || "Espera")}`;
+          details = `<b>Área:</b> ${escapeHtml(node.props.department || "General")}<br><b>Meta de espera:</b> ${formatNumber(node.props.targetWaitMinutes ?? 5,0)} min<br><b>Trámite:</b> ${escapeHtml(node.props.procedure || "Espera")}${angryCount ? `<span class="mood-pill">😠 ${angryCount}</span>` : ""}`;
         } else if (node.type === "process") {
           statusValue = runtime.busy + "/" + Math.max(1, Number(node.props.capacity) || 1);
           metricLabel = "Atendidos";
           metricValue = runtime.completed;
           details = `<b>Depto.:</b> ${escapeHtml(node.props.department || "Área")}<br><b>Trámite:</b> ${escapeHtml(node.props.procedure || "Atención")}`;
           if (node.props.processRole === "credit_evaluation") {
-            details += `<br><b>Tasa:</b> ${formatNumber(node.props.creditAnnualInterestRate ?? 14, 1)}% anual · ${Math.max(1, Number(node.props.creditTermMonths) || 24)} meses`;
+            const angryCount = runtime.queue.filter(entity => entity.mood === "angry").length;
+            details += `<br><b>Productos:</b> vivienda, vehículo, consumo, negocio y educativo${angryCount ? `<span class="mood-pill">😠 ${angryCount}</span>` : ""}`;
+          } else if (node.props.processRole === "banking_services") {
+            details += `<br><b>Servicios:</b> cuentas, tarjetas, seguros e inversiones`;
           }
           quickControls = `
             <div class="node-controls">
@@ -2446,7 +2846,7 @@
             </div>
           ` : `
             <div style="margin:-5px 0 13px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.04);color:var(--muted);font-size:9px;line-height:1.5;">
-              Crédito: USD 1.000–25.000 · Depósito: USD 1–5.000 · Retiro: USD 20–2.000 · Transferencia: USD 10–5.000 · Pago: USD 5–500 · Consulta: USD 0.
+              Créditos según producto: vivienda, vehículo, consumo, negocio o educativo. Depósitos, retiros, transferencias y pagos pueden comenzar desde USD 1. Servicios: cuentas, tarjetas, seguros e inversiones.
             </div>
           `}
           ${(node.props.transactionMode || "mixed") === "mixed" ? `
@@ -2466,6 +2866,24 @@
               <div class="field"><label for="weightPayment">Pago</label><input id="weightPayment" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.payment ?? 10)}"></div>
               <div class="field"><label for="weightInquiry">Consulta</label><input id="weightInquiry" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.inquiry ?? 5)}"></div>
             </div>
+            <div class="field-row">
+              <div class="field"><label for="weightAccount">Apertura cuenta</label><input id="weightAccount" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.account ?? 8)}"></div>
+              <div class="field"><label for="weightCard">Tarjeta</label><input id="weightCard" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.card ?? 7)}"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="weightInsurance">Seguro</label><input id="weightInsurance" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.insurance ?? 5)}"></div>
+              <div class="field"><label for="weightInvestment">Inversión</label><input id="weightInvestment" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.investment ?? 5)}"></div>
+            </div>
+            <div class="field"><label>Tipos de crédito</label><div class="field-help">Defina la frecuencia relativa de cada producto crediticio.</div></div>
+            <div class="field-row">
+              <div class="field"><label for="creditWeightHousing">Vivienda</label><input id="creditWeightHousing" type="number" min="0" step="1" value="${Number(node.props.creditTypeWeights?.housing ?? 18)}"></div>
+              <div class="field"><label for="creditWeightVehicle">Vehículo</label><input id="creditWeightVehicle" type="number" min="0" step="1" value="${Number(node.props.creditTypeWeights?.vehicle ?? 22)}"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="creditWeightConsumer">Consumo</label><input id="creditWeightConsumer" type="number" min="0" step="1" value="${Number(node.props.creditTypeWeights?.consumer ?? 35)}"></div>
+              <div class="field"><label for="creditWeightBusiness">Negocio</label><input id="creditWeightBusiness" type="number" min="0" step="1" value="${Number(node.props.creditTypeWeights?.business ?? 15)}"></div>
+            </div>
+            <div class="field"><label for="creditWeightEducation">Educativo</label><input id="creditWeightEducation" type="number" min="0" step="1" value="${Number(node.props.creditTypeWeights?.education ?? 10)}"></div>
           ` : ""}
         `;
       }
@@ -2486,6 +2904,12 @@
             <label for="propProcedure">Descripción de la espera</label>
             <input id="propProcedure" type="text" value="${escapeHtml(node.props.procedure || "Espera de atención")}">
           </div>
+          <div class="field"><label for="propTargetWait">Tiempo objetivo para ser atendido (min)</label><input id="propTargetWait" type="number" min="0" step="1" value="${Number(node.props.targetWaitMinutes ?? 5)}"></div>
+          <div class="field-row">
+            <div class="field"><label for="propAngerAfter">Se molesta después de (min)</label><input id="propAngerAfter" type="number" min="1" step="1" value="${Number(node.props.angerAfterMinutes ?? 12)}"></div>
+            <div class="field"><label for="propAbandonAfter">Puede abandonar después de (min)</label><input id="propAbandonAfter" type="number" min="1" step="1" value="${Number(node.props.abandonAfterMinutes ?? 30)}"></div>
+          </div>
+          <div class="field"><label for="propAbandonProbability">Probabilidad de abandonar (%)</label><input id="propAbandonProbability" type="number" min="0" max="100" step="1" value="${Number(node.props.abandonProbability ?? 30)}"></div>
         `;
       }
 
@@ -2517,6 +2941,7 @@
               <option value="standard" ${(node.props.processRole || "standard") === "standard" ? "selected" : ""}>Atención general</option>
               <option value="transaction_processing" ${node.props.processRole === "transaction_processing" ? "selected" : ""}>Procesamiento de transacciones</option>
               <option value="credit_evaluation" ${node.props.processRole === "credit_evaluation" ? "selected" : ""}>Evaluación de crédito</option>
+              <option value="banking_services" ${node.props.processRole === "banking_services" ? "selected" : ""}>Servicios bancarios</option>
             </select>
           </div>
           ${node.props.processRole === "credit_evaluation" ? `
@@ -2544,20 +2969,37 @@
               <label for="propCreditMaxIncomeMultiple">Monto máximo / ingreso mensual (veces)</label>
               <input id="propCreditMaxIncomeMultiple" type="number" min="1" step="1" value="${Number(node.props.creditMaxIncomeMultiple ?? 12)}">
             </div>
+            <div class="field-help">Las tasas y plazos son editables por producto. El crédito puede aprobarse o rechazarse y se registra la causa.</div>
             <div class="field-row">
-              <div class="field">
-                <label for="propCreditAnnualInterestRate">Tasa de interés anual (%)</label>
-                <input id="propCreditAnnualInterestRate" type="number" min="0" max="100" step="0.1" value="${Number(node.props.creditAnnualInterestRate ?? 14)}">
-              </div>
-              <div class="field">
-                <label for="propCreditTermMonths">Plazo del crédito (meses)</label>
-                <input id="propCreditTermMonths" type="number" min="1" max="360" step="1" value="${Number(node.props.creditTermMonths ?? 24)}">
-              </div>
+              <div class="field"><label for="rateHousing">Tasa vivienda (%)</label><input id="rateHousing" type="number" min="0" max="100" step="0.1" value="${Number(node.props.creditRates?.housing ?? 9.5)}"></div>
+              <div class="field"><label for="termHousing">Plazo vivienda (meses)</label><input id="termHousing" type="number" min="1" max="360" step="1" value="${Number(node.props.creditTerms?.housing ?? 180)}"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="rateVehicle">Tasa vehículo (%)</label><input id="rateVehicle" type="number" min="0" max="100" step="0.1" value="${Number(node.props.creditRates?.vehicle ?? 13.5)}"></div>
+              <div class="field"><label for="termVehicle">Plazo vehículo (meses)</label><input id="termVehicle" type="number" min="1" max="360" step="1" value="${Number(node.props.creditTerms?.vehicle ?? 60)}"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="rateConsumer">Tasa consumo (%)</label><input id="rateConsumer" type="number" min="0" max="100" step="0.1" value="${Number(node.props.creditRates?.consumer ?? 16.5)}"></div>
+              <div class="field"><label for="termConsumer">Plazo consumo (meses)</label><input id="termConsumer" type="number" min="1" max="360" step="1" value="${Number(node.props.creditTerms?.consumer ?? 36)}"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="rateBusiness">Tasa negocio (%)</label><input id="rateBusiness" type="number" min="0" max="100" step="0.1" value="${Number(node.props.creditRates?.business ?? 15)}"></div>
+              <div class="field"><label for="termBusiness">Plazo negocio (meses)</label><input id="termBusiness" type="number" min="1" max="360" step="1" value="${Number(node.props.creditTerms?.business ?? 48)}"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="rateEducation">Tasa educativo (%)</label><input id="rateEducation" type="number" min="0" max="100" step="0.1" value="${Number(node.props.creditRates?.education ?? 11.5)}"></div>
+              <div class="field"><label for="termEducation">Plazo educativo (meses)</label><input id="termEducation" type="number" min="1" max="360" step="1" value="${Number(node.props.creditTerms?.education ?? 60)}"></div>
             </div>
             <div style="margin:-4px 0 13px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#f5f8fc;color:var(--muted);font-size:9px;line-height:1.5;">
               Se registra si el crédito fue aprobado o rechazado y la razón: documentación incompleta, historial negativo, ingreso insuficiente, endeudamiento alto, poca antigüedad laboral o monto solicitado elevado.
             </div>
           ` : ""}
+          <div class="field"><label for="propTargetWait">Tiempo objetivo para iniciar atención (min)</label><input id="propTargetWait" type="number" min="0" step="1" value="${Number(node.props.targetWaitMinutes ?? 5)}"></div>
+          <div class="field-row">
+            <div class="field"><label for="propAngerAfter">Demora para molestarse (min)</label><input id="propAngerAfter" type="number" min="1" step="1" value="${Number(node.props.angerAfterMinutes ?? 12)}"></div>
+            <div class="field"><label for="propAbandonAfter">Demora para abandonar (min)</label><input id="propAbandonAfter" type="number" min="1" step="1" value="${Number(node.props.abandonAfterMinutes ?? 35)}"></div>
+          </div>
+          <div class="field"><label for="propAbandonProbability">Probabilidad de abandono (%)</label><input id="propAbandonProbability" type="number" min="0" max="100" step="1" value="${Number(node.props.abandonProbability ?? 25)}"></div>
           <div class="field">
             <label for="propObservations">Observaciones</label>
             <textarea id="propObservations">${escapeHtml(node.props.observations || "")}</textarea>
@@ -2666,12 +3108,26 @@
         bindNumericInput("weightTransfer", value => node.props.transactionWeights.transfer = Math.max(0, value));
         bindNumericInput("weightPayment", value => node.props.transactionWeights.payment = Math.max(0, value));
         bindNumericInput("weightInquiry", value => node.props.transactionWeights.inquiry = Math.max(0, value));
+        bindNumericInput("weightAccount", value => node.props.transactionWeights.account = Math.max(0, value));
+        bindNumericInput("weightCard", value => node.props.transactionWeights.card = Math.max(0, value));
+        bindNumericInput("weightInsurance", value => node.props.transactionWeights.insurance = Math.max(0, value));
+        bindNumericInput("weightInvestment", value => node.props.transactionWeights.investment = Math.max(0, value));
+        node.props.creditTypeWeights = { ...NODE_TYPES.source.props.creditTypeWeights, ...(node.props.creditTypeWeights || {}) };
+        bindNumericInput("creditWeightHousing", value => node.props.creditTypeWeights.housing = Math.max(0, value));
+        bindNumericInput("creditWeightVehicle", value => node.props.creditTypeWeights.vehicle = Math.max(0, value));
+        bindNumericInput("creditWeightConsumer", value => node.props.creditTypeWeights.consumer = Math.max(0, value));
+        bindNumericInput("creditWeightBusiness", value => node.props.creditTypeWeights.business = Math.max(0, value));
+        bindNumericInput("creditWeightEducation", value => node.props.creditTypeWeights.education = Math.max(0, value));
       }
 
       if (node.type === "queue") {
         bindNumericInput("propCapacity", value => node.props.capacity = Math.max(1, Math.floor(value)));
         bindTextInput("propDepartment", value => node.props.department = value || "General");
         bindTextInput("propProcedure", value => node.props.procedure = value || "Espera de atención");
+        bindNumericInput("propTargetWait", value => node.props.targetWaitMinutes = Math.max(0, value));
+        bindNumericInput("propAngerAfter", value => node.props.angerAfterMinutes = Math.max(1, value));
+        bindNumericInput("propAbandonAfter", value => node.props.abandonAfterMinutes = Math.max(1, value));
+        bindNumericInput("propAbandonProbability", value => node.props.abandonProbability = clamp(value, 0, 100));
       }
 
       if (node.type === "process") {
@@ -2680,7 +3136,7 @@
         bindNumericInput("propServiceTime", value => node.props.serviceTime = Math.max(0.1, value));
         bindTextInput("propProcedure", value => node.props.procedure = value || "Recepción de trámite");
         document.getElementById("propProcessRole")?.addEventListener("change", event => {
-          node.props.processRole = ["credit_evaluation", "transaction_processing"].includes(event.target.value)
+          node.props.processRole = ["credit_evaluation", "transaction_processing", "banking_services"].includes(event.target.value)
             ? event.target.value
             : "standard";
           renderProperties();
@@ -2693,6 +3149,17 @@
         bindNumericInput("propCreditMaxIncomeMultiple", value => node.props.creditMaxIncomeMultiple = Math.max(1, value));
         bindNumericInput("propCreditAnnualInterestRate", value => node.props.creditAnnualInterestRate = clamp(value, 0, 100));
         bindNumericInput("propCreditTermMonths", value => node.props.creditTermMonths = clamp(Math.floor(value), 1, 360));
+        node.props.creditRates = { ...NODE_TYPES.process.props.creditRates, ...(node.props.creditRates || {}) };
+        node.props.creditTerms = { ...NODE_TYPES.process.props.creditTerms, ...(node.props.creditTerms || {}) };
+        ["housing", "vehicle", "consumer", "business", "education"].forEach(type => {
+          const cap = type.charAt(0).toUpperCase() + type.slice(1);
+          bindNumericInput("rate" + cap, value => node.props.creditRates[type] = clamp(value, 0, 100));
+          bindNumericInput("term" + cap, value => node.props.creditTerms[type] = clamp(Math.floor(value), 1, 360));
+        });
+        bindNumericInput("propTargetWait", value => node.props.targetWaitMinutes = Math.max(0, value));
+        bindNumericInput("propAngerAfter", value => node.props.angerAfterMinutes = Math.max(1, value));
+        bindNumericInput("propAbandonAfter", value => node.props.abandonAfterMinutes = Math.max(1, value));
+        bindNumericInput("propAbandonProbability", value => node.props.abandonProbability = clamp(value, 0, 100));
         bindTextArea("propObservations", value => node.props.observations = value);
       }
 
@@ -3022,6 +3489,9 @@
         paymentTotal: 0,
         transferInTotal: 0,
         transferOutTotal: 0,
+        delayedEvents: 0,
+        angryUsers: 0,
+        abandonedUsers: 0,
         history: []
       };
       state.records = [];
@@ -3057,7 +3527,7 @@
         return;
       }
       if (state.running) return;
-      if (sessionEndMinutes() <= sessionStartMinutes()) {
+      if (sessionEndMinutes() <= sessionStartMinutes() || simulationTotalMinutes() <= 0) {
         showToast("La hora de cierre debe ser posterior a la hora de apertura.", "warning");
         return;
       }
@@ -3112,23 +3582,33 @@
       if (!state.running || state.paused) return;
       const realDelta = Math.min(0.1, Math.max(0, (timestamp - state.lastFrame) / 1000));
       state.lastFrame = timestamp;
-      const simDelta = realDelta * state.speed;
-      state.simTime += simDelta;
-      if (state.simTime >= sessionDurationMinutes()) {
-        state.simTime = sessionDurationMinutes();
+      const targetTime = Math.min(simulationTotalMinutes(), state.simTime + realDelta * state.speed);
+      let guard = 0;
+
+      while (state.simTime < targetTime && guard < 5000) {
+        const step = Math.min(1, targetTime - state.simTime);
+        state.simTime += step;
+        generateSourceEntities();
+        processScheduledEvents();
+        updateMovingEntities();
+        updateWaitingMoods();
+        processQueues();
+        if (state.simTime >= state.nextHistoryTime) {
+          recordHistory();
+          state.nextHistoryTime = state.simTime + 10;
+        }
+        guard += 1;
+      }
+
+      renderNodes();
+      updateMetrics();
+
+      if (state.simTime >= simulationTotalMinutes()) {
+        state.simTime = simulationTotalMinutes();
         finalizeAtClosing();
         return;
       }
-      generateSourceEntities();
-      processScheduledEvents();
-      updateMovingEntities();
-      processQueues();
-      if (state.simTime >= state.nextHistoryTime) {
-        recordHistory();
-        state.nextHistoryTime = state.simTime + 2;
-      }
-      renderNodes();
-      updateMetrics();
+
       requestAnimationFrame(simulationFrame);
     }
 
@@ -3146,6 +3626,11 @@
           const transactionType = chooseTransactionType(node.props);
           const transaction = getTransactionConfig(transactionType);
           const amountUsd = chooseTransactionAmount(transactionType, node.props);
+          const creditType = transactionType === "credit" ? chooseCreditType(node.props) : "";
+          const creditConfig = creditType ? CREDIT_TYPES[creditType] : null;
+          const effectiveAmount = transactionType === "credit" && (node.props.amountMode || "automatic") === "automatic"
+            ? randomAmount(creditConfig.minAmount, creditConfig.maxAmount)
+            : amountUsd;
           const creditProfile = transactionType === "credit" ? createCreditProfile() : null;
           const entity = {
             id: state.nextEntityId++,
@@ -3155,8 +3640,17 @@
             transactionLabel: transaction.label,
             transactionCode: transaction.code,
             transactionColor: transaction.color,
-            amountUsd,
+            amountUsd: effectiveAmount,
+            creditType,
+            creditTypeLabel: creditConfig?.label || "",
             createdAt: nextTime,
+            createdDate: formatDateIso(simulationDate(nextTime)),
+            mood: "calm",
+            becameAngryAt: null,
+            totalWaitMinutes: 0,
+            totalServiceMinutes: 0,
+            delayEvents: 0,
+            abandonEvaluated: false,
             queueEnteredAt: null,
             route: [],
             steps: [],
@@ -3241,12 +3735,16 @@
         before,
         after,
         minute: Number(state.simTime.toFixed(1)),
-        clock: simulationClock()
+        date: formatDateIso(simulationDate()),
+        clock: simulationClock(),
+        dateTime: simulationDateTime()
       });
       if (state.capitalLedger.length > 500) state.capitalLedger.pop();
       entity.timeline.push({
         event: "Movimiento de capital",
+        date: formatDateIso(simulationDate()),
         clock: simulationClock(),
+        dateTime: simulationDateTime(),
         minute: Number(state.simTime.toFixed(1)),
         movement: entity.capitalMovement,
         effect,
@@ -3259,7 +3757,7 @@
     }
 
     function processFinancialTransaction(entity, node) {
-      if (entity.financialPosted || entity.transactionType === "credit" || entity.transactionType === "inquiry") return;
+      if (entity.financialPosted || entity.transactionType === "credit" || entity.transactionType === "inquiry" || entity.transactionType === "account" || entity.transactionType === "card") return;
       const amount = Math.max(0, Number(entity.amountUsd) || 0);
       let effect = 0;
       let description = entity.transactionLabel || "Transacción";
@@ -3275,6 +3773,12 @@
       } else if (entity.transactionType === "transfer") {
         effect = entity.transferDirection === "incoming" ? amount : -amount;
         description = entity.transferDirection === "incoming" ? "Transferencia entrante" : "Transferencia saliente";
+      } else if (entity.transactionType === "insurance") {
+        effect = amount;
+        description = "Prima de seguro recibida";
+      } else if (entity.transactionType === "investment") {
+        effect = amount;
+        description = "Fondo de inversión recibido";
       }
 
       if (!postCapitalMovement(entity, effect, entity.transactionType, description)) {
@@ -3301,6 +3805,18 @@
       }
     }
 
+    function processBankingService(entity) {
+      if (entity.operationOutcome || entity.transactionType === "credit") return;
+      if (["account", "card"].includes(entity.transactionType)) {
+        entity.operationOutcome = "completed";
+        entity.operationReason = entity.transactionType === "account"
+          ? "Cuenta bancaria aperturada"
+          : "Solicitud de tarjeta procesada";
+      } else if (["insurance", "investment"].includes(entity.transactionType)) {
+        processFinancialTransaction(entity, null);
+      }
+    }
+
     function evaluateCredit(entity, node) {
       const profile = entity.creditProfile || createCreditProfile();
       entity.creditProfile = profile;
@@ -3309,8 +3825,9 @@
       const minEmploymentMonths = Math.max(0, Number(node.props.creditMinEmploymentMonths ?? 6));
       const maxIncomeMultiple = Math.max(1, Number(node.props.creditMaxIncomeMultiple ?? 12));
       const approvalRate = clamp(Number(node.props.creditApprovalRate ?? 75), 0, 100);
-      const annualRate = clamp(Number(node.props.creditAnnualInterestRate ?? 14), 0, 100);
-      const termMonths = clamp(Math.floor(Number(node.props.creditTermMonths ?? 24)), 1, 360);
+      const creditType = CREDIT_TYPES[entity.creditType] ? entity.creditType : "consumer";
+      const annualRate = clamp(Number(node.props.creditRates?.[creditType] ?? CREDIT_TYPES[creditType].defaultRate), 0, 100);
+      const termMonths = clamp(Math.floor(Number(node.props.creditTerms?.[creditType] ?? CREDIT_TYPES[creditType].defaultTerm)), 1, 360);
       const terms = calculateCreditTerms(entity.amountUsd, annualRate, termMonths);
 
       entity.creditAnnualInterestRate = terms.annualRate;
@@ -3351,7 +3868,11 @@
 
       entity.timeline.push({
         event: "Evaluación de crédito",
+        date: formatDateIso(simulationDate()),
         clock: simulationClock(),
+        dateTime: simulationDateTime(),
+        creditType: entity.creditType,
+        creditTypeLabel: entity.creditTypeLabel,
         minute: Number(state.simTime.toFixed(1)),
         outcome: entity.creditOutcome,
         reason: entity.creditReason,
@@ -3370,14 +3891,25 @@
       state.events.forEach(event => {
         if (event.payload?.entity) collected.set(event.payload.entity.label, event.payload.entity);
       });
-      state.nodeRuntime.forEach(runtime => {
-        runtime.queue.forEach(entity => collected.set(entity.label, entity));
+      state.nodeRuntime.forEach((runtime, nodeId) => {
+        const node = getNode(nodeId);
+        runtime.queue.forEach(entity => {
+          if (entity.queueEnteredAt !== null && node) {
+            registerWaitResult(entity, node, state.simTime - entity.queueEnteredAt);
+            entity.queueEnteredAt = null;
+          }
+          collected.set(entity.label, entity);
+        });
       });
 
       collected.forEach(entity => {
         if (!state.records.some(record => record.personId === entity.label)) {
           entity.finalStatus = "Pendiente al cierre";
-          entity.creditReason = entity.creditReason || "Jornada finalizada antes de completar el trámite";
+          if (entity.transactionType === "credit") {
+            entity.creditReason = entity.creditReason || "Periodo finalizado antes de completar la evaluación";
+          } else {
+            entity.operationReason = entity.operationReason || "Periodo finalizado antes de completar el trámite";
+          }
           saveRecord(entity, { props: { finalStatus: "Pendiente al cierre" } });
         }
       });
@@ -3394,8 +3926,8 @@
       updateRunStatus();
       renderNodes();
       updateMetrics();
-      updateStatus("Jornada finalizada a las " + state.scenario.closingTime + ". Los trámites pendientes fueron registrados.");
-      showToast("La jornada de simulación finalizó.", "success");
+      updateStatus("Periodo finalizado el " + formatDisplayDate(simulationDate()) + " a las " + state.scenario.closingTime + ". Los trámites pendientes fueron registrados.");
+      showToast("El periodo de simulación finalizó.", "success");
     }
 
     function scheduleEvent(time, type, payload) {
@@ -3426,6 +3958,79 @@
         move.element.remove();
         state.movingEntities = state.movingEntities.filter(item => item !== move);
         acceptEntity(move.toNodeId, move.entity);
+      });
+    }
+
+    function registerWaitResult(entity, node, waited) {
+      const wait = Math.max(0, Number(waited) || 0);
+      entity.totalWaitMinutes = (Number(entity.totalWaitMinutes) || 0) + wait;
+      const target = Math.max(0, Number(node?.props?.targetWaitMinutes ?? 5));
+      if (wait > target) {
+        entity.delayEvents = (Number(entity.delayEvents) || 0) + 1;
+        state.metrics.delayedEvents += 1;
+        entity.timeline.push({
+          event: "Demora superior al objetivo",
+          date: formatDateIso(simulationDate()),
+          clock: simulationClock(),
+          waitedMinutes: Number(wait.toFixed(1)),
+          targetMinutes: target,
+          area: node?.name || "Área"
+        });
+      }
+    }
+
+    function updateWaitingMoods() {
+      state.nodes.filter(node => node.type === "queue" || node.type === "process").forEach(node => {
+        const runtime = ensureNodeRuntime(node);
+        const angerAfter = Math.max(1, Number(node.props.angerAfterMinutes ?? 12));
+        const abandonAfter = Math.max(angerAfter, Number(node.props.abandonAfterMinutes ?? 30));
+        const abandonProbability = clamp(Number(node.props.abandonProbability ?? 25), 0, 100);
+        const remaining = [];
+
+        runtime.queue.forEach(entity => {
+          const entered = Number(entity.queueEnteredAt);
+          const waited = Number.isFinite(entered) ? Math.max(0, state.simTime - entered) : 0;
+          entity.currentWaitMinutes = waited;
+
+          if (waited >= angerAfter && entity.mood !== "angry") {
+            entity.mood = "angry";
+            entity.becameAngryAt = Number(state.simTime.toFixed(1));
+            state.metrics.angryUsers += 1;
+            entity.timeline.push({
+              event: "Usuario molesto por demora",
+              date: formatDateIso(simulationDate()),
+              clock: simulationClock(),
+              waitedMinutes: Number(waited.toFixed(1)),
+              area: node.name
+            });
+          }
+
+          if (waited >= abandonAfter && !entity.abandonEvaluated) {
+            entity.abandonEvaluated = true;
+            if (Math.random() * 100 < abandonProbability) {
+              registerWaitResult(entity, node, waited);
+              entity.finalStatus = "Abandonó por demora";
+              entity.operationOutcome = "abandoned";
+              entity.operationReason = `Esperó ${formatNumber(waited, 1)} minutos en ${node.name}`;
+              state.metrics.abandonedUsers += 1;
+              state.metrics.rejected += 1;
+              state.metrics.completed += 1;
+              entity.timeline.push({
+                event: "Abandono por demora",
+                date: formatDateIso(simulationDate()),
+                clock: simulationClock(),
+                waitedMinutes: Number(waited.toFixed(1)),
+                area: node.name
+              });
+              saveRecord(entity, { props: { finalStatus: "Abandonó por demora" } });
+              return;
+            }
+          }
+
+          remaining.push(entity);
+        });
+
+        runtime.queue = remaining;
       });
     }
 
@@ -3487,11 +4092,11 @@
       const bend = Math.max(70, distance * 0.45);
       const direction = end.x >= start.x ? 1 : -1;
       const element = document.createElement("div");
-      element.className = "entity";
-      element.textContent = "👤";
+      element.className = "entity" + (entity.mood === "angry" ? " angry" : "");
+      element.textContent = entity.mood === "angry" ? "😠" : "👤";
       element.dataset.code = `${entity.transactionCode || "TR"} · ${compactCurrency(entity.amountUsd)}`;
       element.style.setProperty("--transaction-color", entity.transactionColor || "#3a8bfd");
-      element.title = `${entity.label} · ${entity.transactionLabel || "Trámite financiero"} · ${formatCurrency(entity.amountUsd)}`;
+      element.title = `${entity.label} · ${entity.transactionLabel || "Trámite financiero"}${entity.creditTypeLabel ? " · " + entity.creditTypeLabel : ""} · ${formatCurrency(entity.amountUsd)} · ${entity.mood === "angry" ? "Molesto" : "Tranquilo"}`;
       element.style.left = start.x + "px";
       element.style.top = start.y + "px";
       dom.entityLayer.appendChild(element);
@@ -3518,12 +4123,16 @@
         procedure: node.props.procedure || node.props.finalStatus || "",
         stage: stageLabel,
         time: Number(state.simTime.toFixed(1)),
-        clock: simulationClock()
+        date: formatDateIso(simulationDate()),
+        clock: simulationClock(),
+        dateTime: simulationDateTime()
       };
       entity.steps.push(eventData);
       entity.timeline = Array.isArray(entity.timeline) ? entity.timeline : [];
       entity.timeline.push({
         event: stageLabel,
+        date: eventData.date,
+        dateTime: eventData.dateTime,
         area: node.name,
         department: eventData.department,
         procedure: eventData.procedure,
@@ -3549,6 +4158,7 @@
           return;
         }
         entity.queueEnteredAt = state.simTime;
+        entity.currentQueueNodeId = node.id;
         runtime.queue.push(entity);
         state.metrics.maxQueue = Math.max(state.metrics.maxQueue, runtime.queue.length);
         attemptDispatchQueue(node);
@@ -3588,12 +4198,23 @@
         transactionLabel: entity.transactionLabel || getTransactionConfig(entity.transactionType).label,
         transactionCode: entity.transactionCode || getTransactionConfig(entity.transactionType).code,
         amountUsd: Math.max(0, Number(entity.amountUsd) || 0),
+        creditType: entity.creditType || "",
+        creditTypeLabel: entity.creditTypeLabel || "",
         startTime: startMinute,
         endTime: endMinute,
+        startDate: formatDateIso(simulationDate(startMinute)),
+        endDate: formatDateIso(simulationDate(endMinute)),
         startClock: simulationClock(startMinute),
         endClock: simulationClock(endMinute),
+        startDateTime: simulationDateTime(startMinute),
+        endDateTime: simulationDateTime(endMinute),
         durationMinutes: Math.max(0, Number((endMinute - startMinute).toFixed(1))),
-        finalStatus: (entity.operationOutcome === "rejected" || entity.creditOutcome === "rejected")
+        waitingMinutes: Number((entity.totalWaitMinutes || 0).toFixed(1)),
+        delayEvents: Number(entity.delayEvents || 0),
+        serviceMinutes: Number((entity.totalServiceMinutes || 0).toFixed(1)),
+        mood: entity.mood === "angry" ? "Molesto" : "Tranquilo",
+        becameAngryAt: entity.becameAngryAt,
+        finalStatus: (["rejected", "abandoned"].includes(entity.operationOutcome) || entity.creditOutcome === "rejected")
           ? (entity.finalStatus || "Operación rechazada")
           : (sinkNode.props.finalStatus || entity.finalStatus || "Completado"),
         creditOutcome: entity.creditOutcome || "",
@@ -3637,7 +4258,10 @@
         if (!target) break;
         if (target.type === "process" && !processHasCapacity(target)) break;
         const entity = runtime.queue.shift();
-        if (entity.queueEnteredAt !== null) entity.queueEnteredAt = null;
+        if (entity.queueEnteredAt !== null) {
+          registerWaitResult(entity, queueNode, state.simTime - entity.queueEnteredAt);
+          entity.queueEnteredAt = null;
+        }
         routeFromNode(queueNode, entity);
         runtime.completed += 1;
         guard += 1;
@@ -3659,6 +4283,7 @@
         return;
       }
       entity.queueEnteredAt = state.simTime;
+      entity.currentQueueNodeId = node.id;
       runtime.queue.push(entity);
       state.metrics.maxQueue = Math.max(state.metrics.maxQueue, runtime.queue.length);
     }
@@ -3667,6 +4292,7 @@
       const runtime = ensureNodeRuntime(node);
       const serviceTime = Math.max(0.1, Number(node.props.serviceTime) || 6);
       runtime.busy += 1;
+      entity.totalServiceMinutes = (Number(entity.totalServiceMinutes) || 0) + serviceTime;
       scheduleEvent(state.simTime + serviceTime, "processComplete", { nodeId: node.id, entity });
     }
 
@@ -3682,9 +4308,14 @@
       if (node.props.processRole === "transaction_processing" && !entity.financialPosted) {
         processFinancialTransaction(entity, node);
       }
+      if (node.props.processRole === "banking_services") {
+        processBankingService(entity);
+      }
       entity.timeline = Array.isArray(entity.timeline) ? entity.timeline : [];
       entity.timeline.push({
         event: "Fin de atención",
+        date: formatDateIso(simulationDate()),
+        dateTime: simulationDateTime(),
         area: node.name,
         department: node.props.department || "",
         procedure: node.props.procedure || "",
@@ -3695,7 +4326,10 @@
 
       while (runtime.queue.length > 0 && processHasCapacity(node)) {
         const nextEntity = runtime.queue.shift();
-        if (nextEntity.queueEnteredAt !== null) nextEntity.queueEnteredAt = null;
+        if (nextEntity.queueEnteredAt !== null) {
+          registerWaitResult(nextEntity, node, state.simTime - nextEntity.queueEnteredAt);
+          nextEntity.queueEnteredAt = null;
+        }
         startProcess(node, nextEntity);
       }
 
@@ -3736,6 +4370,7 @@
 
     function updateMetrics() {
       const wip = Math.max(0, state.metrics.created - state.metrics.completed - state.metrics.rejected);
+      if (dom.metricDate) dom.metricDate.textContent = formatDisplayDate(simulationDate());
       dom.metricTime.textContent = simulationClock();
       dom.metricCreated.textContent = state.metrics.created.toLocaleString("es-EC");
       dom.metricCompleted.textContent = state.metrics.completed.toLocaleString("es-EC");
@@ -3756,7 +4391,10 @@
       if (dom.metricCreditRejected) dom.metricCreditRejected.textContent = state.metrics.creditRejected.toLocaleString("es-EC");
       if (dom.metricDeposits) dom.metricDeposits.textContent = compactCurrency(state.metrics.depositTotal);
       if (dom.metricWithdrawals) dom.metricWithdrawals.textContent = compactCurrency(state.metrics.withdrawalTotal);
-      dom.clockStatus.textContent = simulationClock() + " h";
+      if (dom.metricDelayed) dom.metricDelayed.textContent = state.metrics.delayedEvents.toLocaleString("es-EC");
+      if (dom.metricAngry) dom.metricAngry.textContent = state.metrics.angryUsers.toLocaleString("es-EC");
+      if (dom.metricAbandoned) dom.metricAbandoned.textContent = state.metrics.abandonedUsers.toLocaleString("es-EC");
+      dom.clockStatus.textContent = simulationDateTime() + " h";
     }
 
     function renderRecords() {
@@ -3774,6 +4412,11 @@
           <span><b>Usuario:</b> ${escapeHtml(record.personType)}</span>
           <span><b>Trámite:</b> ${escapeHtml(record.transactionLabel || "No especificado")}</span>
           <span><b>Monto USD:</b> ${escapeHtml(formatCurrency(record.amountUsd || 0))}</span>
+          ${record.creditTypeLabel ? `<span><b>Tipo de crédito:</b> ${escapeHtml(record.creditTypeLabel)}</span>` : ""}
+          <span><b>Entrada:</b> ${escapeHtml(record.startDateTime || ((record.startDate || "") + " " + record.startClock))}</span>
+          <span><b>Salida:</b> ${escapeHtml(record.endDateTime || ((record.endDate || "") + " " + record.endClock))}</span>
+          <span><b>Espera / atención:</b> ${formatNumber(record.waitingMinutes || 0,1)} min / ${formatNumber(record.serviceMinutes || 0,1)} min · <b>Demoras:</b> ${record.delayEvents || 0}</span>
+          <span><b>Estado emocional:</b> ${escapeHtml(record.mood || "Tranquilo")}</span>
           ${record.creditOutcome ? `<span><b>Resultado de crédito:</b> ${record.creditOutcome === "approved" ? "Aprobado" : "Rechazado"}</span>` : ""}
           ${record.creditReason ? `<span><b>Motivo:</b> ${escapeHtml(record.creditReason)}</span>` : ""}
           ${record.operationReason && !record.creditReason ? `<span><b>Resultado:</b> ${escapeHtml(record.operationReason)}</span>` : ""}
@@ -3820,13 +4463,13 @@
 
     function saveModel() {
       const payload = {
-        version: 8,
+        version: 10,
         savedAt: new Date().toISOString(),
         scenario: state.scenario,
         nodes: state.nodes,
         edges: state.edges
       };
-      const saved = safeStorage.set("simuladorTramitesModel", JSON.stringify(payload));
+      const saved = safeStorage.set("simuladorBancarioNeodatV10", JSON.stringify(payload));
       if (saved) {
         showToast("Modelo guardado en este navegador.");
         updateStatus("Modelo guardado.");
@@ -3839,7 +4482,7 @@
 
     function exportModel() {
       const payload = {
-        version: 8,
+        version: 10,
         exportedAt: new Date().toISOString(),
         scenario: state.scenario,
         nodes: state.nodes,
@@ -3856,8 +4499,8 @@
       }
       const rows = [
         [
-          "persona", "tipo_usuario", "tramite_financiero", "codigo_tramite", "monto_usd",
-          "hora_ingreso", "hora_salida", "duracion_minutos", "estado_final",
+          "persona", "tipo_usuario", "tramite_financiero", "codigo_tramite", "monto_usd", "tipo_credito",
+          "fecha_ingreso", "hora_ingreso", "fecha_salida", "hora_salida", "duracion_minutos", "espera_minutos", "eventos_demora", "atencion_minutos", "estado_emocional", "estado_final",
           "resultado_credito", "motivo_credito", "ingreso_mensual_usd", "deuda_mensual_usd",
           "antiguedad_laboral_meses", "documentos_completos", "historial_crediticio",
           "tasa_interes_anual_pct", "plazo_meses", "cuota_mensual_usd", "interes_total_usd", "total_pagar_usd",
@@ -3873,9 +4516,16 @@
           record.transactionLabel || "No especificado",
           record.transactionCode || "",
           Number(record.amountUsd || 0).toFixed(2),
+          record.creditTypeLabel || "",
+          record.startDate || formatDateIso(simulationDate(record.startTime)),
           record.startClock || simulationClock(record.startTime),
+          record.endDate || formatDateIso(simulationDate(record.endTime)),
           record.endClock || simulationClock(record.endTime),
           Number(record.durationMinutes || 0).toFixed(1),
+          Number(record.waitingMinutes || 0).toFixed(1),
+          record.delayEvents || 0,
+          Number(record.serviceMinutes || 0).toFixed(1),
+          record.mood || "Tranquilo",
           record.finalStatus,
           record.creditOutcome === "approved" ? "Aprobado" : (record.creditOutcome === "rejected" ? "Rechazado" : ""),
           record.creditReason || "",
@@ -3928,7 +4578,10 @@
         businessName: String(payload.scenario?.businessName || "Entidad financiera"),
         initialCapital: Math.max(0, Number(payload.scenario?.initialCapital ?? 1000000) || 0),
         currentCapital: Math.max(0, Number(payload.scenario?.initialCapital ?? 1000000) || 0),
-        openingTime: String(payload.scenario?.openingTime || "07:00"),
+        startDate: String(payload.scenario?.startDate || new Date().toISOString().slice(0, 10)),
+        simulationUnit: payload.scenario?.simulationUnit === "months" ? "months" : "days",
+        simulationLength: clamp(Math.floor(Number(payload.scenario?.simulationLength) || 1), 1, 365),
+        openingTime: String(payload.scenario?.openingTime || "08:00"),
         closingTime: String(payload.scenario?.closingTime || "19:00")
       };
       state.nodes = payload.nodes
@@ -3968,12 +4621,15 @@
 
     function loadExampleModel(showNotification = true) {
       const example = {
-        version: 8,
+        version: 10,
         scenario: {
           businessName: "Entidad financiera",
           initialCapital: 1000000,
           currentCapital: 1000000,
-          openingTime: "07:00",
+          startDate: new Date().toISOString().slice(0, 10),
+          simulationUnit: "days",
+          simulationLength: 5,
+          openingTime: "08:00",
           closingTime: "19:00"
         },
         nodes: [
@@ -4000,7 +4656,18 @@
                 withdrawal: 20,
                 transfer: 10,
                 payment: 10,
-                inquiry: 5
+                inquiry: 5,
+                account: 8,
+                card: 7,
+                insurance: 5,
+                investment: 5
+              },
+              creditTypeWeights: {
+                housing: 18,
+                vehicle: 22,
+                consumer: 35,
+                business: 15,
+                education: 10
               }
             }
           },
@@ -4010,7 +4677,7 @@
             name: "Espera recepción",
             x: 340,
             y: 320,
-            props: { capacity: 20, department: "Recepción", procedure: "Fila inicial" }
+            props: { capacity: 30, department: "Recepción", procedure: "Fila inicial", targetWaitMinutes: 5, angerAfterMinutes: 8, abandonAfterMinutes: 25, abandonProbability: 25 }
           },
           {
             id: "process-reception",
@@ -4018,7 +4685,7 @@
             name: "Recepción",
             x: 610,
             y: 320,
-            props: { serviceTime: 5, capacity: 2, department: "Atención al usuario", procedure: "Registro y orientación", observations: "Punto de entrada" }
+            props: { serviceTime: 5, capacity: 1, department: "Atención al usuario", procedure: "Registro y orientación", observations: "Punto de entrada", targetWaitMinutes: 5, angerAfterMinutes: 8, abandonAfterMinutes: 25, abandonProbability: 25 }
           },
           {
             id: "decision-flow",
@@ -4047,7 +4714,13 @@
               creditMinEmploymentMonths: 6,
               creditMaxIncomeMultiple: 12,
               creditAnnualInterestRate: 14,
-              creditTermMonths: 24
+              creditTermMonths: 24,
+              creditRates: { housing: 9.5, vehicle: 13.5, consumer: 16.5, business: 15, education: 11.5 },
+              creditTerms: { housing: 180, vehicle: 60, consumer: 36, business: 48, education: 60 },
+              targetWaitMinutes: 5,
+              angerAfterMinutes: 12,
+              abandonAfterMinutes: 35,
+              abandonProbability: 25
             }
           },
           {
@@ -4065,6 +4738,26 @@
             x: 1180,
             y: 510,
             props: { serviceTime: 4, capacity: 2, department: "Tesorería", procedure: "Pago, depósito, retiro o transferencia", observations: "", processRole: "transaction_processing" }
+          },
+          {
+            id: "process-banking-services",
+            type: "process",
+            name: "Servicios bancarios",
+            x: 1450,
+            y: 610,
+            props: {
+              serviceTime: 7,
+              capacity: 2,
+              department: "Servicios bancarios",
+              procedure: "Cuentas, tarjetas, seguros e inversiones",
+              observations: "Área especializada",
+              processRole: "banking_services",
+              targetWaitMinutes: 5,
+              angerAfterMinutes: 12,
+              abandonAfterMinutes: 35,
+              abandonProbability: 25,
+              color: "#2563eb"
+            }
           },
           {
             id: "process-archive",
@@ -4098,11 +4791,13 @@
           { id: "e4", from: "decision-flow", to: "process-credit", weight: 4, transactionTypes: ["credit"] },
           { id: "e5", from: "decision-flow", to: "process-service", weight: 3, transactionTypes: ["transfer", "inquiry"] },
           { id: "e6", from: "decision-flow", to: "process-cashier", weight: 2, transactionTypes: ["deposit", "withdrawal", "payment"] },
+          { id: "e6s", from: "decision-flow", to: "process-banking-services", weight: 2, transactionTypes: ["account", "card", "insurance", "investment"] },
           { id: "e7", from: "decision-flow", to: "sink-exit", weight: 1, transactionTypes: [] },
           { id: "e8", from: "process-credit", to: "process-archive", weight: 1, creditOutcomes: ["approved"] },
           { id: "e8r", from: "process-credit", to: "sink-exit", weight: 1, creditOutcomes: ["rejected"] },
           { id: "e9", from: "process-service", to: "process-archive", weight: 1 },
           { id: "e10", from: "process-cashier", to: "process-archive", weight: 1 },
+          { id: "e10s", from: "process-banking-services", to: "process-archive", weight: 1 },
           { id: "e11", from: "process-archive", to: "sink-success", weight: 1 }
         ]
       };
@@ -4200,6 +4895,48 @@
       updateMetrics();
     });
 
+    dom.simulationStartDateInput?.addEventListener("change", event => {
+      if (state.running) { showToast("Detenga la simulación antes de cambiar la fecha.", "warning"); updateScenarioUi(); return; }
+      state.scenario.startDate = event.target.value || new Date().toISOString().slice(0, 10);
+      updateScenarioUi();
+      updateMetrics();
+    });
+
+    dom.simulationUnitInput?.addEventListener("change", event => {
+      if (state.running) { showToast("Detenga la simulación antes de cambiar el periodo.", "warning"); updateScenarioUi(); return; }
+      state.scenario.simulationUnit = event.target.value === "months" ? "months" : "days";
+      if (state.scenario.simulationUnit === "months" && state.scenario.simulationLength > 12) state.scenario.simulationLength = 1;
+      updateScenarioUi();
+      updateMetrics();
+    });
+
+    dom.simulationLengthInput?.addEventListener("change", event => {
+      if (state.running) { showToast("Detenga la simulación antes de cambiar la duración.", "warning"); updateScenarioUi(); return; }
+      const max = state.scenario.simulationUnit === "months" ? 12 : 365;
+      state.scenario.simulationLength = clamp(Math.floor(Number(event.target.value) || 1), 1, max);
+      updateScenarioUi();
+      updateMetrics();
+    });
+
+    document.getElementById("addBankingServicesBtn")?.addEventListener("click", () => {
+      const node = createNode("process", 1180, 650, {
+        name: "Servicios bancarios",
+        props: {
+          ...clone(NODE_TYPES.process.props),
+          department: "Servicios bancarios",
+          procedure: "Cuentas, tarjetas, seguros e inversiones",
+          processRole: "banking_services",
+          serviceTime: 7,
+          capacity: 2,
+          color: "#2563eb"
+        }
+      });
+      if (node) {
+        fitView();
+        showToast("Área de servicios bancarios agregada.");
+      }
+    });
+
     dom.playBtn.addEventListener("click", startSimulation);
     document.getElementById("quickRunBtn").addEventListener("click", startSimulation);
     dom.pauseBtn.addEventListener("click", pauseSimulation);
@@ -4272,14 +5009,14 @@
       updateRunStatus();
       updateScenarioUi();
       loadExampleModel(false);
-      const saved = safeStorage.get("simuladorTramitesModel");
+      const saved = safeStorage.get("simuladorBancarioNeodatV10");
       if (saved) {
         try {
           applyModel(JSON.parse(saved));
           showToast("Se cargó el último modelo guardado.");
           return;
         } catch (error) {
-          safeStorage.remove("simuladorTramitesModel");
+          safeStorage.remove("simuladorBancarioNeodatV10");
           loadExampleModel(false);
         }
       }
