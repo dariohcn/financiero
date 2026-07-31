@@ -421,6 +421,46 @@
       box-shadow: 0 0 0 4px rgba(32, 180, 134, 0.13);
     }
 
+
+    .capital-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border: 1px solid rgba(58, 139, 253, 0.18);
+      border-radius: 999px;
+      background: rgba(58, 139, 253, 0.08);
+      color: #1f5da8;
+      font-size: 9px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .scenario-fields {
+      display: grid;
+      gap: 9px;
+    }
+
+    .scenario-fields label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .scenario-fields input {
+      width: 100%;
+      min-height: 38px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(255,255,255,.055);
+      color: var(--text);
+    }
+
     .quick-run-button {
       min-height: 28px;
       padding: 0 10px;
@@ -1027,7 +1067,7 @@
     @media (max-width: 1100px) {
       .workspace-summary { left: 190px; right: 8px; top: 8px; min-height: 40px; }
       .canvas-wrap { top: 56px; }
-      .ready-badge { display: none; }
+      .ready-badge, .capital-badge { display: none; }
       .app {
         grid-template-columns: 1fr;
         grid-template-rows: var(--topbar-height) minmax(0, 1fr) var(--statusbar-height);
@@ -1235,6 +1275,20 @@
       </section>
 
       <section class="panel-section">
+        <div class="panel-title"><h2>Negocio</h2><span>Configuración general</span></div>
+        <div class="scenario-fields">
+          <div>
+            <label for="businessNameInput">Nombre del negocio</label>
+            <input id="businessNameInput" type="text" value="Entidad financiera" maxlength="70">
+          </div>
+          <div>
+            <label for="initialCapitalInput">Capital inicial USD</label>
+            <input id="initialCapitalInput" type="number" min="0" step="1000" value="1000000">
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-section">
         <div class="panel-title"><h2>Modelo</h2></div>
         <button class="property-button" id="loadExampleBtn" style="width: 100%;">Cargar ejemplo</button>
         <button class="property-button" id="clearModelBtn" style="width: 100%; margin-top: 8px;">Limpiar lienzo</button>
@@ -1254,9 +1308,10 @@
       <div class="workspace-summary">
         <div>
           <span class="workspace-kicker">ESCENARIO ACTIVO</span>
-          <strong>Recorrido de usuarios por áreas institucionales</strong>
+          <strong id="scenarioTitle">Entidad financiera · recorrido de usuarios por áreas</strong>
         </div>
         <div class="workspace-summary-actions">
+          <span class="capital-badge" id="capitalBadge">Capital inicial: $1.000.000,00</span>
           <span class="ready-badge"><i></i> Modelo listo</span>
           <button id="quickRunBtn" class="quick-run-button">▶ Ejecutar simulación</button>
         </div>
@@ -1316,6 +1371,7 @@
           <div class="metric-card"><span>En sistema</span><strong id="metricWip">0</strong></div>
           <div class="metric-card"><span>Cola máxima</span><strong id="metricMaxQueue">0</strong></div>
           <div class="metric-card"><span>Personal total</span><strong id="metricStaff">0</strong></div>
+          <div class="metric-card"><span>Capital inicial</span><strong id="metricCapital">$1,00 M</strong></div>
         </div>
 
         <div class="chart" aria-label="Gráfico de trámites finalizados">
@@ -1393,6 +1449,7 @@
           amountFixed: 500,
           amountMin: 20,
           amountMax: 5000,
+          color: "#20b486",
           transactionWeights: {
             credit: 30,
             deposit: 25,
@@ -1411,7 +1468,8 @@
         props: {
           capacity: 999,
           department: "General",
-          procedure: "Espera de atención"
+          procedure: "Espera de atención",
+          color: "#f2a93b"
         }
       },
       process: {
@@ -1424,7 +1482,8 @@
           capacity: 2,
           department: "Atención al cliente",
           procedure: "Recepción de trámite",
-          observations: ""
+          observations: "",
+          color: "#3a8bfd"
         }
       },
       decision: {
@@ -1435,7 +1494,8 @@
         props: {
           department: "Flujo",
           procedure: "Asignación de ruta",
-          routingMode: "transaction"
+          routingMode: "transaction",
+          color: "#8b6df6"
         }
       },
       sink: {
@@ -1446,7 +1506,8 @@
         props: {
           finalStatus: "Completado",
           department: "Cierre",
-          procedure: "Cierre de trámite"
+          procedure: "Cierre de trámite",
+          color: "#ef5b67"
         }
       }
     };
@@ -1486,13 +1547,22 @@
       zoomLabel: document.getElementById("zoomLabel"),
       toastContainer: document.getElementById("toastContainer"),
       recordsList: document.getElementById("recordsList"),
-      recordsCount: document.getElementById("recordsCount")
+      recordsCount: document.getElementById("recordsCount"),
+      businessNameInput: document.getElementById("businessNameInput"),
+      initialCapitalInput: document.getElementById("initialCapitalInput"),
+      capitalBadge: document.getElementById("capitalBadge"),
+      scenarioTitle: document.getElementById("scenarioTitle"),
+      metricCapital: document.getElementById("metricCapital")
     };
 
     const state = {
       nodes: [],
       edges: [],
       records: [],
+      scenario: {
+        businessName: "Entidad financiera",
+        initialCapital: 1000000
+      },
       selected: null,
       connectionMode: false,
       connectionOrigin: null,
@@ -1540,6 +1610,23 @@
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals
       });
+    }
+
+    function safeColor(value, fallback = "#3a8bfd") {
+      const color = String(value || "").trim();
+      return /^#[0-9a-fA-F]{6}$/.test(color) ? color : fallback;
+    }
+
+    function updateScenarioUi() {
+      const name = String(state.scenario?.businessName || "Entidad financiera").trim() || "Entidad financiera";
+      const capital = Math.max(0, Number(state.scenario?.initialCapital) || 0);
+      state.scenario.businessName = name;
+      state.scenario.initialCapital = capital;
+      if (dom.businessNameInput && dom.businessNameInput.value !== name) dom.businessNameInput.value = name;
+      if (dom.initialCapitalInput && Number(dom.initialCapitalInput.value) !== capital) dom.initialCapitalInput.value = String(capital);
+      if (dom.scenarioTitle) dom.scenarioTitle.textContent = name + " · recorrido de usuarios por áreas";
+      if (dom.capitalBadge) dom.capitalBadge.textContent = "Capital inicial: " + formatCurrency(capital);
+      if (dom.metricCapital) dom.metricCapital.textContent = compactCurrency(capital);
     }
 
     function getTransactionConfig(type) {
@@ -1709,6 +1796,7 @@
       updateModelStatus();
       updateEmptyState();
       updateMetrics();
+      updateScenarioUi();
       renderRecords();
     }
 
@@ -1788,7 +1876,7 @@
           <span class="node-port in"></span>
           <span class="node-port out"></span>
           <div class="node-header">
-            <div class="node-icon ${config.colorClass}">${config.icon}</div>
+            <div class="node-icon ${config.colorClass}" style="background:${safeColor(node.props.color, config.color || "#3a8bfd")};">${config.icon}</div>
             <div class="node-title">
               <strong title="${escapeHtml(node.name)}">${escapeHtml(node.name)}</strong>
               <span>${config.label}</span>
@@ -2022,6 +2110,10 @@
           <label for="propName">Nombre</label>
           <input id="propName" type="text" value="${escapeHtml(node.name)}" maxlength="60">
         </div>
+        <div class="field">
+          <label for="propColor">Color del bloque</label>
+          <input id="propColor" type="color" value="${safeColor(node.props.color, "#3a8bfd")}" style="height:40px;padding:4px;cursor:pointer;">
+        </div>
       `;
 
       if (node.type === "source") {
@@ -2215,6 +2307,11 @@
 
       document.getElementById("propName")?.addEventListener("input", event => {
         node.name = event.target.value || config.defaultName;
+        renderNodes();
+      });
+
+      document.getElementById("propColor")?.addEventListener("input", event => {
+        node.props.color = safeColor(event.target.value, "#3a8bfd");
         renderNodes();
       });
 
@@ -2924,6 +3021,7 @@
       dom.metricWip.textContent = wip.toLocaleString("es-EC");
       dom.metricMaxQueue.textContent = state.metrics.maxQueue.toLocaleString("es-EC");
       dom.metricStaff.textContent = totalStaff().toLocaleString("es-EC");
+      if (dom.metricCapital) dom.metricCapital.textContent = compactCurrency(state.scenario.initialCapital);
       dom.clockStatus.textContent = "t = " + formatNumber(state.simTime, 1) + " s";
     }
 
@@ -2981,8 +3079,9 @@
 
     function saveModel() {
       const payload = {
-        version: 5,
+        version: 6,
         savedAt: new Date().toISOString(),
+        scenario: state.scenario,
         nodes: state.nodes,
         edges: state.edges
       };
@@ -2999,8 +3098,9 @@
 
     function exportModel() {
       const payload = {
-        version: 5,
+        version: 6,
         exportedAt: new Date().toISOString(),
+        scenario: state.scenario,
         nodes: state.nodes,
         edges: state.edges
       };
@@ -3052,6 +3152,10 @@
     function applyModel(payload) {
       if (!payload || !Array.isArray(payload.nodes) || !Array.isArray(payload.edges)) throw new Error("Formato inválido.");
       stopSimulation(false);
+      state.scenario = {
+        businessName: String(payload.scenario?.businessName || "Entidad financiera"),
+        initialCapital: Math.max(0, Number(payload.scenario?.initialCapital ?? 1000000) || 0)
+      };
       state.nodes = payload.nodes
         .filter(node => NODE_TYPES[node.type])
         .map(node => ({
@@ -3085,7 +3189,11 @@
 
     function loadExampleModel(showNotification = true) {
       const example = {
-        version: 5,
+        version: 6,
+        scenario: {
+          businessName: "Entidad financiera",
+          initialCapital: 1000000
+        },
         nodes: [
           {
             id: "source-entry",
@@ -3250,6 +3358,16 @@
       });
     }
 
+    dom.businessNameInput?.addEventListener("input", event => {
+      state.scenario.businessName = event.target.value || "Entidad financiera";
+      updateScenarioUi();
+    });
+
+    dom.initialCapitalInput?.addEventListener("input", event => {
+      state.scenario.initialCapital = Math.max(0, Number(event.target.value) || 0);
+      updateScenarioUi();
+    });
+
     dom.playBtn.addEventListener("click", startSimulation);
     document.getElementById("quickRunBtn").addEventListener("click", startSimulation);
     dom.pauseBtn.addEventListener("click", pauseSimulation);
@@ -3319,6 +3437,7 @@
 
     function initializeApp() {
       updateRunStatus();
+      updateScenarioUi();
       loadExampleModel(false);
       const saved = safeStorage.get("simuladorTramitesModel");
       if (saved) {
