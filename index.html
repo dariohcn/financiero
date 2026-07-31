@@ -1,1 +1,2939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <title>FlowSim Trámites | Simulador por áreas y departamentos</title>
 
+  <style>
+    :root {
+      --bg: #07101f;
+      --panel: rgba(12, 24, 43, 0.94);
+      --panel-soft: rgba(19, 35, 58, 0.82);
+      --canvas: #f4f7fb;
+      --canvas-grid: rgba(57, 76, 104, 0.09);
+      --text: #e9f0f8;
+      --muted: #9aabc0;
+      --dark-text: #182338;
+      --dark-muted: #617089;
+      --line: rgba(255, 255, 255, 0.10);
+      --line-dark: rgba(21, 37, 60, 0.14);
+      --primary: #3a8bfd;
+      --primary-strong: #176fe5;
+      --success: #20b486;
+      --warning: #f2a93b;
+      --danger: #ef5b67;
+      --purple: #8b6df6;
+      --cyan: #19a7bd;
+      --shadow: 0 18px 44px rgba(0, 0, 0, 0.26);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --sidebar-width: 250px;
+      --properties-width: 316px;
+      --topbar-height: 68px;
+      --statusbar-height: 38px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { border: 0; }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(58, 139, 253, 0.32);
+      outline-offset: 2px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--properties-width);
+      grid-template-rows: var(--topbar-height) minmax(0, 1fr) var(--statusbar-height);
+      width: 100%;
+      height: 100%;
+    }
+
+    .topbar {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--properties-width);
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(58, 139, 253, 0.18), transparent 26%),
+        linear-gradient(90deg, #0a1527, #0b1422);
+      z-index: 30;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      height: 100%;
+      padding: 0 18px;
+      border-right: 1px solid var(--line);
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, var(--primary), #6f5cf4);
+      box-shadow: 0 10px 24px rgba(58, 139, 253, 0.32);
+      font-size: 12px;
+      letter-spacing: -0.03em;
+      font-weight: 900;
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-copy span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      padding: 0 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .toolbar::-webkit-scrollbar { display: none; }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex: 0 0 auto;
+    }
+
+    .toolbar-divider {
+      width: 1px;
+      height: 28px;
+      flex: 0 0 auto;
+      margin: 0 3px;
+      background: var(--line);
+    }
+
+    .tool-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 36px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.045);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tool-button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(58, 139, 253, 0.52);
+      background: rgba(58, 139, 253, 0.12);
+    }
+
+    .tool-button.primary {
+      border-color: transparent;
+      background: linear-gradient(145deg, var(--primary), var(--primary-strong));
+      box-shadow: 0 9px 20px rgba(23, 111, 229, 0.24);
+    }
+
+    .tool-button.danger:hover {
+      border-color: rgba(239, 91, 103, 0.55);
+      background: rgba(239, 91, 103, 0.12);
+    }
+
+    .tool-button.active {
+      border-color: rgba(58, 139, 253, 0.65);
+      background: rgba(58, 139, 253, 0.20);
+      color: #ffffff;
+    }
+
+    .tool-button.icon-only {
+      width: 36px;
+      padding: 0;
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .speed-control span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .speed-control select {
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .speed-control option { background: #0d1a2c; }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      height: 100%;
+      padding: 0 16px;
+      border-left: 1px solid var(--line);
+    }
+
+    .sidebar, .properties {
+      min-height: 0;
+      background: var(--panel);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+    }
+
+    .sidebar {
+      grid-column: 1;
+      grid-row: 2;
+      border-right: 1px solid var(--line);
+    }
+
+    .properties {
+      grid-column: 3;
+      grid-row: 2;
+      border-left: 1px solid var(--line);
+    }
+
+    .panel-section {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 13px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .panel-title span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .palette { display: grid; gap: 9px; }
+
+    .palette-item {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      min-height: 62px;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.035);
+      cursor: grab;
+      user-select: none;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .palette-item:hover {
+      transform: translateX(3px);
+      border-color: rgba(58, 139, 253, 0.46);
+      background: rgba(58, 139, 253, 0.09);
+    }
+
+    .palette-item:active { cursor: grabbing; }
+
+    .palette-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .palette-copy strong { display: block; font-size: 12px; }
+    .palette-copy span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    .source-color { background: linear-gradient(145deg, #22b487, #148863); }
+    .queue-color { background: linear-gradient(145deg, #f0ab3d, #d47b22); }
+    .process-color { background: linear-gradient(145deg, #3a8bfd, #2365d1); }
+    .decision-color { background: linear-gradient(145deg, #8b6df6, #674bd8); }
+    .sink-color { background: linear-gradient(145deg, #ef5b67, #cf3948); }
+
+    .tip-card {
+      padding: 13px;
+      border: 1px solid rgba(58, 139, 253, 0.23);
+      border-radius: 13px;
+      background: rgba(58, 139, 253, 0.08);
+    }
+
+    .tip-card strong { display: block; margin-bottom: 6px; font-size: 11px; }
+    .tip-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .workspace {
+      position: relative;
+      grid-column: 2;
+      grid-row: 2;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      background: #dce4ef;
+    }
+
+    .workspace-summary {
+      position: absolute;
+      top: 14px;
+      left: 216px;
+      right: 14px;
+      z-index: 18;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 12px 10px 16px;
+      border: 1px solid rgba(16, 35, 59, 0.10);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 12px 30px rgba(27, 42, 62, 0.13);
+      backdrop-filter: blur(12px);
+      color: var(--dark-text);
+    }
+
+    .workspace-summary > div:first-child { min-width: 0; }
+    .workspace-summary strong {
+      display: block;
+      margin-top: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .workspace-kicker {
+      color: var(--dark-muted);
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+    }
+
+    .workspace-summary-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex: 0 0 auto;
+    }
+
+    .ready-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 32px;
+      padding: 0 10px;
+      border: 1px solid rgba(32, 180, 134, 0.20);
+      border-radius: 999px;
+      background: rgba(32, 180, 134, 0.08);
+      color: #137356;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .ready-badge i {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(32, 180, 134, 0.13);
+    }
+
+    .quick-run-button {
+      min-height: 34px;
+      padding: 0 13px;
+      border-radius: 9px;
+      background: linear-gradient(145deg, var(--primary), var(--primary-strong));
+      box-shadow: 0 8px 18px rgba(23, 111, 229, 0.22);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 900;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .quick-run-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 11px 23px rgba(23, 111, 229, 0.28);
+    }
+
+    .canvas-toolbar {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 18;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px;
+      border: 1px solid rgba(16, 35, 59, 0.10);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.90);
+      box-shadow: 0 12px 30px rgba(27, 42, 62, 0.13);
+      backdrop-filter: blur(10px);
+    }
+
+    .canvas-tool {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--dark-text);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .canvas-tool:hover, .canvas-tool.active {
+      background: rgba(58, 139, 253, 0.12);
+      color: var(--primary-strong);
+    }
+
+    .zoom-label {
+      min-width: 48px;
+      color: var(--dark-muted);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .canvas-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(42, 60, 85, 0.25) transparent;
+    }
+
+    .canvas {
+      position: relative;
+      width: 1900px;
+      height: 1100px;
+      transform-origin: top left;
+      background-color: var(--canvas);
+      background-image:
+        linear-gradient(var(--canvas-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--canvas-grid) 1px, transparent 1px),
+        linear-gradient(rgba(57, 76, 104, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 76, 104, 0.045) 1px, transparent 1px);
+      background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+      overflow: hidden;
+    }
+
+    .canvas.drag-over { box-shadow: inset 0 0 0 4px rgba(58, 139, 253, 0.25); }
+
+    .connections {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .edge-group { pointer-events: auto; cursor: pointer; }
+
+    .edge-visible {
+      fill: none;
+      stroke: #6c7c90;
+      stroke-width: 3;
+      marker-end: url(#arrow);
+      transition: stroke 140ms ease, stroke-width 140ms ease;
+    }
+
+    .edge-hit { fill: none; stroke: transparent; stroke-width: 18; }
+
+    .edge-group:hover .edge-visible,
+    .edge-group.selected .edge-visible {
+      stroke: var(--primary);
+      stroke-width: 4;
+    }
+
+    .edge-label-bg {
+      fill: rgba(255, 255, 255, 0.94);
+      stroke: rgba(24, 35, 56, 0.12);
+      stroke-width: 1;
+    }
+
+    .edge-label {
+      fill: #34445c;
+      font-size: 11px;
+      font-weight: 800;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+
+    .nodes-layer { position: absolute; inset: 0; z-index: 5; }
+
+    .node {
+      position: absolute;
+      width: 188px;
+      min-height: 108px;
+      border: 2px solid transparent;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 12px 28px rgba(30, 45, 68, 0.14);
+      color: var(--dark-text);
+      cursor: move;
+      user-select: none;
+      transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+    }
+
+    .node:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 35px rgba(30, 45, 68, 0.18);
+    }
+
+    .node.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(58, 139, 253, 0.16), 0 18px 36px rgba(30, 45, 68, 0.18);
+    }
+
+    .node.connection-origin {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 5px rgba(139, 109, 246, 0.18), 0 18px 36px rgba(30, 45, 68, 0.18);
+    }
+
+    .node-header {
+      display: grid;
+      grid-template-columns: 37px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 10px 7px;
+    }
+
+    .node-icon {
+      display: grid;
+      place-items: center;
+      width: 37px;
+      height: 37px;
+      border-radius: 11px;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .node-title { min-width: 0; }
+    .node-title strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    .node-title span {
+      display: block;
+      margin-top: 3px;
+      color: var(--dark-muted);
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .node-status {
+      min-width: 27px;
+      min-height: 23px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #eef2f7;
+      color: var(--dark-muted);
+      font-size: 10px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .node-details {
+      padding: 0 11px 7px;
+      color: var(--dark-muted);
+      font-size: 9px;
+      line-height: 1.45;
+    }
+
+    .node-details b { color: var(--dark-text); }
+
+    .node-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 11px 10px;
+      border-top: 1px solid #edf1f5;
+    }
+
+    .node-metric { min-width: 0; }
+    .node-metric span { display: block; color: var(--dark-muted); font-size: 9px; }
+    .node-metric strong { display: block; margin-top: 2px; font-size: 11px; }
+
+    .node-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: 0 0 auto;
+    }
+
+    .mini-step {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: #eff3f8;
+      color: var(--dark-text);
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      border: 1px solid rgba(23,35,56,.08);
+    }
+
+    .mini-step:hover {
+      background: rgba(58, 139, 253, 0.14);
+      border-color: rgba(58, 139, 253, 0.35);
+      color: var(--primary-strong);
+    }
+
+    .mini-value {
+      min-width: 24px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--dark-text);
+    }
+
+    .node-indicator {
+      width: 9px;
+      height: 9px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: #b9c4d1;
+      box-shadow: 0 0 0 4px rgba(185, 196, 209, 0.20);
+    }
+
+    .node-indicator.active {
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(32, 180, 134, 0.18);
+    }
+
+    .node-port {
+      position: absolute;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      margin-top: -6px;
+      border: 2px solid #ffffff;
+      border-radius: 999px;
+      background: #91a0b4;
+      box-shadow: 0 0 0 2px rgba(33, 48, 70, 0.10);
+    }
+    .node-port.in { left: -7px; }
+    .node-port.out { right: -7px; background: var(--primary); }
+
+    .entity-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    .entity {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      margin-left: -9px;
+      margin-top: -9px;
+      border: 2px solid #ffffff;
+      border-radius: 999px;
+      background: linear-gradient(145deg, #1f4a8f, #173563);
+      box-shadow: 0 4px 11px rgba(20, 34, 55, 0.32);
+      color: #ffffff;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .empty-state {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 1;
+      width: min(460px, calc(100% - 48px));
+      padding: 26px;
+      border: 1px dashed rgba(41, 65, 96, 0.22);
+      border-radius: 18px;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: var(--dark-muted);
+      background: rgba(255, 255, 255, 0.54);
+      backdrop-filter: blur(8px);
+    }
+
+    .empty-state strong { display: block; color: var(--dark-text); font-size: 18px; }
+    .empty-state p { margin: 9px 0 0; font-size: 12px; line-height: 1.6; }
+
+    .field { margin-bottom: 13px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.035em;
+      text-transform: uppercase;
+    }
+
+    .field input, .field select, .field textarea {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.055);
+      color: var(--text);
+      padding: 9px 10px;
+      transition: border-color 150ms ease, background 150ms ease;
+    }
+    .field textarea { resize: vertical; min-height: 72px; }
+
+    .field input:hover, .field select:hover, .field textarea:hover {
+      border-color: rgba(58, 139, 253, 0.44);
+    }
+
+    .field select option { background: #0f1c2f; }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .properties-empty {
+      padding: 22px 18px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .properties-empty strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .property-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .property-button {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.055);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .property-button:hover {
+      border-color: rgba(58, 139, 253, 0.46);
+      background: rgba(58, 139, 253, 0.10);
+    }
+
+    .property-button.danger:hover {
+      border-color: rgba(239, 91, 103, 0.55);
+      background: rgba(239, 91, 103, 0.11);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .metric-card {
+      min-width: 0;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .metric-card span { display: block; color: var(--muted); font-size: 9px; }
+    .metric-card strong {
+      display: block;
+      margin-top: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text);
+      font-size: 17px;
+      white-space: nowrap;
+    }
+
+    .chart {
+      position: relative;
+      height: 120px;
+      margin-top: 11px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 100% 30px;
+      overflow: hidden;
+    }
+
+    .chart svg { width: 100%; height: 100%; }
+    .chart-line { fill: none; stroke: var(--primary); stroke-width: 2.5; vector-effect: non-scaling-stroke; }
+    .chart-area { fill: url(#chartGradient); }
+
+    .records-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .record-item {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(255,255,255,.035);
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .record-item strong { display:block; font-size:11px; color:var(--text); margin-bottom:4px; }
+    .record-item span { display:block; color:var(--muted); }
+
+    .statusbar {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--properties-width);
+      align-items: center;
+      border-top: 1px solid var(--line);
+      background: #081323;
+      color: var(--muted);
+      font-size: 10px;
+      z-index: 40;
+    }
+
+    .status-left, .status-center, .status-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 100%;
+      padding: 0 16px;
+      white-space: nowrap;
+    }
+
+    .status-left { border-right: 1px solid var(--line); }
+    .status-center { min-width: 0; overflow: hidden; }
+    .status-right { justify-content: flex-end; border-left: 1px solid var(--line); }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #6f8096;
+    }
+
+    .status-dot.running {
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(32, 180, 134, 0.15);
+    }
+
+    .toast-container {
+      position: fixed;
+      right: 18px;
+      bottom: 55px;
+      z-index: 100;
+      display: grid;
+      gap: 9px;
+      width: min(340px, calc(100% - 36px));
+      pointer-events: none;
+    }
+
+    .toast {
+      padding: 13px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 12px;
+      background: rgba(9, 21, 37, 0.95);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      font-size: 11px;
+      line-height: 1.45;
+      animation: toastIn 220ms ease both;
+    }
+
+    .toast.success { border-left: 4px solid var(--success); }
+    .toast.warning { border-left: 4px solid var(--warning); }
+    .toast.error { border-left: 4px solid var(--danger); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(9px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden { display: none !important; }
+    .mobile-toggle { display: none; }
+
+    @media (max-width: 1180px) {
+      :root { --sidebar-width: 220px; --properties-width: 268px; }
+      .tool-button .label { display: none; }
+      .tool-button { width: 36px; padding: 0; }
+    }
+
+    @media (max-width: 920px) {
+      .workspace-summary { left: 14px; top: 62px; }
+      .ready-badge { display: none; }
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: var(--topbar-height) minmax(0, 1fr) var(--statusbar-height);
+      }
+      .topbar { grid-template-columns: minmax(0, 1fr) auto; }
+      .brand { display: none; }
+      .toolbar { min-width: 0; }
+      .top-actions { grid-column: 2; }
+      .workspace { grid-column: 1; }
+      .sidebar, .properties {
+        position: fixed;
+        top: var(--topbar-height);
+        bottom: var(--statusbar-height);
+        z-index: 60;
+        width: min(320px, 86vw);
+        box-shadow: var(--shadow);
+        transition: transform 220ms ease;
+      }
+      .sidebar { left: 0; transform: translateX(-105%); }
+      .properties { right: 0; transform: translateX(105%); }
+      .sidebar.open, .properties.open { transform: translateX(0); }
+      .mobile-toggle { display: inline-flex; }
+      .statusbar { grid-template-columns: 1fr auto; }
+      .status-left { display: none; }
+      .status-center { grid-column: 1; }
+      .status-right { grid-column: 2; }
+    }
+
+    @media (max-width: 620px) {
+      .workspace-summary { min-height: 52px; padding-left: 12px; }
+      .workspace-summary strong { max-width: 125px; }
+      .quick-run-button { padding: 0 10px; font-size: 9px; }
+      .topbar { grid-template-columns: minmax(0, 1fr); }
+      .top-actions { display: none; }
+      .toolbar { padding: 0 8px; }
+      .toolbar-divider { display: none; }
+      .speed-control span { display: none; }
+      .status-right { display: none; }
+      .statusbar { grid-template-columns: 1fr; }
+      .status-center { justify-content: space-between; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">FT</div>
+        <div class="brand-copy">
+          <strong>FlowSim Trámites</strong>
+          <span>Simulador visual por áreas y departamentos</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <button class="tool-button mobile-toggle" id="openPaletteBtn" title="Abrir componentes" aria-label="Abrir componentes">☰</button>
+          <button class="tool-button primary" id="playBtn" title="Iniciar simulación"><span>▶</span><span class="label">Iniciar</span></button>
+          <button class="tool-button" id="pauseBtn" title="Pausar simulación"><span>Ⅱ</span><span class="label">Pausar</span></button>
+          <button class="tool-button" id="stopBtn" title="Detener simulación"><span>■</span><span class="label">Detener</span></button>
+          <button class="tool-button" id="resetBtn" title="Reiniciar métricas"><span>↺</span><span class="label">Reiniciar</span></button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="speed-control">
+          <span>Velocidad</span>
+          <select id="speedSelect" aria-label="Velocidad de simulación">
+            <option value="0.5">0.5×</option>
+            <option value="1">1×</option>
+            <option value="2">2×</option>
+            <option value="5" selected>5×</option>
+            <option value="10">10×</option>
+            <option value="25">25×</option>
+          </select>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+          <button class="tool-button" id="connectBtn" title="Conectar bloques"><span>⤳</span><span class="label">Conectar</span></button>
+          <button class="tool-button danger" id="deleteBtn" title="Eliminar elemento seleccionado"><span>⌫</span><span class="label">Eliminar</span></button>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="tool-button" id="saveBtn">Guardar</button>
+        <button class="tool-button" id="exportBtn">Exportar</button>
+        <button class="tool-button" id="exportRecordsBtn">Registros</button>
+        <button class="tool-button mobile-toggle" id="openPropertiesBtn" title="Abrir propiedades">⚙</button>
+      </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <section class="panel-section">
+        <div class="panel-title">
+          <h2>Componentes</h2>
+          <span>Arrastre al lienzo</span>
+        </div>
+
+        <div class="palette">
+          <div class="palette-item" draggable="true" data-type="source">
+            <div class="palette-icon source-color">👤</div>
+            <div class="palette-copy">
+              <strong>Entrada</strong>
+              <span>Genera personas que ingresan al proceso.</span>
+            </div>
+          </div>
+
+          <div class="palette-item" draggable="true" data-type="queue">
+            <div class="palette-icon queue-color">≡</div>
+            <div class="palette-copy">
+              <strong>Espera</strong>
+              <span>Representa una fila o sala de espera.</span>
+            </div>
+          </div>
+
+          <div class="palette-item" draggable="true" data-type="process">
+            <div class="palette-icon process-color">🏢</div>
+            <div class="palette-copy">
+              <strong>Área</strong>
+              <span>Departamento o ventanilla donde se realiza un trámite.</span>
+            </div>
+          </div>
+
+          <div class="palette-item" draggable="true" data-type="decision">
+            <div class="palette-icon decision-color">◇</div>
+            <div class="palette-copy">
+              <strong>Decisión</strong>
+              <span>Envía personas a otras áreas por probabilidad.</span>
+            </div>
+          </div>
+
+          <div class="palette-item" draggable="true" data-type="sink">
+            <div class="palette-icon sink-color">✓</div>
+            <div class="palette-copy">
+              <strong>Salida</strong>
+              <span>Finaliza el trámite y guarda el registro.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-title"><h2>Uso</h2></div>
+        <div class="tip-card">
+          <strong>Flujo recomendado</strong>
+          <p>
+            Arrastre bloques al lienzo, conecte el flujo, configure nombre del departamento, trámite,
+            tiempo de atención, personal disponible y probabilidades de derivación. Puede aumentar o reducir
+            personal desde cada área con los botones + y −.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-title"><h2>Modelo</h2></div>
+        <button class="property-button" id="loadExampleBtn" style="width: 100%;">Cargar ejemplo</button>
+        <button class="property-button" id="clearModelBtn" style="width: 100%; margin-top: 8px;">Limpiar lienzo</button>
+        <label class="property-button" style="display:grid; place-items:center; width:100%; margin-top:8px; cursor:pointer;">
+          Importar JSON
+          <input type="file" id="importInput" accept=".json,application/json" hidden>
+        </label>
+      </section>
+    </aside>
+
+    <main class="workspace" id="workspace">
+      <div class="workspace-summary">
+        <div>
+          <span class="workspace-kicker">ESCENARIO ACTIVO</span>
+          <strong>Recorrido de usuarios por áreas institucionales</strong>
+        </div>
+        <div class="workspace-summary-actions">
+          <span class="ready-badge"><i></i> Modelo listo</span>
+          <button id="quickRunBtn" class="quick-run-button">▶ Ejecutar simulación</button>
+        </div>
+      </div>
+
+      <div class="canvas-toolbar">
+        <button class="canvas-tool" id="zoomOutBtn" title="Alejar">−</button>
+        <span class="zoom-label" id="zoomLabel">100%</span>
+        <button class="canvas-tool" id="zoomInBtn" title="Acercar">＋</button>
+        <button class="canvas-tool" id="fitBtn" title="Ajustar vista">⌗</button>
+      </div>
+
+      <div class="canvas-wrap" id="canvasWrap">
+        <div class="canvas" id="canvas">
+          <svg class="connections" id="connectionsSvg" viewBox="0 0 1900 1100" preserveAspectRatio="none">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"></path>
+              </marker>
+            </defs>
+            <g id="edgeLayer"></g>
+          </svg>
+
+          <div class="nodes-layer" id="nodesLayer"></div>
+          <div class="entity-layer" id="entityLayer"></div>
+
+          <div class="empty-state hidden" id="emptyState">
+            <strong>Construya su simulador</strong>
+            <p>Arrastre componentes desde el panel izquierdo o cargue el modelo de ejemplo.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="properties" id="properties">
+      <section class="panel-section">
+        <div class="panel-title">
+          <h2>Propiedades</h2>
+          <span id="selectionType">Sin selección</span>
+        </div>
+        <div id="propertiesContent" class="properties-empty">
+          <strong>Seleccione un elemento</strong>
+          Haga clic sobre un bloque o una conexión para editar sus parámetros.
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-title">
+          <h2>Indicadores</h2>
+          <span>Tiempo real</span>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card"><span>Tiempo simulado</span><strong id="metricTime">0.0 s</strong></div>
+          <div class="metric-card"><span>Personas ingresadas</span><strong id="metricCreated">0</strong></div>
+          <div class="metric-card"><span>Registros guardados</span><strong id="metricCompleted">0</strong></div>
+          <div class="metric-card"><span>En sistema</span><strong id="metricWip">0</strong></div>
+          <div class="metric-card"><span>Cola máxima</span><strong id="metricMaxQueue">0</strong></div>
+          <div class="metric-card"><span>Personal total</span><strong id="metricStaff">0</strong></div>
+        </div>
+
+        <div class="chart" aria-label="Gráfico de trámites finalizados">
+          <svg viewBox="0 0 280 120" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3a8bfd" stop-opacity="0.35"></stop>
+                <stop offset="100%" stop-color="#3a8bfd" stop-opacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <path id="chartArea" class="chart-area" d=""></path>
+            <path id="chartLine" class="chart-line" d=""></path>
+          </svg>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <div class="panel-title">
+          <h2>Últimos registros</h2>
+          <span id="recordsCount">0</span>
+        </div>
+        <div id="recordsList" class="records-list"></div>
+      </section>
+    </aside>
+
+    <footer class="statusbar">
+      <div class="status-left">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Detenido</span>
+      </div>
+
+      <div class="status-center">
+        <span id="statusMessage">Modelo listo.</span>
+        <span id="statusSelection">0 bloques · 0 conexiones</span>
+      </div>
+
+      <div class="status-right">
+        <span>Motor: flujo discreto de usuarios</span>
+        <span id="clockStatus">t = 0.0 s</span>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    "use strict";
+
+    const NODE_TYPES = {
+      source: {
+        label: "Entrada",
+        icon: "👤",
+        colorClass: "source-color",
+        defaultName: "Ingreso de usuarios",
+        props: {
+          interval: 4,
+          startAt: 0,
+          maxEntities: 0,
+          personType: "Ciudadano"
+        }
+      },
+      queue: {
+        label: "Espera",
+        icon: "≡",
+        colorClass: "queue-color",
+        defaultName: "Sala de espera",
+        props: {
+          capacity: 999,
+          department: "General",
+          procedure: "Espera de atención"
+        }
+      },
+      process: {
+        label: "Área",
+        icon: "🏢",
+        colorClass: "process-color",
+        defaultName: "Área de atención",
+        props: {
+          serviceTime: 6,
+          capacity: 2,
+          department: "Atención al cliente",
+          procedure: "Recepción de trámite",
+          observations: ""
+        }
+      },
+      decision: {
+        label: "Decisión",
+        icon: "◇",
+        colorClass: "decision-color",
+        defaultName: "Derivación",
+        props: {
+          department: "Flujo",
+          procedure: "Asignación de ruta"
+        }
+      },
+      sink: {
+        label: "Salida",
+        icon: "✓",
+        colorClass: "sink-color",
+        defaultName: "Trámite finalizado",
+        props: {
+          finalStatus: "Completado",
+          department: "Cierre",
+          procedure: "Cierre de trámite"
+        }
+      }
+    };
+
+    const dom = {
+      sidebar: document.getElementById("sidebar"),
+      properties: document.getElementById("properties"),
+      workspace: document.getElementById("workspace"),
+      canvasWrap: document.getElementById("canvasWrap"),
+      canvas: document.getElementById("canvas"),
+      nodesLayer: document.getElementById("nodesLayer"),
+      edgeLayer: document.getElementById("edgeLayer"),
+      entityLayer: document.getElementById("entityLayer"),
+      emptyState: document.getElementById("emptyState"),
+      propertiesContent: document.getElementById("propertiesContent"),
+      selectionType: document.getElementById("selectionType"),
+      connectBtn: document.getElementById("connectBtn"),
+      playBtn: document.getElementById("playBtn"),
+      pauseBtn: document.getElementById("pauseBtn"),
+      stopBtn: document.getElementById("stopBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      deleteBtn: document.getElementById("deleteBtn"),
+      speedSelect: document.getElementById("speedSelect"),
+      metricTime: document.getElementById("metricTime"),
+      metricCreated: document.getElementById("metricCreated"),
+      metricCompleted: document.getElementById("metricCompleted"),
+      metricWip: document.getElementById("metricWip"),
+      metricMaxQueue: document.getElementById("metricMaxQueue"),
+      metricStaff: document.getElementById("metricStaff"),
+      chartLine: document.getElementById("chartLine"),
+      chartArea: document.getElementById("chartArea"),
+      statusDot: document.getElementById("statusDot"),
+      statusText: document.getElementById("statusText"),
+      statusMessage: document.getElementById("statusMessage"),
+      statusSelection: document.getElementById("statusSelection"),
+      clockStatus: document.getElementById("clockStatus"),
+      zoomLabel: document.getElementById("zoomLabel"),
+      toastContainer: document.getElementById("toastContainer"),
+      recordsList: document.getElementById("recordsList"),
+      recordsCount: document.getElementById("recordsCount")
+    };
+
+    const state = {
+      nodes: [],
+      edges: [],
+      records: [],
+      selected: null,
+      connectionMode: false,
+      connectionOrigin: null,
+      zoom: 1,
+      draggingNode: null,
+      dragOffset: { x: 0, y: 0 },
+      running: false,
+      paused: false,
+      simTime: 0,
+      speed: Number(dom.speedSelect.value),
+      lastFrame: 0,
+      nextEntityId: 1,
+      nextEventId: 1,
+      events: [],
+      movingEntities: [],
+      nodeRuntime: new Map(),
+      sourceSchedule: new Map(),
+      metrics: {
+        created: 0,
+        completed: 0,
+        rejected: 0,
+        maxQueue: 0,
+        history: []
+      },
+      nextHistoryTime: 0
+    };
+
+    const safeStorage = {
+      get(key) { try { return window.localStorage.getItem(key); } catch (error) { return null; } },
+      set(key, value) { try { window.localStorage.setItem(key, value); return true; } catch (error) { return false; } },
+      remove(key) { try { window.localStorage.removeItem(key); return true; } catch (error) { return false; } }
+    };
+
+    function uid(prefix) {
+      if (window.crypto && typeof window.crypto.randomUUID === "function") {
+        return prefix + "-" + window.crypto.randomUUID();
+      }
+      return prefix + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 9);
+    }
+
+    function clone(value) { return JSON.parse(JSON.stringify(value)); }
+    function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+    function formatNumber(value, decimals = 1) {
+      return Number(value || 0).toLocaleString("es-EC", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function showToast(message, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = "toast " + type;
+      toast.textContent = message;
+      dom.toastContainer.appendChild(toast);
+      window.setTimeout(() => toast.remove(), 2800);
+    }
+
+    function updateStatus(message) { dom.statusMessage.textContent = message; }
+    function getNode(nodeId) { return state.nodes.find(node => node.id === nodeId) || null; }
+    function getEdge(edgeId) { return state.edges.find(edge => edge.id === edgeId) || null; }
+    function getOutgoing(nodeId) { return state.edges.filter(edge => edge.from === nodeId); }
+    function getIncoming(nodeId) { return state.edges.filter(edge => edge.to === nodeId); }
+
+    function nodeCenter(node) {
+      return { x: node.x + 94, y: node.y + 54 };
+    }
+
+    function totalStaff() {
+      return state.nodes
+        .filter(node => node.type === "process")
+        .reduce((sum, node) => sum + Math.max(1, Number(node.props.capacity) || 1), 0);
+    }
+
+    function createNode(type, x, y, custom = {}) {
+      const config = NODE_TYPES[type];
+      if (!config) return null;
+
+      const node = {
+        id: uid("node"),
+        type,
+        name: custom.name || config.defaultName,
+        x: clamp(Number(x) || 0, 0, 1900 - 188),
+        y: clamp(Number(y) || 0, 0, 1100 - 108),
+        props: { ...clone(config.props), ...(custom.props || {}) }
+      };
+
+      state.nodes.push(node);
+      ensureNodeRuntime(node);
+      renderAll();
+      selectElement("node", node.id);
+      return node;
+    }
+
+    function createEdge(from, to, weight = 1) {
+      if (!from || !to || from === to) {
+        showToast("La conexión no es válida.", "warning");
+        return null;
+      }
+
+      const exists = state.edges.some(edge => edge.from === from && edge.to === to);
+      if (exists) {
+        showToast("Esa conexión ya existe.", "warning");
+        return null;
+      }
+
+      const fromNode = getNode(from);
+      if (!fromNode || fromNode.type === "sink") {
+        showToast("El bloque de salida no puede generar conexiones.", "warning");
+        return null;
+      }
+
+      const edge = { id: uid("edge"), from, to, weight: Math.max(0, Number(weight) || 0) };
+      state.edges.push(edge);
+      renderEdges();
+      updateModelStatus();
+      selectElement("edge", edge.id);
+      showToast("Conexión creada.");
+      return edge;
+    }
+
+    function ensureNodeRuntime(node) {
+      if (!state.nodeRuntime.has(node.id)) {
+        state.nodeRuntime.set(node.id, {
+          queue: [],
+          busy: 0,
+          completed: 0,
+          entered: 0,
+          rejected: 0
+        });
+      }
+      return state.nodeRuntime.get(node.id);
+    }
+
+    function renderAll() {
+      renderNodes();
+      renderEdges();
+      renderProperties();
+      updateModelStatus();
+      updateEmptyState();
+      updateMetrics();
+      renderRecords();
+    }
+
+    function renderNodes() {
+      dom.nodesLayer.innerHTML = "";
+
+      state.nodes.forEach(node => {
+        const config = NODE_TYPES[node.type];
+        const runtime = ensureNodeRuntime(node);
+
+        const element = document.createElement("div");
+        element.className = "node";
+        element.dataset.nodeId = node.id;
+        element.style.left = node.x + "px";
+        element.style.top = node.y + "px";
+
+        if (state.selected?.kind === "node" && state.selected.id === node.id) {
+          element.classList.add("selected");
+        }
+        if (state.connectionOrigin === node.id) {
+          element.classList.add("connection-origin");
+        }
+
+        let statusValue = "0";
+        let metricLabel = "Recorridos";
+        let metricValue = runtime.completed;
+        let details = "";
+        let quickControls = "";
+
+        if (node.type === "source") {
+          statusValue = String(runtime.completed);
+          metricLabel = "Ingresos";
+          metricValue = runtime.completed;
+          details = `<b>Tipo:</b> ${escapeHtml(node.props.personType || "Ciudadano")}<br><b>Intervalo:</b> ${formatNumber(node.props.interval || 4, 1)} s`;
+        } else if (node.type === "queue") {
+          statusValue = String(runtime.queue.length);
+          metricLabel = "En espera";
+          metricValue = runtime.queue.length;
+          details = `<b>Área:</b> ${escapeHtml(node.props.department || "General")}<br><b>Trámite:</b> ${escapeHtml(node.props.procedure || "Espera")}`;
+        } else if (node.type === "process") {
+          statusValue = runtime.busy + "/" + Math.max(1, Number(node.props.capacity) || 1);
+          metricLabel = "Atendidos";
+          metricValue = runtime.completed;
+          details = `<b>Depto.:</b> ${escapeHtml(node.props.department || "Área")}<br><b>Trámite:</b> ${escapeHtml(node.props.procedure || "Atención")}`;
+          quickControls = `
+            <div class="node-controls">
+              <button class="mini-step" data-action="decrease" title="Reducir personal">−</button>
+              <span class="mini-value">${Math.max(1, Number(node.props.capacity) || 1)}</span>
+              <button class="mini-step" data-action="increase" title="Incrementar personal">+</button>
+            </div>
+          `;
+        } else if (node.type === "decision") {
+          statusValue = String(runtime.completed);
+          metricLabel = "Derivadas";
+          metricValue = runtime.completed;
+          details = `<b>Departamento:</b> ${escapeHtml(node.props.department || "Flujo")}<br><b>Uso:</b> ${escapeHtml(node.props.procedure || "Derivación")}`;
+        } else if (node.type === "sink") {
+          statusValue = String(runtime.completed);
+          metricLabel = "Finalizadas";
+          metricValue = runtime.completed;
+          details = `<b>Estado final:</b> ${escapeHtml(node.props.finalStatus || "Completado")}<br><b>Registro:</b> guardado automáticamente`;
+        }
+
+        const active = (
+          (node.type === "queue" && runtime.queue.length > 0) ||
+          (node.type === "process" && runtime.busy > 0) ||
+          (node.type === "source" && state.running && !state.paused)
+        );
+
+        element.innerHTML = `
+          <span class="node-port in"></span>
+          <span class="node-port out"></span>
+          <div class="node-header">
+            <div class="node-icon ${config.colorClass}">${config.icon}</div>
+            <div class="node-title">
+              <strong title="${escapeHtml(node.name)}">${escapeHtml(node.name)}</strong>
+              <span>${config.label}</span>
+            </div>
+            <div class="node-status">${statusValue}</div>
+          </div>
+          <div class="node-details">${details}</div>
+          <div class="node-body">
+            <div class="node-metric">
+              <span>${metricLabel}</span>
+              <strong>${metricValue}</strong>
+            </div>
+            ${quickControls || `<span class="node-indicator ${active ? "active" : ""}"></span>`}
+          </div>
+        `;
+
+        element.addEventListener("pointerdown", event => beginNodeDrag(event, node.id));
+        element.addEventListener("click", event => {
+          event.stopPropagation();
+          handleNodeClick(node.id);
+        });
+
+        if (node.type === "process") {
+          const downButton = element.querySelector('[data-action="decrease"]');
+          const upButton = element.querySelector('[data-action="increase"]');
+
+          downButton?.addEventListener("click", event => {
+            event.stopPropagation();
+            adjustStaff(node.id, -1);
+          });
+
+          upButton?.addEventListener("click", event => {
+            event.stopPropagation();
+            adjustStaff(node.id, 1);
+          });
+        }
+
+        dom.nodesLayer.appendChild(element);
+      });
+    }
+
+    function adjustStaff(nodeId, delta) {
+      const node = getNode(nodeId);
+      if (!node || node.type !== "process") return;
+      node.props.capacity = Math.max(1, (Number(node.props.capacity) || 1) + delta);
+      renderNodes();
+      updateMetrics();
+      if (state.selected?.kind === "node" && state.selected.id === nodeId) renderProperties();
+      updateStatus("Personal actualizado en " + node.name + ".");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderEdges() {
+      dom.edgeLayer.innerHTML = "";
+
+      state.edges.forEach(edge => {
+        const fromNode = getNode(edge.from);
+        const toNode = getNode(edge.to);
+        if (!fromNode || !toNode) return;
+
+        const start = { x: fromNode.x + 188, y: fromNode.y + 54 };
+        const end = { x: toNode.x, y: toNode.y + 54 };
+        const distance = Math.abs(end.x - start.x);
+        const bend = Math.max(70, distance * 0.45);
+        const direction = end.x >= start.x ? 1 : -1;
+        const c1x = start.x + bend * direction;
+        const c2x = end.x - bend * direction;
+        const path = `M ${start.x} ${start.y} C ${c1x} ${start.y}, ${c2x} ${end.y}, ${end.x} ${end.y}`;
+
+        const mid = cubicPoint(
+          { x: start.x, y: start.y },
+          { x: c1x, y: start.y },
+          { x: c2x, y: end.y },
+          { x: end.x, y: end.y },
+          0.5
+        );
+
+        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        group.setAttribute("class", "edge-group");
+        group.dataset.edgeId = edge.id;
+
+        if (state.selected?.kind === "edge" && state.selected.id === edge.id) group.classList.add("selected");
+
+        const visible = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        visible.setAttribute("class", "edge-visible");
+        visible.setAttribute("d", path);
+
+        const hit = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        hit.setAttribute("class", "edge-hit");
+        hit.setAttribute("d", path);
+
+        group.appendChild(visible);
+        group.appendChild(hit);
+
+        if (fromNode.type === "decision") {
+          const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("class", "edge-label-bg");
+          rect.setAttribute("x", mid.x - 24);
+          rect.setAttribute("y", mid.y - 12);
+          rect.setAttribute("width", 48);
+          rect.setAttribute("height", 24);
+          rect.setAttribute("rx", 8);
+
+          const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          text.setAttribute("class", "edge-label");
+          text.setAttribute("x", mid.x);
+          text.setAttribute("y", mid.y + 0.5);
+          text.textContent = formatDecisionWeight(edge);
+
+          labelGroup.appendChild(rect);
+          labelGroup.appendChild(text);
+          group.appendChild(labelGroup);
+        }
+
+        group.addEventListener("click", event => {
+          event.stopPropagation();
+          selectElement("edge", edge.id);
+        });
+
+        dom.edgeLayer.appendChild(group);
+      });
+    }
+
+    function formatDecisionWeight(edge) {
+      const siblings = getOutgoing(edge.from);
+      const total = siblings.reduce((sum, item) => sum + Math.max(0, Number(item.weight) || 0), 0);
+      const percent = total > 0 ? ((Number(edge.weight) || 0) / total) * 100 : 0;
+      return formatNumber(percent, 0) + "%";
+    }
+
+    function cubicPoint(p0, p1, p2, p3, t) {
+      const u = 1 - t;
+      return {
+        x: u * u * u * p0.x + 3 * u * u * t * p1.x + 3 * u * t * t * p2.x + t * t * t * p3.x,
+        y: u * u * u * p0.y + 3 * u * u * t * p1.y + 3 * u * t * t * p2.y + t * t * t * p3.y
+      };
+    }
+
+    function handleNodeClick(nodeId) {
+      if (!state.connectionMode) {
+        selectElement("node", nodeId);
+        return;
+      }
+      if (!state.connectionOrigin) {
+        state.connectionOrigin = nodeId;
+        selectElement("node", nodeId);
+        updateStatus("Seleccione el bloque de destino.");
+        renderNodes();
+        return;
+      }
+
+      const origin = state.connectionOrigin;
+      state.connectionOrigin = null;
+      if (origin === nodeId) {
+        showToast("Seleccione un bloque de destino diferente.", "warning");
+        renderNodes();
+        return;
+      }
+
+      createEdge(origin, nodeId, 1);
+      renderNodes();
+      updateStatus("Conexión creada. Seleccione otro origen o desactive el modo Conectar.");
+    }
+
+    function selectElement(kind, id) {
+      state.selected = { kind, id };
+      renderNodes();
+      renderEdges();
+      renderProperties();
+      if (window.innerWidth <= 920 && kind) dom.properties.classList.add("open");
+    }
+
+    function clearSelection() {
+      state.selected = null;
+      renderNodes();
+      renderEdges();
+      renderProperties();
+    }
+
+    function renderProperties() {
+      const selection = state.selected;
+      if (!selection) {
+        dom.selectionType.textContent = "Sin selección";
+        dom.propertiesContent.className = "properties-empty";
+        dom.propertiesContent.innerHTML = `
+          <strong>Seleccione un elemento</strong>
+          Haga clic sobre un bloque o una conexión para editar sus parámetros.
+        `;
+        return;
+      }
+
+      dom.propertiesContent.className = "";
+
+      if (selection.kind === "node") {
+        const node = getNode(selection.id);
+        if (!node) { clearSelection(); return; }
+        renderNodeProperties(node);
+        return;
+      }
+
+      if (selection.kind === "edge") {
+        const edge = getEdge(selection.id);
+        if (!edge) { clearSelection(); return; }
+        renderEdgeProperties(edge);
+      }
+    }
+
+    function renderNodeProperties(node) {
+      const config = NODE_TYPES[node.type];
+      dom.selectionType.textContent = config.label;
+
+      let fields = `
+        <div class="field">
+          <label for="propName">Nombre</label>
+          <input id="propName" type="text" value="${escapeHtml(node.name)}" maxlength="60">
+        </div>
+      `;
+
+      if (node.type === "source") {
+        fields += `
+          <div class="field-row">
+            <div class="field">
+              <label for="propInterval">Intervalo llegada</label>
+              <input id="propInterval" type="number" min="0.1" step="0.1" value="${Number(node.props.interval) || 4}">
+            </div>
+            <div class="field">
+              <label for="propStartAt">Inicio</label>
+              <input id="propStartAt" type="number" min="0" step="0.1" value="${Number(node.props.startAt) || 0}">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="propMaxEntities">Máximo personas (0 = ilimitado)</label>
+              <input id="propMaxEntities" type="number" min="0" step="1" value="${Number(node.props.maxEntities) || 0}">
+            </div>
+            <div class="field">
+              <label for="propPersonType">Tipo de persona</label>
+              <input id="propPersonType" type="text" value="${escapeHtml(node.props.personType || "Ciudadano")}">
+            </div>
+          </div>
+        `;
+      }
+
+      if (node.type === "queue") {
+        fields += `
+          <div class="field-row">
+            <div class="field">
+              <label for="propCapacity">Capacidad cola</label>
+              <input id="propCapacity" type="number" min="1" step="1" value="${Number(node.props.capacity) || 999}">
+            </div>
+            <div class="field">
+              <label for="propDepartment">Área o departamento</label>
+              <input id="propDepartment" type="text" value="${escapeHtml(node.props.department || "General")}">
+            </div>
+          </div>
+          <div class="field">
+            <label for="propProcedure">Descripción de la espera</label>
+            <input id="propProcedure" type="text" value="${escapeHtml(node.props.procedure || "Espera de atención")}">
+          </div>
+        `;
+      }
+
+      if (node.type === "process") {
+        fields += `
+          <div class="field-row">
+            <div class="field">
+              <label for="propDepartment">Departamento</label>
+              <input id="propDepartment" type="text" value="${escapeHtml(node.props.department || "Atención al cliente")}">
+            </div>
+            <div class="field">
+              <label for="propCapacity">Personal</label>
+              <input id="propCapacity" type="number" min="1" step="1" value="${Number(node.props.capacity) || 1}">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="propServiceTime">Tiempo atención</label>
+              <input id="propServiceTime" type="number" min="0.1" step="0.1" value="${Number(node.props.serviceTime) || 6}">
+            </div>
+            <div class="field">
+              <label for="propProcedure">Trámite</label>
+              <input id="propProcedure" type="text" value="${escapeHtml(node.props.procedure || "Recepción de trámite")}">
+            </div>
+          </div>
+          <div class="field">
+            <label for="propObservations">Observaciones</label>
+            <textarea id="propObservations">${escapeHtml(node.props.observations || "")}</textarea>
+          </div>
+        `;
+      }
+
+      if (node.type === "decision") {
+        fields += `
+          <div class="field-row">
+            <div class="field">
+              <label for="propDepartment">Departamento</label>
+              <input id="propDepartment" type="text" value="${escapeHtml(node.props.department || "Flujo")}">
+            </div>
+            <div class="field">
+              <label for="propProcedure">Uso</label>
+              <input id="propProcedure" type="text" value="${escapeHtml(node.props.procedure || "Asignación de ruta")}">
+            </div>
+          </div>
+          <div class="field">
+            <label>Probabilidades</label>
+            <div style="color:var(--muted); font-size:10px; line-height:1.55;">Seleccione cada conexión saliente para editar su peso probabilístico. No es necesario que sumen 100; el simulador las normaliza automáticamente.</div>
+          </div>
+        `;
+      }
+
+      if (node.type === "sink") {
+        fields += `
+          <div class="field-row">
+            <div class="field">
+              <label for="propDepartment">Departamento</label>
+              <input id="propDepartment" type="text" value="${escapeHtml(node.props.department || "Cierre")}">
+            </div>
+            <div class="field">
+              <label for="propFinalStatus">Estado final</label>
+              <input id="propFinalStatus" type="text" value="${escapeHtml(node.props.finalStatus || "Completado")}">
+            </div>
+          </div>
+          <div class="field">
+            <label for="propProcedure">Descripción</label>
+            <input id="propProcedure" type="text" value="${escapeHtml(node.props.procedure || "Cierre de trámite")}">
+          </div>
+        `;
+      }
+
+      fields += `
+        <div class="property-actions">
+          <button class="property-button" id="duplicateNodeBtn">Duplicar</button>
+          <button class="property-button danger" id="deletePropertyBtn">Eliminar</button>
+        </div>
+      `;
+
+      dom.propertiesContent.innerHTML = fields;
+
+      document.getElementById("propName")?.addEventListener("input", event => {
+        node.name = event.target.value || config.defaultName;
+        renderNodes();
+      });
+
+      if (node.type === "source") {
+        bindNumericInput("propInterval", value => node.props.interval = Math.max(0.1, value));
+        bindNumericInput("propStartAt", value => node.props.startAt = Math.max(0, value));
+        bindNumericInput("propMaxEntities", value => node.props.maxEntities = Math.max(0, Math.floor(value)));
+        bindTextInput("propPersonType", value => node.props.personType = value || "Ciudadano");
+      }
+
+      if (node.type === "queue") {
+        bindNumericInput("propCapacity", value => node.props.capacity = Math.max(1, Math.floor(value)));
+        bindTextInput("propDepartment", value => node.props.department = value || "General");
+        bindTextInput("propProcedure", value => node.props.procedure = value || "Espera de atención");
+      }
+
+      if (node.type === "process") {
+        bindTextInput("propDepartment", value => node.props.department = value || "Atención al cliente");
+        bindNumericInput("propCapacity", value => node.props.capacity = Math.max(1, Math.floor(value)));
+        bindNumericInput("propServiceTime", value => node.props.serviceTime = Math.max(0.1, value));
+        bindTextInput("propProcedure", value => node.props.procedure = value || "Recepción de trámite");
+        bindTextArea("propObservations", value => node.props.observations = value);
+      }
+
+      if (node.type === "decision") {
+        bindTextInput("propDepartment", value => node.props.department = value || "Flujo");
+        bindTextInput("propProcedure", value => node.props.procedure = value || "Asignación de ruta");
+      }
+
+      if (node.type === "sink") {
+        bindTextInput("propDepartment", value => node.props.department = value || "Cierre");
+        bindTextInput("propFinalStatus", value => node.props.finalStatus = value || "Completado");
+        bindTextInput("propProcedure", value => node.props.procedure = value || "Cierre de trámite");
+      }
+
+      document.getElementById("duplicateNodeBtn")?.addEventListener("click", () => {
+        createNode(node.type, node.x + 34, node.y + 34, { name: node.name + " copia", props: clone(node.props) });
+      });
+      document.getElementById("deletePropertyBtn")?.addEventListener("click", deleteSelected);
+    }
+
+    function renderEdgeProperties(edge) {
+      const fromNode = getNode(edge.from);
+      const toNode = getNode(edge.to);
+      dom.selectionType.textContent = "Conexión";
+      const showWeight = fromNode && fromNode.type === "decision";
+
+      dom.propertiesContent.innerHTML = `
+        <div class="field">
+          <label>Origen</label>
+          <input type="text" value="${escapeHtml(fromNode?.name || "No disponible")}" disabled>
+        </div>
+        <div class="field">
+          <label>Destino</label>
+          <input type="text" value="${escapeHtml(toNode?.name || "No disponible")}" disabled>
+        </div>
+        ${showWeight ? `
+          <div class="field">
+            <label for="propWeight">Peso probabilístico</label>
+            <input id="propWeight" type="number" min="0" step="0.1" value="${Number(edge.weight) || 0}">
+          </div>
+        ` : `
+          <div class="field">
+            <label>Ruta</label>
+            <div style="padding:10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.055);font-size:10px;color:var(--muted);line-height:1.55;">
+              Esta conexión traslada personas desde un bloque al siguiente. Si desea editar probabilidades, seleccione una conexión saliente de un bloque de decisión.
+            </div>
+          </div>
+        `}
+        <div class="property-actions" style="grid-template-columns:1fr;">
+          <button class="property-button danger" id="deletePropertyBtn">Eliminar conexión</button>
+        </div>
+      `;
+
+      if (showWeight) {
+        bindNumericInput("propWeight", value => {
+          edge.weight = Math.max(0, value);
+          renderEdges();
+        });
+      }
+      document.getElementById("deletePropertyBtn")?.addEventListener("click", deleteSelected);
+    }
+
+    function bindNumericInput(id, callback) {
+      const input = document.getElementById(id);
+      if (!input) return;
+      input.addEventListener("input", event => {
+        const value = Number(event.target.value);
+        if (Number.isFinite(value)) {
+          callback(value);
+          renderNodes();
+          updateMetrics();
+        }
+      });
+    }
+
+    function bindTextInput(id, callback) {
+      const input = document.getElementById(id);
+      if (!input) return;
+      input.addEventListener("input", event => {
+        callback(event.target.value);
+        renderNodes();
+      });
+    }
+
+    function bindTextArea(id, callback) {
+      const input = document.getElementById(id);
+      if (!input) return;
+      input.addEventListener("input", event => callback(event.target.value));
+    }
+
+    function deleteSelected() {
+      if (!state.selected) {
+        showToast("No hay ningún elemento seleccionado.", "warning");
+        return;
+      }
+      stopSimulation(false);
+
+      if (state.selected.kind === "node") {
+        const nodeId = state.selected.id;
+        state.nodes = state.nodes.filter(node => node.id !== nodeId);
+        state.edges = state.edges.filter(edge => edge.from !== nodeId && edge.to !== nodeId);
+        state.nodeRuntime.delete(nodeId);
+        state.sourceSchedule.delete(nodeId);
+      } else {
+        state.edges = state.edges.filter(edge => edge.id !== state.selected.id);
+      }
+
+      state.selected = null;
+      renderAll();
+      showToast("Elemento eliminado.");
+    }
+
+    function beginNodeDrag(event, nodeId) {
+      if (event.button !== 0 || state.connectionMode) return;
+      const node = getNode(nodeId);
+      if (!node) return;
+      if (event.target.closest('.mini-step')) return;
+      selectElement("node", nodeId);
+      const point = clientToCanvas(event.clientX, event.clientY);
+      state.draggingNode = nodeId;
+      state.dragOffset.x = point.x - node.x;
+      state.dragOffset.y = point.y - node.y;
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    }
+
+    document.addEventListener("pointermove", event => {
+      if (!state.draggingNode) return;
+      const node = getNode(state.draggingNode);
+      if (!node) { state.draggingNode = null; return; }
+      const point = clientToCanvas(event.clientX, event.clientY);
+      node.x = clamp(point.x - state.dragOffset.x, 0, 1900 - 188);
+      node.y = clamp(point.y - state.dragOffset.y, 0, 1100 - 108);
+      const element = dom.nodesLayer.querySelector(`[data-node-id="${node.id}"]`);
+      if (element) {
+        element.style.left = node.x + "px";
+        element.style.top = node.y + "px";
+      }
+      renderEdges();
+    });
+
+    document.addEventListener("pointerup", () => { state.draggingNode = null; });
+
+    function clientToCanvas(clientX, clientY) {
+      const rect = dom.canvas.getBoundingClientRect();
+      return { x: (clientX - rect.left) / state.zoom, y: (clientY - rect.top) / state.zoom };
+    }
+
+    document.querySelectorAll(".palette-item").forEach(item => {
+      item.addEventListener("dragstart", event => {
+        event.dataTransfer.setData("application/x-simulator-node", item.dataset.type);
+        event.dataTransfer.effectAllowed = "copy";
+      });
+    });
+
+    dom.canvas.addEventListener("dragover", event => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "copy";
+      dom.canvas.classList.add("drag-over");
+    });
+
+    dom.canvas.addEventListener("dragleave", event => {
+      if (!dom.canvas.contains(event.relatedTarget)) dom.canvas.classList.remove("drag-over");
+    });
+
+    dom.canvas.addEventListener("drop", event => {
+      event.preventDefault();
+      dom.canvas.classList.remove("drag-over");
+      const type = event.dataTransfer.getData("application/x-simulator-node");
+      if (!NODE_TYPES[type]) return;
+      const point = clientToCanvas(event.clientX, event.clientY);
+      createNode(type, point.x - 94, point.y - 54);
+      updateStatus("Bloque agregado al modelo.");
+    });
+
+    dom.canvas.addEventListener("click", event => {
+      if (event.target === dom.canvas || event.target === dom.nodesLayer || event.target === dom.entityLayer) clearSelection();
+    });
+
+    function toggleConnectionMode() {
+      state.connectionMode = !state.connectionMode;
+      state.connectionOrigin = null;
+      dom.connectBtn.classList.toggle("active", state.connectionMode);
+      renderNodes();
+      updateStatus(state.connectionMode ? "Modo Conectar activado. Seleccione el bloque de origen." : "Modo Conectar desactivado.");
+    }
+
+    function initializeRuntime() {
+      state.nodeRuntime.clear();
+      state.sourceSchedule.clear();
+      state.nodes.forEach(node => {
+        state.nodeRuntime.set(node.id, { queue: [], busy: 0, completed: 0, entered: 0, rejected: 0 });
+        if (node.type === "source") state.sourceSchedule.set(node.id, Math.max(0, Number(node.props.startAt) || 0));
+      });
+      state.events = [];
+      state.movingEntities = [];
+      dom.entityLayer.innerHTML = "";
+      state.nextEntityId = 1;
+      state.nextEventId = 1;
+      state.simTime = 0;
+      state.nextHistoryTime = 0;
+      state.metrics = { created: 0, completed: 0, rejected: 0, maxQueue: 0, history: [] };
+      state.records = [];
+      renderAll();
+    }
+
+    function validateModel() {
+      const sources = state.nodes.filter(node => node.type === "source");
+      const sinks = state.nodes.filter(node => node.type === "sink");
+      if (sources.length === 0) { showToast("Agregue al menos una entrada.", "warning"); return false; }
+      if (sinks.length === 0) { showToast("Agregue al menos una salida.", "warning"); return false; }
+
+      const disconnected = state.nodes.filter(node => {
+        if (node.type === "sink") return getIncoming(node.id).length === 0;
+        if (node.type === "source") return getOutgoing(node.id).length === 0;
+        return getIncoming(node.id).length === 0 || getOutgoing(node.id).length === 0;
+      });
+
+      if (disconnected.length > 0) {
+        showToast("Existen bloques sin una ruta completa.", "warning");
+        selectElement("node", disconnected[0].id);
+        return false;
+      }
+      return true;
+    }
+
+    function startSimulation() {
+      if (state.running && state.paused) {
+        state.paused = false;
+        state.lastFrame = performance.now();
+        updateRunStatus();
+        requestAnimationFrame(simulationFrame);
+        return;
+      }
+      if (state.running) return;
+      if (!validateModel()) return;
+      initializeRuntime();
+      state.running = true;
+      state.paused = false;
+      state.lastFrame = performance.now();
+      updateRunStatus();
+      updateStatus("Simulación en ejecución.");
+      requestAnimationFrame(simulationFrame);
+    }
+
+    function pauseSimulation() {
+      if (!state.running) { showToast("La simulación no está en ejecución.", "warning"); return; }
+      state.paused = true;
+      updateRunStatus();
+      updateStatus("Simulación pausada.");
+    }
+
+    function stopSimulation(resetTime = false) {
+      state.running = false;
+      state.paused = false;
+      state.lastFrame = 0;
+      if (resetTime) initializeRuntime();
+      updateRunStatus();
+      updateStatus(resetTime ? "Simulación reiniciada." : "Simulación detenida.");
+    }
+
+    function resetSimulation() { stopSimulation(true); }
+
+    function updateRunStatus() {
+      if (state.running && !state.paused) {
+        dom.statusDot.classList.add("running");
+        dom.statusText.textContent = "Ejecutando";
+        dom.playBtn.classList.add("active");
+        dom.pauseBtn.classList.remove("active");
+      } else if (state.running && state.paused) {
+        dom.statusDot.classList.remove("running");
+        dom.statusText.textContent = "Pausado";
+        dom.playBtn.classList.remove("active");
+        dom.pauseBtn.classList.add("active");
+      } else {
+        dom.statusDot.classList.remove("running");
+        dom.statusText.textContent = "Detenido";
+        dom.playBtn.classList.remove("active");
+        dom.pauseBtn.classList.remove("active");
+      }
+    }
+
+    function simulationFrame(timestamp) {
+      if (!state.running || state.paused) return;
+      const realDelta = Math.min(0.1, Math.max(0, (timestamp - state.lastFrame) / 1000));
+      state.lastFrame = timestamp;
+      const simDelta = realDelta * state.speed;
+      state.simTime += simDelta;
+      generateSourceEntities();
+      processScheduledEvents();
+      updateMovingEntities();
+      processQueues();
+      if (state.simTime >= state.nextHistoryTime) {
+        recordHistory();
+        state.nextHistoryTime = state.simTime + 2;
+      }
+      renderNodes();
+      updateMetrics();
+      requestAnimationFrame(simulationFrame);
+    }
+
+    function generateSourceEntities() {
+      state.nodes.filter(node => node.type === "source").forEach(node => {
+        const interval = Math.max(0.1, Number(node.props.interval) || 4);
+        const maxEntities = Math.max(0, Math.floor(Number(node.props.maxEntities) || 0));
+        const runtime = ensureNodeRuntime(node);
+        let nextTime = state.sourceSchedule.get(node.id);
+        if (!Number.isFinite(nextTime)) nextTime = Math.max(0, Number(node.props.startAt) || 0);
+        let guard = 0;
+
+        while (state.simTime >= nextTime && (maxEntities === 0 || runtime.completed < maxEntities) && guard < 100) {
+          const label = "P-" + String(state.nextEntityId).padStart(4, "0");
+          const entity = {
+            id: state.nextEntityId++,
+            label,
+            personType: node.props.personType || "Ciudadano",
+            createdAt: nextTime,
+            queueEnteredAt: null,
+            route: [],
+            steps: [],
+            finalStatus: "En proceso"
+          };
+          runtime.completed += 1;
+          state.metrics.created += 1;
+          registerVisit(entity, node, "Ingreso");
+          routeFromNode(node, entity);
+          nextTime += interval;
+          guard += 1;
+        }
+        state.sourceSchedule.set(node.id, nextTime);
+      });
+    }
+
+    function scheduleEvent(time, type, payload) {
+      state.events.push({ id: state.nextEventId++, time, type, payload });
+      state.events.sort((a, b) => a.time - b.time || a.id - b.id);
+    }
+
+    function processScheduledEvents() {
+      let guard = 0;
+      while (state.events.length > 0 && state.events[0].time <= state.simTime && guard < 1000) {
+        const event = state.events.shift();
+        if (event.type === "processComplete") completeProcess(event.payload.nodeId, event.payload.entity);
+        guard += 1;
+      }
+    }
+
+    function updateMovingEntities() {
+      const completedMoves = [];
+      state.movingEntities.forEach(move => {
+        const progress = clamp((state.simTime - move.startTime) / Math.max(0.001, move.duration), 0, 1);
+        const point = cubicPoint(move.p0, move.p1, move.p2, move.p3, progress);
+        move.element.style.left = point.x + "px";
+        move.element.style.top = point.y + "px";
+        if (progress >= 1) completedMoves.push(move);
+      });
+
+      completedMoves.forEach(move => {
+        move.element.remove();
+        state.movingEntities = state.movingEntities.filter(item => item !== move);
+        acceptEntity(move.toNodeId, move.entity);
+      });
+    }
+
+    function processQueues() {
+      state.nodes.filter(node => node.type === "queue").forEach(node => attemptDispatchQueue(node));
+    }
+
+    function routeFromNode(node, entity) {
+      const outgoing = getOutgoing(node.id);
+      if (outgoing.length === 0) {
+        state.metrics.rejected += 1;
+        entity.finalStatus = "Sin destino";
+        showToast(`La persona ${entity.label} quedó sin destino desde "${node.name}".`, "error");
+        return;
+      }
+      let edge = outgoing[0];
+      if (node.type === "decision" && outgoing.length > 1) edge = chooseWeightedEdge(outgoing);
+      animateEntity(node.id, edge.to, entity);
+    }
+
+    function chooseWeightedEdge(edges) {
+      const weighted = edges.map(edge => ({ edge, weight: Math.max(0, Number(edge.weight) || 0) }));
+      const total = weighted.reduce((sum, item) => sum + item.weight, 0);
+      if (total <= 0) return edges[Math.floor(Math.random() * edges.length)];
+      let random = Math.random() * total;
+      for (const item of weighted) {
+        random -= item.weight;
+        if (random <= 0) return item.edge;
+      }
+      return weighted[weighted.length - 1].edge;
+    }
+
+    function animateEntity(fromNodeId, toNodeId, entity) {
+      const fromNode = getNode(fromNodeId);
+      const toNode = getNode(toNodeId);
+      if (!fromNode || !toNode) { state.metrics.rejected += 1; return; }
+      const start = nodeCenter(fromNode);
+      const end = nodeCenter(toNode);
+      const distance = Math.abs(end.x - start.x);
+      const bend = Math.max(70, distance * 0.45);
+      const direction = end.x >= start.x ? 1 : -1;
+      const element = document.createElement("div");
+      element.className = "entity";
+      element.textContent = "👤";
+      element.title = entity.label;
+      element.style.left = start.x + "px";
+      element.style.top = start.y + "px";
+      dom.entityLayer.appendChild(element);
+      state.movingEntities.push({
+        element,
+        entity,
+        toNodeId,
+        startTime: state.simTime,
+        duration: 1,
+        p0: start,
+        p1: { x: start.x + bend * direction, y: start.y },
+        p2: { x: end.x - bend * direction, y: end.y },
+        p3: end
+      });
+    }
+
+    function registerVisit(entity, node, stageLabel = "Paso") {
+      entity.route.push(node.name);
+      entity.steps.push({
+        nodeId: node.id,
+        nodeName: node.name,
+        type: node.type,
+        department: node.props.department || "",
+        procedure: node.props.procedure || node.props.finalStatus || "",
+        stage: stageLabel,
+        time: Number(state.simTime.toFixed(1))
+      });
+    }
+
+    function acceptEntity(nodeId, entity) {
+      const node = getNode(nodeId);
+      if (!node) { state.metrics.rejected += 1; return; }
+      const runtime = ensureNodeRuntime(node);
+      runtime.entered += 1;
+      registerVisit(entity, node, NODE_TYPES[node.type].label);
+
+      if (node.type === "queue") {
+        const capacity = Math.max(1, Number(node.props.capacity) || 999);
+        if (runtime.queue.length >= capacity) {
+          runtime.rejected += 1;
+          state.metrics.rejected += 1;
+          entity.finalStatus = "Cola llena";
+          showToast(`La cola "${node.name}" alcanzó su capacidad.`, "error");
+          return;
+        }
+        entity.queueEnteredAt = state.simTime;
+        runtime.queue.push(entity);
+        state.metrics.maxQueue = Math.max(state.metrics.maxQueue, runtime.queue.length);
+        attemptDispatchQueue(node);
+        return;
+      }
+
+      if (node.type === "process") {
+        startOrQueueProcess(node, entity);
+        return;
+      }
+
+      if (node.type === "decision") {
+        runtime.completed += 1;
+        routeFromNode(node, entity);
+        return;
+      }
+
+      if (node.type === "sink") {
+        runtime.completed += 1;
+        state.metrics.completed += 1;
+        entity.finalStatus = node.props.finalStatus || "Completado";
+        saveRecord(entity, node);
+        return;
+      }
+
+      routeFromNode(node, entity);
+    }
+
+    function saveRecord(entity, sinkNode) {
+      const record = {
+        personId: entity.label,
+        personType: entity.personType,
+        startTime: Number(entity.createdAt.toFixed(1)),
+        endTime: Number(state.simTime.toFixed(1)),
+        finalStatus: sinkNode.props.finalStatus || entity.finalStatus || "Completado",
+        route: entity.route.join(" → "),
+        steps: clone(entity.steps)
+      };
+      state.records.unshift(record);
+      if (state.records.length > 300) state.records.pop();
+      renderRecords();
+    }
+
+    function attemptDispatchQueue(queueNode) {
+      const runtime = ensureNodeRuntime(queueNode);
+      const outgoing = getOutgoing(queueNode.id);
+      if (runtime.queue.length === 0 || outgoing.length === 0) return;
+      let guard = 0;
+
+      while (runtime.queue.length > 0 && guard < 100) {
+        const edge = outgoing[0];
+        const target = getNode(edge.to);
+        if (!target) break;
+        if (target.type === "process" && !processHasCapacity(target)) break;
+        const entity = runtime.queue.shift();
+        if (entity.queueEnteredAt !== null) entity.queueEnteredAt = null;
+        routeFromNode(queueNode, entity);
+        runtime.completed += 1;
+        guard += 1;
+        if (target.type !== "process") break;
+      }
+    }
+
+    function processHasCapacity(node) {
+      const runtime = ensureNodeRuntime(node);
+      const capacity = Math.max(1, Number(node.props.capacity) || 1);
+      return runtime.busy < capacity;
+    }
+
+    function startOrQueueProcess(node, entity) {
+      const runtime = ensureNodeRuntime(node);
+      const capacity = Math.max(1, Number(node.props.capacity) || 1);
+      if (runtime.busy < capacity) {
+        startProcess(node, entity);
+        return;
+      }
+      entity.queueEnteredAt = state.simTime;
+      runtime.queue.push(entity);
+      state.metrics.maxQueue = Math.max(state.metrics.maxQueue, runtime.queue.length);
+    }
+
+    function startProcess(node, entity) {
+      const runtime = ensureNodeRuntime(node);
+      const serviceTime = Math.max(0.1, Number(node.props.serviceTime) || 6);
+      runtime.busy += 1;
+      scheduleEvent(state.simTime + serviceTime, "processComplete", { nodeId: node.id, entity });
+    }
+
+    function completeProcess(nodeId, entity) {
+      const node = getNode(nodeId);
+      if (!node) return;
+      const runtime = ensureNodeRuntime(node);
+      runtime.busy = Math.max(0, runtime.busy - 1);
+      runtime.completed += 1;
+      routeFromNode(node, entity);
+
+      while (runtime.queue.length > 0 && processHasCapacity(node)) {
+        const nextEntity = runtime.queue.shift();
+        if (nextEntity.queueEnteredAt !== null) nextEntity.queueEnteredAt = null;
+        startProcess(node, nextEntity);
+      }
+
+      getIncoming(nodeId).forEach(edge => {
+        const source = getNode(edge.from);
+        if (source && source.type === "queue") attemptDispatchQueue(source);
+      });
+    }
+
+    function recordHistory() {
+      state.metrics.history.push({ time: state.simTime, completed: state.metrics.completed });
+      if (state.metrics.history.length > 60) state.metrics.history.shift();
+      renderChart();
+    }
+
+    function renderChart() {
+      const history = state.metrics.history;
+      if (history.length < 2) {
+        dom.chartLine.setAttribute("d", "");
+        dom.chartArea.setAttribute("d", "");
+        return;
+      }
+      const width = 280;
+      const height = 120;
+      const padding = 8;
+      const minTime = history[0].time;
+      const maxTime = history[history.length - 1].time;
+      const maxValue = Math.max(1, ...history.map(item => item.completed));
+      const points = history.map(item => ({
+        x: padding + ((item.time - minTime) / Math.max(0.001, maxTime - minTime)) * (width - padding * 2),
+        y: height - padding - (item.completed / maxValue) * (height - padding * 2)
+      }));
+      const line = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+      const area = `${line} L ${points[points.length - 1].x} ${height - padding} L ${points[0].x} ${height - padding} Z`;
+      dom.chartLine.setAttribute("d", line);
+      dom.chartArea.setAttribute("d", area);
+    }
+
+    function updateMetrics() {
+      const wip = Math.max(0, state.metrics.created - state.metrics.completed - state.metrics.rejected);
+      dom.metricTime.textContent = formatNumber(state.simTime, 1) + " s";
+      dom.metricCreated.textContent = state.metrics.created.toLocaleString("es-EC");
+      dom.metricCompleted.textContent = state.metrics.completed.toLocaleString("es-EC");
+      dom.metricWip.textContent = wip.toLocaleString("es-EC");
+      dom.metricMaxQueue.textContent = state.metrics.maxQueue.toLocaleString("es-EC");
+      dom.metricStaff.textContent = totalStaff().toLocaleString("es-EC");
+      dom.clockStatus.textContent = "t = " + formatNumber(state.simTime, 1) + " s";
+    }
+
+    function renderRecords() {
+      dom.recordsCount.textContent = state.records.length.toLocaleString("es-EC");
+      dom.recordsList.innerHTML = "";
+      if (state.records.length === 0) {
+        dom.recordsList.innerHTML = `<div class="record-item"><strong>Sin registros</strong><span>Los trámites finalizados aparecerán aquí.</span></div>`;
+        return;
+      }
+      state.records.slice(0, 8).forEach(record => {
+        const item = document.createElement("div");
+        item.className = "record-item";
+        item.innerHTML = `
+          <strong>${escapeHtml(record.personId)} · ${escapeHtml(record.finalStatus)}</strong>
+          <span><b>Tipo:</b> ${escapeHtml(record.personType)}</span>
+          <span><b>Ruta:</b> ${escapeHtml(record.route)}</span>
+          <span><b>Tiempo:</b> ${formatNumber(record.startTime,1)} s → ${formatNumber(record.endTime,1)} s</span>
+        `;
+        dom.recordsList.appendChild(item);
+      });
+    }
+
+    function updateModelStatus() {
+      dom.statusSelection.textContent = state.nodes.length + " bloques · " + state.edges.length + " conexiones";
+    }
+
+    function updateEmptyState() { dom.emptyState.classList.toggle("hidden", state.nodes.length > 0); }
+
+    function downloadJson(payload, filename) {
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadText(text, filename, type = "text/plain") {
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function saveModel() {
+      const payload = {
+        version: 3,
+        savedAt: new Date().toISOString(),
+        nodes: state.nodes,
+        edges: state.edges
+      };
+      const saved = safeStorage.set("simuladorTramitesModel", JSON.stringify(payload));
+      if (saved) {
+        showToast("Modelo guardado en este navegador.");
+        updateStatus("Modelo guardado.");
+        return;
+      }
+      downloadJson(payload, "modelo-simulacion-tramites-respaldo.json");
+      showToast("El navegador bloqueó el almacenamiento. Se descargó un respaldo JSON.", "warning");
+      updateStatus("Respaldo JSON generado.");
+    }
+
+    function exportModel() {
+      const payload = {
+        version: 3,
+        exportedAt: new Date().toISOString(),
+        nodes: state.nodes,
+        edges: state.edges
+      };
+      downloadJson(payload, "modelo-simulacion-tramites.json");
+      showToast("Modelo exportado.");
+    }
+
+    function exportRecords() {
+      if (state.records.length === 0) {
+        showToast("No existen registros para exportar.", "warning");
+        return;
+      }
+      const rows = [
+        ["persona", "tipo", "hora_ingreso", "hora_salida", "estado_final", "ruta"]
+      ];
+      state.records.forEach(record => {
+        rows.push([
+          record.personId,
+          record.personType,
+          record.startTime,
+          record.endTime,
+          record.finalStatus,
+          record.route
+        ]);
+      });
+      const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
+      downloadText(csv, "registros-simulacion.csv", "text/csv;charset=utf-8");
+      showToast("Registros exportados.");
+    }
+
+    function importModel(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const payload = JSON.parse(String(reader.result));
+          applyModel(payload);
+          showToast("Modelo importado correctamente.");
+        } catch (error) {
+          showToast("El archivo JSON no es válido.", "error");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function applyModel(payload) {
+      if (!payload || !Array.isArray(payload.nodes) || !Array.isArray(payload.edges)) throw new Error("Formato inválido.");
+      stopSimulation(false);
+      state.nodes = payload.nodes
+        .filter(node => NODE_TYPES[node.type])
+        .map(node => ({
+          id: node.id || uid("node"),
+          type: node.type,
+          name: node.name || NODE_TYPES[node.type].defaultName,
+          x: clamp(Number(node.x) || 0, 0, 1900 - 188),
+          y: clamp(Number(node.y) || 0, 0, 1100 - 108),
+          props: { ...clone(NODE_TYPES[node.type].props), ...(node.props || {}) }
+        }));
+
+      const validNodeIds = new Set(state.nodes.map(node => node.id));
+      state.edges = payload.edges
+        .filter(edge => validNodeIds.has(edge.from) && validNodeIds.has(edge.to))
+        .map(edge => ({
+          id: edge.id || uid("edge"),
+          from: edge.from,
+          to: edge.to,
+          weight: Math.max(0, Number(edge.weight) || 0)
+        }));
+
+      state.selected = null;
+      state.connectionOrigin = null;
+      initializeRuntime();
+      fitView();
+      updateStatus("Modelo cargado.");
+    }
+
+    function loadExampleModel(showNotification = true) {
+      const example = {
+        version: 3,
+        nodes: [
+          {
+            id: "source-entry",
+            type: "source",
+            name: "Ingreso principal",
+            x: 90,
+            y: 320,
+            props: { interval: 4, startAt: 0, maxEntities: 0, personType: "Usuario" }
+          },
+          {
+            id: "queue-reception",
+            type: "queue",
+            name: "Espera recepción",
+            x: 340,
+            y: 320,
+            props: { capacity: 20, department: "Recepción", procedure: "Fila inicial" }
+          },
+          {
+            id: "process-reception",
+            type: "process",
+            name: "Recepción",
+            x: 610,
+            y: 320,
+            props: { serviceTime: 5, capacity: 2, department: "Atención al usuario", procedure: "Registro y orientación", observations: "Punto de entrada" }
+          },
+          {
+            id: "decision-flow",
+            type: "decision",
+            name: "Derivación de trámite",
+            x: 890,
+            y: 320,
+            props: { department: "Flujo", procedure: "Asignar siguiente área" }
+          },
+          {
+            id: "process-credit",
+            type: "process",
+            name: "Crédito",
+            x: 1180,
+            y: 130,
+            props: { serviceTime: 8, capacity: 2, department: "Departamento de crédito", procedure: "Recepción de solicitud", observations: "" }
+          },
+          {
+            id: "process-service",
+            type: "process",
+            name: "Servicio al cliente",
+            x: 1180,
+            y: 320,
+            props: { serviceTime: 6, capacity: 3, department: "Servicio al cliente", procedure: "Consulta y actualización", observations: "" }
+          },
+          {
+            id: "process-cashier",
+            type: "process",
+            name: "Caja",
+            x: 1180,
+            y: 510,
+            props: { serviceTime: 4, capacity: 2, department: "Tesorería", procedure: "Pago o validación", observations: "" }
+          },
+          {
+            id: "process-archive",
+            type: "process",
+            name: "Archivo",
+            x: 1480,
+            y: 320,
+            props: { serviceTime: 3, capacity: 1, department: "Archivo", procedure: "Cierre y resguardo", observations: "" }
+          },
+          {
+            id: "sink-success",
+            type: "sink",
+            name: "Trámite completado",
+            x: 1710,
+            y: 320,
+            props: { finalStatus: "Completado", department: "Cierre", procedure: "Registro final" }
+          },
+          {
+            id: "sink-exit",
+            type: "sink",
+            name: "Salida sin completar",
+            x: 1180,
+            y: 730,
+            props: { finalStatus: "No completado", department: "Cierre", procedure: "Fin alternativo" }
+          }
+        ],
+        edges: [
+          { id: "e1", from: "source-entry", to: "queue-reception", weight: 1 },
+          { id: "e2", from: "queue-reception", to: "process-reception", weight: 1 },
+          { id: "e3", from: "process-reception", to: "decision-flow", weight: 1 },
+          { id: "e4", from: "decision-flow", to: "process-credit", weight: 4 },
+          { id: "e5", from: "decision-flow", to: "process-service", weight: 3 },
+          { id: "e6", from: "decision-flow", to: "process-cashier", weight: 2 },
+          { id: "e7", from: "decision-flow", to: "sink-exit", weight: 1 },
+          { id: "e8", from: "process-credit", to: "process-archive", weight: 1 },
+          { id: "e9", from: "process-service", to: "process-archive", weight: 1 },
+          { id: "e10", from: "process-cashier", to: "process-archive", weight: 1 },
+          { id: "e11", from: "process-archive", to: "sink-success", weight: 1 }
+        ]
+      };
+      applyModel(example);
+      if (showNotification) showToast("Modelo de ejemplo cargado.");
+    }
+
+    function clearModel() {
+      stopSimulation(false);
+      state.nodes = [];
+      state.edges = [];
+      state.selected = null;
+      state.connectionOrigin = null;
+      initializeRuntime();
+      updateStatus("Lienzo vacío.");
+      showToast("Modelo eliminado del lienzo.");
+    }
+
+    function setZoom(value) {
+      state.zoom = clamp(value, 0.45, 1.6);
+      dom.canvas.style.transform = `scale(${state.zoom})`;
+      dom.canvasWrap.firstElementChild.style.marginRight = ((state.zoom - 1) * 1900) + "px";
+      dom.canvasWrap.firstElementChild.style.marginBottom = ((state.zoom - 1) * 1100) + "px";
+      dom.zoomLabel.textContent = Math.round(state.zoom * 100) + "%";
+    }
+
+    function fitView() {
+      const availableWidth = dom.canvasWrap.clientWidth - 40;
+      const availableHeight = dom.canvasWrap.clientHeight - 40;
+      if (state.nodes.length === 0) {
+        setZoom(Math.min(1, availableWidth / 1200, availableHeight / 700));
+        dom.canvasWrap.scrollTo({ left: 0, top: 0 });
+        return;
+      }
+      const minX = Math.min(...state.nodes.map(node => node.x));
+      const minY = Math.min(...state.nodes.map(node => node.y));
+      const maxX = Math.max(...state.nodes.map(node => node.x + 188));
+      const maxY = Math.max(...state.nodes.map(node => node.y + 108));
+      const modelWidth = Math.max(420, maxX - minX + 160);
+      const modelHeight = Math.max(260, maxY - minY + 160);
+      const zoom = Math.min(1.2, availableWidth / modelWidth, availableHeight / modelHeight);
+      setZoom(zoom);
+      window.requestAnimationFrame(() => {
+        dom.canvasWrap.scrollTo({
+          left: Math.max(0, (minX - 80) * state.zoom),
+          top: Math.max(0, (minY - 80) * state.zoom),
+          behavior: "smooth"
+        });
+      });
+    }
+
+    dom.playBtn.addEventListener("click", startSimulation);
+    document.getElementById("quickRunBtn").addEventListener("click", startSimulation);
+    dom.pauseBtn.addEventListener("click", pauseSimulation);
+    dom.stopBtn.addEventListener("click", () => stopSimulation(false));
+    dom.resetBtn.addEventListener("click", resetSimulation);
+    dom.connectBtn.addEventListener("click", toggleConnectionMode);
+    dom.deleteBtn.addEventListener("click", deleteSelected);
+    dom.speedSelect.addEventListener("change", event => {
+      state.speed = Number(event.target.value) || 1;
+      updateStatus("Velocidad ajustada a " + state.speed + "×.");
+    });
+
+    document.getElementById("saveBtn").addEventListener("click", saveModel);
+    document.getElementById("exportBtn").addEventListener("click", exportModel);
+    document.getElementById("exportRecordsBtn").addEventListener("click", exportRecords);
+    document.getElementById("loadExampleBtn").addEventListener("click", loadExampleModel);
+    document.getElementById("clearModelBtn").addEventListener("click", clearModel);
+    document.getElementById("importInput").addEventListener("change", event => {
+      importModel(event.target.files?.[0]);
+      event.target.value = "";
+    });
+
+    document.getElementById("zoomInBtn").addEventListener("click", () => setZoom(state.zoom + 0.1));
+    document.getElementById("zoomOutBtn").addEventListener("click", () => setZoom(state.zoom - 0.1));
+    document.getElementById("fitBtn").addEventListener("click", fitView);
+
+    document.getElementById("openPaletteBtn").addEventListener("click", () => {
+      dom.sidebar.classList.toggle("open");
+      dom.properties.classList.remove("open");
+    });
+
+    document.getElementById("openPropertiesBtn").addEventListener("click", () => {
+      dom.properties.classList.toggle("open");
+      dom.sidebar.classList.remove("open");
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Delete" || event.key === "Backspace") {
+        const tag = document.activeElement?.tagName;
+        if (tag !== "INPUT" && tag !== "TEXTAREA") {
+          event.preventDefault();
+          deleteSelected();
+        }
+      }
+      if (event.key === "Escape") {
+        state.connectionOrigin = null;
+        state.connectionMode = false;
+        dom.connectBtn.classList.remove("active");
+        clearSelection();
+        updateStatus("Selección cancelada.");
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        saveModel();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 920) {
+        dom.sidebar.classList.remove("open");
+        dom.properties.classList.remove("open");
+      }
+    });
+
+    function initializeApp() {
+      updateRunStatus();
+      loadExampleModel(false);
+      const saved = safeStorage.get("simuladorTramitesModel");
+      if (saved) {
+        try {
+          applyModel(JSON.parse(saved));
+          showToast("Se cargó el último modelo guardado.");
+          return;
+        } catch (error) {
+          safeStorage.remove("simuladorTramitesModel");
+          loadExampleModel(false);
+        }
+      }
+      updateStatus("Modelo de demostración listo para ejecutar.");
+      showToast("Simulador cargado correctamente.");
+    }
+
+    initializeApp();
+
+    window.FlowSimTramites = {
+      state,
+      start: startSimulation,
+      pause: pauseSimulation,
+      stop: () => stopSimulation(false),
+      reset: resetSimulation,
+      save: saveModel,
+      exportModel,
+      exportRecords,
+      loadExample: loadExampleModel
+    };
+  </script>
+</body>
+</html>
