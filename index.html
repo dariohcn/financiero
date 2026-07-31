@@ -1569,6 +1569,56 @@
       line-height: 1.5;
     }
 
+    .config-disclosure {
+      margin: 0 0 13px;
+      border: 1px solid #dbe3ed;
+      border-radius: 11px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .config-disclosure summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 40px;
+      padding: 0 11px;
+      cursor: pointer;
+      list-style: none;
+      color: #24344d;
+      background: #f7f9fc;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .025em;
+    }
+
+    .config-disclosure summary::-webkit-details-marker { display: none; }
+    .config-disclosure summary::after {
+      content: "+";
+      color: #176fe5;
+      font-size: 16px;
+      font-weight: 900;
+    }
+    .config-disclosure[open] summary::after { content: "−"; }
+
+    .config-disclosure-body {
+      padding: 11px 11px 3px;
+      border-top: 1px solid #e4eaf1;
+    }
+
+    .config-disclosure .field label {
+      color: #5d6c80;
+      font-size: 9px;
+    }
+
+    .config-disclosure .property-button {
+      margin-bottom: 10px;
+      color: #24344d;
+      background: #f7f9fc;
+      border-color: #dbe3ed;
+    }
+
     @media (max-width: 620px) {
       .scenario-period-grid { grid-template-columns: 1fr; }
       .workspace-summary-actions .capital-badge:nth-of-type(1) { display: inline-flex; }
@@ -1764,7 +1814,503 @@
       .comparison-dialog { max-height: 94vh; border-radius: 13px; }
     }
 
-  </style>
+  
+
+    /* ===== PANELES OCULTABLES Y RESPONSIVE REFORZADO ===== */
+    .app {
+      transition: grid-template-columns 220ms ease;
+    }
+
+    .panel-toggle {
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .panel-toggle[aria-pressed="true"] {
+      border-color: rgba(58, 139, 253, 0.60);
+      background: #eaf3ff;
+      color: #145ebd;
+    }
+
+    .app.sidebar-collapsed {
+      grid-template-columns: 0 minmax(0, 1fr) var(--properties-width);
+    }
+
+    .app.properties-collapsed {
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 0;
+    }
+
+    .app.sidebar-collapsed.properties-collapsed {
+      grid-template-columns: 0 minmax(0, 1fr) 0;
+    }
+
+    .app.sidebar-collapsed .sidebar,
+    .app.properties-collapsed .properties {
+      width: 0;
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .app.sidebar-collapsed .statusbar {
+      grid-template-columns: 0 minmax(0, 1fr) var(--properties-width);
+    }
+
+    .app.properties-collapsed .statusbar {
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 0;
+    }
+
+    .app.sidebar-collapsed.properties-collapsed .statusbar {
+      grid-template-columns: 0 minmax(0, 1fr) 0;
+    }
+
+    .app.sidebar-collapsed .status-left,
+    .app.properties-collapsed .status-right {
+      display: none;
+    }
+
+    .panel-head {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 48px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #e3e9f1;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-head strong {
+      color: #172237;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .panel-close {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      border: 1px solid #d8e0eb;
+      border-radius: 9px;
+      background: #ffffff;
+      color: #26364d;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .panel-close:hover {
+      border-color: rgba(58, 139, 253, 0.50);
+      background: #eef5ff;
+      color: #176fe5;
+    }
+
+    .panel-backdrop {
+      position: fixed;
+      inset: var(--topbar-height) 0 var(--statusbar-height) 0;
+      z-index: 55;
+      display: none;
+      background: rgba(12, 24, 43, 0.38);
+      backdrop-filter: blur(2px);
+    }
+
+    .panel-backdrop.visible {
+      display: block;
+    }
+
+    .developer-credit {
+      color: #4d5f76;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .developer-credit strong {
+      color: #176fe5;
+    }
+
+    .developer-credit:hover strong {
+      text-decoration: underline;
+    }
+
+    @media (min-width: 1101px) {
+      .panel-head {
+        display: none;
+      }
+
+      .sidebar,
+      .properties {
+        transition: width 220ms ease, opacity 180ms ease;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .app,
+      .app.sidebar-collapsed,
+      .app.properties-collapsed,
+      .app.sidebar-collapsed.properties-collapsed {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .app.sidebar-collapsed .sidebar,
+      .app.properties-collapsed .properties {
+        width: min(360px, 92vw);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .panel-toggle {
+        display: inline-flex;
+      }
+
+      .sidebar,
+      .properties {
+        width: min(360px, 92vw);
+        max-width: none;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .sidebar.open,
+      .properties.open {
+        transform: translateX(0);
+      }
+
+      .topbar {
+        grid-template-columns: 122px minmax(0, 1fr) auto;
+      }
+
+      .toolbar {
+        gap: 5px;
+        padding: 0 8px;
+      }
+
+      .tool-button,
+      .speed-control {
+        min-height: 34px;
+      }
+
+      .statusbar,
+      .app.sidebar-collapsed .statusbar,
+      .app.properties-collapsed .statusbar,
+      .app.sidebar-collapsed.properties-collapsed .statusbar {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .status-center {
+        grid-column: 1;
+        justify-content: center;
+        min-width: 0;
+      }
+
+      .status-center #statusMessage,
+      .status-center #statusSelection {
+        display: none;
+      }
+
+      .developer-credit {
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 10px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      :root {
+        --topbar-height: 58px;
+        --statusbar-height: 42px;
+      }
+
+      .topbar {
+        grid-template-columns: 82px minmax(0, 1fr);
+      }
+
+      .brand {
+        width: 82px;
+        min-width: 82px;
+        padding: 4px;
+      }
+
+      .brand-logo-link {
+        padding: 2px 4px;
+      }
+
+      .brand-logo {
+        width: 72px;
+        max-height: 34px;
+      }
+
+      .toolbar {
+        grid-column: 2;
+        padding: 0 5px;
+        gap: 4px;
+      }
+
+      .toolbar-group {
+        gap: 4px;
+      }
+
+      .tool-button {
+        width: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        padding: 0;
+        border-radius: 8px;
+        font-size: 11px;
+      }
+
+      .speed-control {
+        height: 32px;
+        min-height: 32px;
+        padding: 0 6px;
+        border-radius: 8px;
+      }
+
+      .speed-control select {
+        max-width: 52px;
+        font-size: 10px;
+      }
+
+      .toolbar-divider {
+        display: none;
+      }
+
+      .top-actions {
+        display: none;
+      }
+
+      .workspace-summary {
+        top: 40px;
+        left: 5px;
+        right: 5px;
+        min-height: 34px;
+        padding: 4px 5px 4px 8px;
+      }
+
+      .workspace-summary strong {
+        max-width: 138px;
+        font-size: 9px;
+      }
+
+      .workspace-kicker {
+        font-size: 6px;
+      }
+
+      .quick-run-button {
+        min-height: 25px;
+        padding: 0 7px;
+        font-size: 8px;
+      }
+
+      .canvas-toolbar {
+        top: 4px;
+        left: 4px;
+      }
+
+      .canvas-wrap {
+        top: 80px;
+      }
+
+      .sidebar,
+      .properties,
+      .app.sidebar-collapsed .sidebar,
+      .app.properties-collapsed .properties {
+        top: var(--topbar-height);
+        bottom: var(--statusbar-height);
+        width: 100vw;
+        max-width: 100vw;
+      }
+
+      .panel-section {
+        padding: 14px;
+      }
+
+      .field-row,
+      .metrics-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .property-actions {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .palette-item {
+        min-height: 58px;
+      }
+
+      .status-center {
+        padding: 0 8px;
+      }
+
+      .developer-credit {
+        font-size: 9px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .brand {
+        width: 68px;
+        min-width: 68px;
+      }
+
+      .topbar {
+        grid-template-columns: 68px minmax(0, 1fr);
+      }
+
+      .brand-logo {
+        width: 60px;
+      }
+
+      .toolbar {
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+      }
+
+      .toolbar > * {
+        scroll-snap-align: start;
+      }
+
+      .speed-control {
+        display: none;
+      }
+    }
+
+  
+    /* Mejoras visuales finales */
+    .workspace-summary {
+      left: 164px;
+      right: 10px;
+      top: 10px;
+      min-height: 44px;
+      gap: 12px;
+      padding: 7px 10px 7px 12px;
+      border-radius: 14px;
+      border-left-width: 4px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 10px 24px rgba(27, 42, 62, 0.10);
+    }
+
+    .workspace-summary strong {
+      margin-top: 2px;
+      font-size: 12px;
+      line-height: 1.2;
+      white-space: normal;
+    }
+
+    .workspace-kicker {
+      font-size: 7px;
+      letter-spacing: 0.16em;
+    }
+
+    .workspace-summary-actions {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+      max-width: 72%;
+    }
+
+    .capital-badge {
+      min-height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 9px;
+      box-shadow: inset 0 0 0 1px rgba(58, 139, 253, 0.04);
+    }
+
+    .ready-badge {
+      min-height: 26px;
+      padding: 0 10px;
+      font-size: 9px;
+    }
+
+    .quick-run-button {
+      min-height: 30px;
+      padding: 0 12px;
+      border-radius: 10px;
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .canvas-toolbar {
+      top: 10px;
+      left: 10px;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 10px 24px rgba(27, 42, 62, 0.12);
+    }
+
+    .canvas-tool {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    .zoom-label {
+      min-width: 54px;
+      padding: 0 2px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #44556f;
+    }
+
+    .canvas-wrap {
+      top: 64px;
+    }
+
+    @media (max-width: 1280px) {
+      .workspace-summary { left: 150px; }
+      .workspace-summary-actions { max-width: 68%; }
+      .capital-badge { font-size: 8.5px; padding: 0 8px; }
+    }
+
+    @media (max-width: 920px) {
+      .workspace-summary {
+        left: 10px;
+        right: 10px;
+        top: 58px;
+        min-height: auto;
+        padding: 9px 10px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .workspace-summary strong { font-size: 11px; }
+      .workspace-summary-actions {
+        width: 100%;
+        max-width: none;
+        justify-content: flex-start;
+      }
+      .capital-badge, .ready-badge { font-size: 8px; }
+      .quick-run-button { min-height: 28px; font-size: 8.5px; }
+      .canvas-toolbar { top: 10px; left: 10px; }
+      .canvas-wrap { top: 122px; }
+    }
+
+    @media (max-width: 620px) {
+      .canvas-toolbar { gap: 4px; padding: 5px 7px; }
+      .canvas-tool { width: 32px; height: 32px; }
+      .zoom-label { min-width: 50px; font-size: 11px; }
+      .workspace-summary { top: 56px; }
+      .workspace-summary-actions { gap: 5px; }
+      .capital-badge:nth-child(2) { max-width: 100%; }
+      .capital-badge, .ready-badge, .quick-run-button { width: auto; }
+      .canvas-wrap { top: 126px; }
+    }
+
+</style>
 </head>
 <body>
   <div class="app">
@@ -1777,7 +2323,8 @@
 
       <div class="toolbar">
         <div class="toolbar-group">
-          <button class="tool-button mobile-toggle" id="openPaletteBtn" title="Abrir componentes" aria-label="Abrir componentes">☰</button>
+          <button class="tool-button panel-toggle" id="openPaletteBtn" title="Mostrar u ocultar panel izquierdo" aria-label="Mostrar u ocultar panel izquierdo" aria-pressed="false">☰</button>
+          <button class="tool-button panel-toggle" id="openPropertiesBtn" title="Mostrar u ocultar panel derecho" aria-label="Mostrar u ocultar panel derecho" aria-pressed="false">⚙</button>
           <button class="tool-button primary" id="playBtn" title="Iniciar simulación"><span>▶</span><span class="label">Iniciar</span></button>
           <button class="tool-button" id="pauseBtn" title="Pausar simulación"><span>Ⅱ</span><span class="label">Pausar</span></button>
           <button class="tool-button" id="stopBtn" title="Detener simulación"><span>■</span><span class="label">Detener</span></button>
@@ -1813,11 +2360,17 @@
         <button class="tool-button" id="saveBtn" title="Guardar modelo" aria-label="Guardar modelo"><span class="action-icon">💾</span><span class="action-label">Guardar</span></button>
         <button class="tool-button" id="exportBtn" title="Exportar modelo" aria-label="Exportar modelo"><span class="action-icon">⇩</span><span class="action-label">Exportar</span></button>
         <button class="tool-button" id="exportRecordsBtn" title="Exportar registros" aria-label="Exportar registros"><span class="action-icon">▤</span><span class="action-label">Registros</span></button>
-        <button class="tool-button mobile-toggle" id="openPropertiesBtn" title="Abrir propiedades" aria-label="Abrir propiedades">⚙</button>
+        
       </div>
     </header>
 
-    <aside class="sidebar" id="sidebar">
+    <div class="panel-backdrop" id="panelBackdrop" aria-hidden="true"></div>
+
+    <aside class="sidebar" id="sidebar" aria-label="Panel de componentes y configuración">
+      <div class="panel-head">
+        <strong>Configuración</strong>
+        <button class="panel-close" id="closeSidebarBtn" type="button" aria-label="Cerrar panel izquierdo">×</button>
+      </div>
       <section class="panel-section">
         <div class="panel-title">
           <h2>Componentes</h2>
@@ -2083,7 +2636,11 @@
       </div>
     </main>
 
-    <aside class="properties" id="properties">
+    <aside class="properties" id="properties" aria-label="Panel de propiedades e indicadores">
+      <div class="panel-head">
+        <strong>Propiedades e indicadores</strong>
+        <button class="panel-close" id="closePropertiesBtn" type="button" aria-label="Cerrar panel derecho">×</button>
+      </div>
       <section class="panel-section">
         <div class="panel-title">
           <h2>Propiedades</h2>
@@ -2175,8 +2732,8 @@
       <div class="status-center">
         <span id="statusMessage">Modelo listo.</span>
         <span id="statusSelection">0 bloques · 0 conexiones</span>
-        <a class="developer-credit" href="https://neodat.net" target="_blank" rel="noopener noreferrer" aria-label="Visitar Neodat Consultores">
-          Desarrollado por <strong>Neodat Consultores</strong> ↗
+        <a class="developer-credit" href="https://neodat.net" target="_blank" rel="noopener noreferrer" aria-label="Visitar NeoDat Consultores">
+          Desarrollado por <strong>NeoDat Consultores</strong> ↗
         </a>
       </div>
 
@@ -2210,15 +2767,15 @@
 
     const TRANSACTION_TYPES = {
       credit: { label: "Solicitud de crédito", code: "CR", color: "#8b6df6", minAmount: 1000, maxAmount: 120000 },
-      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486", minAmount: 1, maxAmount: 10000 },
-      withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67", minAmount: 1, maxAmount: 5000 },
-      transfer: { label: "Transferencia", code: "TR", color: "#19a7bd", minAmount: 1, maxAmount: 15000 },
-      payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b", minAmount: 1, maxAmount: 1000 },
+      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486", minAmount: 1, maxAmount: 5000 },
+      withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67", minAmount: 1, maxAmount: 2000 },
+      transfer: { label: "Transferencia", code: "TR", color: "#19a7bd", minAmount: 1, maxAmount: 7000 },
+      payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b", minAmount: 1, maxAmount: 600 },
       inquiry: { label: "Consulta financiera", code: "CS", color: "#617089", minAmount: 0, maxAmount: 0 },
-      account: { label: "Apertura de cuenta", code: "AP", color: "#2563eb", minAmount: 0, maxAmount: 500 },
-      card: { label: "Tarjeta bancaria", code: "TJ", color: "#db2777", minAmount: 0, maxAmount: 200 },
-      insurance: { label: "Seguro bancario", code: "SG", color: "#0f9f8f", minAmount: 5, maxAmount: 500 },
-      investment: { label: "Inversión o ahorro", code: "IV", color: "#7c3aed", minAmount: 100, maxAmount: 25000 }
+      account: { label: "Apertura de cuenta", code: "AP", color: "#2563eb", minAmount: 0, maxAmount: 100 },
+      card: { label: "Tarjeta bancaria", code: "TJ", color: "#db2777", minAmount: 0, maxAmount: 30 },
+      insurance: { label: "Seguro bancario", code: "SG", color: "#0f9f8f", minAmount: 5, maxAmount: 250 },
+      investment: { label: "Inversión o ahorro", code: "IV", color: "#7c3aed", minAmount: 50, maxAmount: 10000 }
     };
 
     const CREDIT_TYPES = {
@@ -2227,6 +2784,72 @@
       consumer: { label: "Crédito de consumo", code: "CON", minAmount: 500, maxAmount: 25000, defaultRate: 16.5, defaultTerm: 36 },
       business: { label: "Crédito para negocio", code: "NEG", minAmount: 1000, maxAmount: 60000, defaultRate: 15.0, defaultTerm: 48 },
       education: { label: "Crédito educativo", code: "EDU", minAmount: 1000, maxAmount: 30000, defaultRate: 11.5, defaultTerm: 60 }
+    };
+
+    const DEFAULT_AUTOMATIC_AMOUNT_PROFILES = {
+      deposit: [
+        { min: 1, max: 300, weight: 60 },
+        { min: 300.01, max: 800, weight: 25 },
+        { min: 800.01, max: 1500, weight: 10 },
+        { min: 1500.01, max: 3000, weight: 4 },
+        { min: 3000.01, max: 5000, weight: 1 }
+      ],
+      withdrawal: [
+        { min: 1, max: 200, weight: 55 },
+        { min: 200.01, max: 500, weight: 30 },
+        { min: 500.01, max: 1000, weight: 12 },
+        { min: 1000.01, max: 2000, weight: 3 }
+      ],
+      transfer: [
+        { min: 1, max: 300, weight: 55 },
+        { min: 300.01, max: 1000, weight: 25 },
+        { min: 1000.01, max: 3000, weight: 15 },
+        { min: 3000.01, max: 7000, weight: 5 }
+      ],
+      payment: [
+        { min: 1, max: 80, weight: 60 },
+        { min: 80.01, max: 250, weight: 30 },
+        { min: 250.01, max: 600, weight: 10 }
+      ],
+      account: [
+        { min: 0, max: 0, weight: 70 },
+        { min: 5, max: 50, weight: 25 },
+        { min: 50.01, max: 100, weight: 5 }
+      ],
+      card: [
+        { min: 0, max: 0, weight: 85 },
+        { min: 5, max: 30, weight: 15 }
+      ],
+      insurance: [
+        { min: 5, max: 40, weight: 60 },
+        { min: 40.01, max: 100, weight: 30 },
+        { min: 100.01, max: 250, weight: 10 }
+      ],
+      investment: [
+        { min: 50, max: 500, weight: 55 },
+        { min: 500.01, max: 1500, weight: 30 },
+        { min: 1500.01, max: 5000, weight: 12 },
+        { min: 5000.01, max: 10000, weight: 3 }
+      ]
+    };
+
+    const DEFAULT_AUTOMATIC_AMOUNT_RANGES = {
+      deposit: { min: 1, max: 5000 },
+      withdrawal: { min: 1, max: 2000 },
+      transfer: { min: 1, max: 7000 },
+      payment: { min: 1, max: 600 },
+      account: { min: 0, max: 100 },
+      card: { min: 0, max: 30 },
+      insurance: { min: 5, max: 250 },
+      investment: { min: 50, max: 10000 }
+    };
+
+    const DEFAULT_CREDIT_AMOUNT_RANGES = {
+      housing: { min: 15000, max: 120000 },
+      vehicle: { min: 5000, max: 50000 },
+      consumer: { min: 500, max: 25000 },
+      business: { min: 1000, max: 60000 },
+      education: { min: 1000, max: 30000 }
     };
 
     const NODE_TYPES = {
@@ -2246,18 +2869,20 @@
           amountFixed: 500,
           amountMin: 20,
           amountMax: 5000,
+          automaticAmountRanges: clone(DEFAULT_AUTOMATIC_AMOUNT_RANGES),
+          creditAmountRanges: clone(DEFAULT_CREDIT_AMOUNT_RANGES),
           color: "#20b486",
           transactionWeights: {
-            credit: 30,
-            deposit: 25,
+            credit: 12,
+            deposit: 24,
             withdrawal: 20,
-            transfer: 10,
-            payment: 10,
-            inquiry: 5,
-            account: 8,
-            card: 7,
-            insurance: 5,
-            investment: 5
+            transfer: 12,
+            payment: 15,
+            inquiry: 10,
+            account: 3,
+            card: 2,
+            insurance: 1,
+            investment: 1
           },
           creditTypeWeights: {
             housing: 18,
@@ -2358,8 +2983,10 @@
     };
 
     const dom = {
+      app: document.querySelector(".app"),
       sidebar: document.getElementById("sidebar"),
       properties: document.getElementById("properties"),
+      panelBackdrop: document.getElementById("panelBackdrop"),
       workspace: document.getElementById("workspace"),
       canvasWrap: document.getElementById("canvasWrap"),
       canvas: document.getElementById("canvas"),
@@ -3120,23 +3747,95 @@
       return Math.round((low + Math.random() * (high - low)) * 100) / 100;
     }
 
-    function chooseTransactionAmount(type, props) {
+    function weightedAmount(bands) {
+      const validBands = Array.isArray(bands)
+        ? bands.filter(band => Number(band?.weight) > 0)
+        : [];
+      if (!validBands.length) return 0;
+
+      const totalWeight = validBands.reduce((sum, band) => sum + Number(band.weight), 0);
+      let draw = Math.random() * totalWeight;
+
+      for (const band of validBands) {
+        draw -= Number(band.weight);
+        if (draw <= 0) return randomAmount(band.min, band.max);
+      }
+
+      const lastBand = validBands[validBands.length - 1];
+      return randomAmount(lastBand.min, lastBand.max);
+    }
+
+    function normalizeConfiguredRange(config, fallback, minimumAllowed = 0) {
+      const min = Math.max(minimumAllowed, Number(config?.min ?? fallback.min) || 0);
+      const max = Math.max(min, Number(config?.max ?? fallback.max) || min);
+      return { min, max };
+    }
+
+    function scaleAmountProfile(profile, configuredRange) {
+      if (!Array.isArray(profile) || !profile.length) return [];
+      const baseMin = Math.min(...profile.map(band => Number(band.min) || 0));
+      const baseMax = Math.max(...profile.map(band => Number(band.max) || 0));
+      const span = Math.max(0.000001, baseMax - baseMin);
+      const targetSpan = Math.max(0, configuredRange.max - configuredRange.min);
+
+      return profile.map((band, index) => {
+        const minRatio = (Number(band.min) - baseMin) / span;
+        const maxRatio = (Number(band.max) - baseMin) / span;
+        const scaledMin = index === 0
+          ? configuredRange.min
+          : configuredRange.min + minRatio * targetSpan;
+        const scaledMax = index === profile.length - 1
+          ? configuredRange.max
+          : configuredRange.min + maxRatio * targetSpan;
+        return {
+          min: Math.round(Math.max(configuredRange.min, scaledMin) * 100) / 100,
+          max: Math.round(Math.max(scaledMin, scaledMax) * 100) / 100,
+          weight: Number(band.weight) || 0
+        };
+      });
+    }
+
+    function normalAutomaticAmount(type, props = {}) {
+      if (type === "inquiry") return 0;
+
+      const fallbackRange = DEFAULT_AUTOMATIC_AMOUNT_RANGES[type];
+      const profile = DEFAULT_AUTOMATIC_AMOUNT_PROFILES[type];
+
+      if (fallbackRange && profile) {
+        const minimumAllowed = type === "deposit" ? 1 : 0;
+        const configuredRange = normalizeConfiguredRange(
+          props.automaticAmountRanges?.[type],
+          fallbackRange,
+          minimumAllowed
+        );
+        return weightedAmount(scaleAmountProfile(profile, configuredRange));
+      }
+
       const transaction = getTransactionConfig(type);
+      return randomAmount(transaction.minAmount, transaction.maxAmount);
+    }
+
+    function chooseTransactionAmount(type, props) {
       const mode = props.amountMode || "automatic";
-      if (type === "inquiry" && mode === "automatic") return 0;
       let amount = 0;
-      if (mode === "fixed") amount = Math.max(0, Number(props.amountFixed) || 0);
-      else if (mode === "random") amount = randomAmount(props.amountMin, props.amountMax);
-      else amount = randomAmount(transaction.minAmount, transaction.maxAmount);
+
+      if (mode === "fixed") {
+        amount = Math.max(0, Number(props.amountFixed) || 0);
+      } else if (mode === "random") {
+        amount = randomAmount(props.amountMin, props.amountMax);
+      } else {
+        amount = normalAutomaticAmount(type, props);
+      }
+
       if (type === "deposit") amount = Math.max(1, amount);
-      return amount;
+      return Math.round(amount * 100) / 100;
     }
 
     function amountConfigurationSummary(props) {
       const mode = props.amountMode || "automatic";
       if (mode === "fixed") return formatCurrency(props.amountFixed || 0);
       if (mode === "random") return `${formatCurrency(props.amountMin || 0)} – ${formatCurrency(props.amountMax || 0)}`;
-      return "Rango automático por trámite";
+      return "Rangos automáticos ajustables";
     }
 
     function chooseTransactionType(props) {
@@ -3673,9 +4372,75 @@
               </div>
             </div>
           ` : `
-            <div style="margin:-5px 0 13px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.04);color:var(--muted);font-size:9px;line-height:1.5;">
-              Créditos según producto: vivienda, vehículo, consumo, negocio o educativo. Depósitos, retiros, transferencias y pagos pueden comenzar desde USD 1. Servicios: cuentas, tarjetas, seguros e inversiones.
+            <div class="field-help">
+              Los montos automáticos mantienen una distribución concentrada en valores bajos, pero ahora usted puede modificar los límites mínimo y máximo de cada operación.
             </div>
+
+            <details class="config-disclosure">
+              <summary>Rangos automáticos de transacciones</summary>
+              <div class="config-disclosure-body">
+                <div class="field-row">
+                  <div class="field"><label for="autoDepositMin">Depósito mínimo USD</label><input id="autoDepositMin" type="number" min="1" step="0.01" value="${Number(node.props.automaticAmountRanges?.deposit?.min ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.deposit.min)}"></div>
+                  <div class="field"><label for="autoDepositMax">Depósito máximo USD</label><input id="autoDepositMax" type="number" min="1" step="0.01" value="${Number(node.props.automaticAmountRanges?.deposit?.max ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.deposit.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="autoWithdrawalMin">Retiro mínimo USD</label><input id="autoWithdrawalMin" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.withdrawal?.min ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.withdrawal.min)}"></div>
+                  <div class="field"><label for="autoWithdrawalMax">Retiro máximo USD</label><input id="autoWithdrawalMax" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.withdrawal?.max ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.withdrawal.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="autoTransferMin">Transferencia mínima USD</label><input id="autoTransferMin" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.transfer?.min ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.transfer.min)}"></div>
+                  <div class="field"><label for="autoTransferMax">Transferencia máxima USD</label><input id="autoTransferMax" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.transfer?.max ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.transfer.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="autoPaymentMin">Pago mínimo USD</label><input id="autoPaymentMin" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.payment?.min ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.payment.min)}"></div>
+                  <div class="field"><label for="autoPaymentMax">Pago máximo USD</label><input id="autoPaymentMax" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.payment?.max ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.payment.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="autoAccountMin">Apertura mínima USD</label><input id="autoAccountMin" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.account?.min ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.account.min)}"></div>
+                  <div class="field"><label for="autoAccountMax">Apertura máxima USD</label><input id="autoAccountMax" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.account?.max ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.account.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="autoCardMin">Tarjeta mínimo USD</label><input id="autoCardMin" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.card?.min ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.card.min)}"></div>
+                  <div class="field"><label for="autoCardMax">Tarjeta máximo USD</label><input id="autoCardMax" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.card?.max ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.card.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="autoInsuranceMin">Seguro mínimo USD</label><input id="autoInsuranceMin" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.insurance?.min ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.insurance.min)}"></div>
+                  <div class="field"><label for="autoInsuranceMax">Seguro máximo USD</label><input id="autoInsuranceMax" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.insurance?.max ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.insurance.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="autoInvestmentMin">Inversión mínima USD</label><input id="autoInvestmentMin" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.investment?.min ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.investment.min)}"></div>
+                  <div class="field"><label for="autoInvestmentMax">Inversión máxima USD</label><input id="autoInvestmentMax" type="number" min="0" step="0.01" value="${Number(node.props.automaticAmountRanges?.investment?.max ?? DEFAULT_AUTOMATIC_AMOUNT_RANGES.investment.max)}"></div>
+                </div>
+                <button class="property-button" id="resetAutomaticRangesBtn" type="button" style="width:100%;">Restablecer montos normales</button>
+              </div>
+            </details>
+
+            <details class="config-disclosure">
+              <summary>Montos automáticos por tipo de crédito</summary>
+              <div class="config-disclosure-body">
+                <div class="field-row">
+                  <div class="field"><label for="creditAmountHousingMin">Vivienda mínimo USD</label><input id="creditAmountHousingMin" type="number" min="0" step="100" value="${Number(node.props.creditAmountRanges?.housing?.min ?? DEFAULT_CREDIT_AMOUNT_RANGES.housing.min)}"></div>
+                  <div class="field"><label for="creditAmountHousingMax">Vivienda máximo USD</label><input id="creditAmountHousingMax" type="number" min="0" step="100" value="${Number(node.props.creditAmountRanges?.housing?.max ?? DEFAULT_CREDIT_AMOUNT_RANGES.housing.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="creditAmountVehicleMin">Vehículo mínimo USD</label><input id="creditAmountVehicleMin" type="number" min="0" step="100" value="${Number(node.props.creditAmountRanges?.vehicle?.min ?? DEFAULT_CREDIT_AMOUNT_RANGES.vehicle.min)}"></div>
+                  <div class="field"><label for="creditAmountVehicleMax">Vehículo máximo USD</label><input id="creditAmountVehicleMax" type="number" min="0" step="100" value="${Number(node.props.creditAmountRanges?.vehicle?.max ?? DEFAULT_CREDIT_AMOUNT_RANGES.vehicle.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="creditAmountConsumerMin">Consumo mínimo USD</label><input id="creditAmountConsumerMin" type="number" min="0" step="50" value="${Number(node.props.creditAmountRanges?.consumer?.min ?? DEFAULT_CREDIT_AMOUNT_RANGES.consumer.min)}"></div>
+                  <div class="field"><label for="creditAmountConsumerMax">Consumo máximo USD</label><input id="creditAmountConsumerMax" type="number" min="0" step="50" value="${Number(node.props.creditAmountRanges?.consumer?.max ?? DEFAULT_CREDIT_AMOUNT_RANGES.consumer.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="creditAmountBusinessMin">Negocio mínimo USD</label><input id="creditAmountBusinessMin" type="number" min="0" step="100" value="${Number(node.props.creditAmountRanges?.business?.min ?? DEFAULT_CREDIT_AMOUNT_RANGES.business.min)}"></div>
+                  <div class="field"><label for="creditAmountBusinessMax">Negocio máximo USD</label><input id="creditAmountBusinessMax" type="number" min="0" step="100" value="${Number(node.props.creditAmountRanges?.business?.max ?? DEFAULT_CREDIT_AMOUNT_RANGES.business.max)}"></div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label for="creditAmountEducationMin">Educativo mínimo USD</label><input id="creditAmountEducationMin" type="number" min="0" step="100" value="${Number(node.props.creditAmountRanges?.education?.min ?? DEFAULT_CREDIT_AMOUNT_RANGES.education.min)}"></div>
+                  <div class="field"><label for="creditAmountEducationMax">Educativo máximo USD</label><input id="creditAmountEducationMax" type="number" min="0" step="100" value="${Number(node.props.creditAmountRanges?.education?.max ?? DEFAULT_CREDIT_AMOUNT_RANGES.education.max)}"></div>
+                </div>
+                <button class="property-button" id="resetCreditAmountRangesBtn" type="button" style="width:100%;">Restablecer montos de crédito</button>
+              </div>
+            </details>
           `}
           ${(node.props.transactionMode || "mixed") === "mixed" ? `
             <div class="field">
@@ -3683,24 +4448,24 @@
               <div style="color:var(--muted);font-size:10px;line-height:1.5;margin-bottom:8px;">Los valores funcionan como pesos relativos y no necesitan sumar 100.</div>
             </div>
             <div class="field-row">
-              <div class="field"><label for="weightCredit">Crédito</label><input id="weightCredit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.credit ?? 30)}"></div>
-              <div class="field"><label for="weightDeposit">Depósito</label><input id="weightDeposit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.deposit ?? 25)}"></div>
+              <div class="field"><label for="weightCredit">Crédito</label><input id="weightCredit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.credit ?? 12)}"></div>
+              <div class="field"><label for="weightDeposit">Depósito</label><input id="weightDeposit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.deposit ?? 24)}"></div>
             </div>
             <div class="field-row">
               <div class="field"><label for="weightWithdrawal">Retiro</label><input id="weightWithdrawal" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.withdrawal ?? 20)}"></div>
-              <div class="field"><label for="weightTransfer">Transferencia</label><input id="weightTransfer" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.transfer ?? 10)}"></div>
+              <div class="field"><label for="weightTransfer">Transferencia</label><input id="weightTransfer" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.transfer ?? 12)}"></div>
             </div>
             <div class="field-row">
-              <div class="field"><label for="weightPayment">Pago</label><input id="weightPayment" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.payment ?? 10)}"></div>
-              <div class="field"><label for="weightInquiry">Consulta</label><input id="weightInquiry" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.inquiry ?? 5)}"></div>
+              <div class="field"><label for="weightPayment">Pago</label><input id="weightPayment" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.payment ?? 15)}"></div>
+              <div class="field"><label for="weightInquiry">Consulta</label><input id="weightInquiry" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.inquiry ?? 10)}"></div>
             </div>
             <div class="field-row">
-              <div class="field"><label for="weightAccount">Apertura cuenta</label><input id="weightAccount" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.account ?? 8)}"></div>
-              <div class="field"><label for="weightCard">Tarjeta</label><input id="weightCard" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.card ?? 7)}"></div>
+              <div class="field"><label for="weightAccount">Apertura cuenta</label><input id="weightAccount" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.account ?? 3)}"></div>
+              <div class="field"><label for="weightCard">Tarjeta</label><input id="weightCard" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.card ?? 2)}"></div>
             </div>
             <div class="field-row">
-              <div class="field"><label for="weightInsurance">Seguro</label><input id="weightInsurance" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.insurance ?? 5)}"></div>
-              <div class="field"><label for="weightInvestment">Inversión</label><input id="weightInvestment" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.investment ?? 5)}"></div>
+              <div class="field"><label for="weightInsurance">Seguro</label><input id="weightInsurance" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.insurance ?? 1)}"></div>
+              <div class="field"><label for="weightInvestment">Inversión</label><input id="weightInvestment" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.investment ?? 1)}"></div>
             </div>
             <div class="field"><label>Tipos de crédito</label><div class="field-help">Defina la frecuencia relativa de cada producto crediticio.</div></div>
             <div class="field-row">
@@ -3943,6 +4708,37 @@
           if ((Number(node.props.amountMax) || 0) < node.props.amountMin) node.props.amountMax = node.props.amountMin;
         });
         bindNumericInput("propAmountMax", value => node.props.amountMax = Math.max(Number(node.props.amountMin) || 0, value));
+
+        ensureSourceAmountRanges(node);
+        bindRangePair(node, "autoDeposit", "automaticAmountRanges", "deposit", 1);
+        bindRangePair(node, "autoWithdrawal", "automaticAmountRanges", "withdrawal", 0);
+        bindRangePair(node, "autoTransfer", "automaticAmountRanges", "transfer", 0);
+        bindRangePair(node, "autoPayment", "automaticAmountRanges", "payment", 0);
+        bindRangePair(node, "autoAccount", "automaticAmountRanges", "account", 0);
+        bindRangePair(node, "autoCard", "automaticAmountRanges", "card", 0);
+        bindRangePair(node, "autoInsurance", "automaticAmountRanges", "insurance", 0);
+        bindRangePair(node, "autoInvestment", "automaticAmountRanges", "investment", 0);
+
+        bindRangePair(node, "creditAmountHousing", "creditAmountRanges", "housing", 0);
+        bindRangePair(node, "creditAmountVehicle", "creditAmountRanges", "vehicle", 0);
+        bindRangePair(node, "creditAmountConsumer", "creditAmountRanges", "consumer", 0);
+        bindRangePair(node, "creditAmountBusiness", "creditAmountRanges", "business", 0);
+        bindRangePair(node, "creditAmountEducation", "creditAmountRanges", "education", 0);
+
+        document.getElementById("resetAutomaticRangesBtn")?.addEventListener("click", () => {
+          node.props.automaticAmountRanges = clone(DEFAULT_AUTOMATIC_AMOUNT_RANGES);
+          renderNodes();
+          renderProperties();
+          showToast("Montos automáticos restablecidos al escenario normal.");
+        });
+
+        document.getElementById("resetCreditAmountRangesBtn")?.addEventListener("click", () => {
+          node.props.creditAmountRanges = clone(DEFAULT_CREDIT_AMOUNT_RANGES);
+          renderNodes();
+          renderProperties();
+          showToast("Montos de crédito restablecidos.");
+        });
+
         node.props.transactionWeights = {
           ...NODE_TYPES.source.props.transactionWeights,
           ...(node.props.transactionWeights || {})
@@ -4131,6 +4927,40 @@
         });
       }
       document.getElementById("deletePropertyBtn")?.addEventListener("click", deleteSelected);
+    }
+
+    function ensureSourceAmountRanges(node) {
+      const configured = node.props.automaticAmountRanges || {};
+      node.props.automaticAmountRanges = {};
+      Object.entries(DEFAULT_AUTOMATIC_AMOUNT_RANGES).forEach(([type, fallback]) => {
+        node.props.automaticAmountRanges[type] = {
+          ...fallback,
+          ...(configured[type] || {})
+        };
+      });
+
+      const creditConfigured = node.props.creditAmountRanges || {};
+      node.props.creditAmountRanges = {};
+      Object.entries(DEFAULT_CREDIT_AMOUNT_RANGES).forEach(([type, fallback]) => {
+        node.props.creditAmountRanges[type] = {
+          ...fallback,
+          ...(creditConfigured[type] || {})
+        };
+      });
+    }
+
+    function bindRangePair(node, prefix, collectionName, type, minimumAllowed = 0) {
+      const minId = prefix + "Min";
+      const maxId = prefix + "Max";
+      bindNumericInput(minId, value => {
+        const range = node.props[collectionName][type];
+        range.min = Math.max(minimumAllowed, value);
+        if ((Number(range.max) || 0) < range.min) range.max = range.min;
+      });
+      bindNumericInput(maxId, value => {
+        const range = node.props[collectionName][type];
+        range.max = Math.max(Number(range.min) || minimumAllowed, value);
+      });
     }
 
     function bindNumericInput(id, callback) {
@@ -4497,8 +5327,15 @@
           const amountUsd = chooseTransactionAmount(transactionType, node.props);
           const creditType = transactionType === "credit" ? chooseCreditType(node.props) : "";
           const creditConfig = creditType ? CREDIT_TYPES[creditType] : null;
+          const configuredCreditRange = transactionType === "credit"
+            ? normalizeConfiguredRange(
+                node.props.creditAmountRanges?.[creditType],
+                DEFAULT_CREDIT_AMOUNT_RANGES[creditType] || { min: creditConfig.minAmount, max: creditConfig.maxAmount },
+                0
+              )
+            : null;
           const effectiveAmount = transactionType === "credit" && (node.props.amountMode || "automatic") === "automatic"
-            ? randomAmount(creditConfig.minAmount, creditConfig.maxAmount)
+            ? randomAmount(configuredCreditRange.min, configuredCreditRange.max)
             : amountUsd;
           const creditProfile = transactionType === "credit" ? createCreditProfile() : null;
           const entity = {
@@ -5683,16 +6520,16 @@
               amountMin: 20,
               amountMax: 5000,
               transactionWeights: {
-                credit: 30,
-                deposit: 25,
-                withdrawal: 20,
-                transfer: 10,
-                payment: 10,
-                inquiry: 5,
-                account: 8,
-                card: 7,
-                insurance: 5,
-                investment: 5
+                credit: 12,
+            deposit: 24,
+            withdrawal: 20,
+            transfer: 12,
+            payment: 15,
+            inquiry: 10,
+            account: 3,
+            card: 2,
+            insurance: 1,
+            investment: 1
               },
               creditTypeWeights: {
                 housing: 18,
@@ -5849,7 +6686,7 @@
     }
 
     function setZoom(value) {
-      const minimumZoom = window.innerWidth <= 620 ? 0.42 : (window.innerWidth <= 1100 ? 0.50 : 0.58);
+      const minimumZoom = 0.10;
       state.zoom = clamp(value, minimumZoom, 1.6);
       dom.canvas.style.transform = `scale(${state.zoom})`;
       dom.canvasWrap.firstElementChild.style.marginRight = ((state.zoom - 1) * 1900) + "px";
@@ -5871,7 +6708,7 @@
       const maxY = Math.max(...state.nodes.map(node => node.y + 108));
       const modelWidth = Math.max(420, maxX - minX + 160);
       const modelHeight = Math.max(260, maxY - minY + 160);
-      const readableZoom = window.innerWidth <= 620 ? 0.46 : (window.innerWidth <= 1100 ? 0.54 : 0.62);
+      const readableZoom = window.innerWidth <= 620 ? 0.28 : (window.innerWidth <= 1100 ? 0.34 : 0.40);
       const zoom = Math.max(
         readableZoom,
         Math.min(1.2, availableWidth / modelWidth, availableHeight / modelHeight)
@@ -6105,15 +6942,85 @@
     document.getElementById("zoomOutBtn").addEventListener("click", () => setZoom(state.zoom - 0.1));
     document.getElementById("fitBtn").addEventListener("click", fitView);
 
-    document.getElementById("openPaletteBtn").addEventListener("click", () => {
-      dom.sidebar.classList.toggle("open");
-      dom.properties.classList.remove("open");
-    });
+    const sidebarToggleBtn = document.getElementById("openPaletteBtn");
+    const propertiesToggleBtn = document.getElementById("openPropertiesBtn");
+    const closeSidebarBtn = document.getElementById("closeSidebarBtn");
+    const closePropertiesBtn = document.getElementById("closePropertiesBtn");
 
-    document.getElementById("openPropertiesBtn").addEventListener("click", () => {
-      dom.properties.classList.toggle("open");
+    function isDrawerMode() {
+      return window.innerWidth <= 1100;
+    }
+
+    function updatePanelBackdrop() {
+      const visible = isDrawerMode() && (
+        dom.sidebar.classList.contains("open") ||
+        dom.properties.classList.contains("open")
+      );
+      dom.panelBackdrop?.classList.toggle("visible", visible);
+      dom.panelBackdrop?.setAttribute("aria-hidden", String(!visible));
+      document.body.style.overflow = visible ? "hidden" : "";
+    }
+
+    function updatePanelToggleState() {
+      const sidebarActive = isDrawerMode()
+        ? dom.sidebar.classList.contains("open")
+        : !dom.app.classList.contains("sidebar-collapsed");
+      const propertiesActive = isDrawerMode()
+        ? dom.properties.classList.contains("open")
+        : !dom.app.classList.contains("properties-collapsed");
+
+      sidebarToggleBtn?.setAttribute("aria-pressed", String(sidebarActive));
+      propertiesToggleBtn?.setAttribute("aria-pressed", String(propertiesActive));
+      sidebarToggleBtn?.setAttribute("title", sidebarActive ? "Ocultar panel izquierdo" : "Mostrar panel izquierdo");
+      propertiesToggleBtn?.setAttribute("title", propertiesActive ? "Ocultar panel derecho" : "Mostrar panel derecho");
+    }
+
+    function closeMobilePanels() {
       dom.sidebar.classList.remove("open");
-    });
+      dom.properties.classList.remove("open");
+      updatePanelBackdrop();
+      updatePanelToggleState();
+    }
+
+    function toggleSidebarPanel() {
+      if (isDrawerMode()) {
+        const willOpen = !dom.sidebar.classList.contains("open");
+        dom.sidebar.classList.toggle("open", willOpen);
+        dom.properties.classList.remove("open");
+      } else {
+        dom.app.classList.toggle("sidebar-collapsed");
+        safeStorage.set(
+          "simuladorBancarioPanelIzquierdoOculto",
+          String(dom.app.classList.contains("sidebar-collapsed"))
+        );
+      }
+      updatePanelBackdrop();
+      updatePanelToggleState();
+      window.setTimeout(() => fitView(), 240);
+    }
+
+    function togglePropertiesPanel() {
+      if (isDrawerMode()) {
+        const willOpen = !dom.properties.classList.contains("open");
+        dom.properties.classList.toggle("open", willOpen);
+        dom.sidebar.classList.remove("open");
+      } else {
+        dom.app.classList.toggle("properties-collapsed");
+        safeStorage.set(
+          "simuladorBancarioPanelDerechoOculto",
+          String(dom.app.classList.contains("properties-collapsed"))
+        );
+      }
+      updatePanelBackdrop();
+      updatePanelToggleState();
+      window.setTimeout(() => fitView(), 240);
+    }
+
+    sidebarToggleBtn?.addEventListener("click", toggleSidebarPanel);
+    propertiesToggleBtn?.addEventListener("click", togglePropertiesPanel);
+    closeSidebarBtn?.addEventListener("click", closeMobilePanels);
+    closePropertiesBtn?.addEventListener("click", closeMobilePanels);
+    dom.panelBackdrop?.addEventListener("click", closeMobilePanels);
 
     document.addEventListener("keydown", event => {
       if (event.key === "Delete" || event.key === "Backspace") {
@@ -6124,6 +7031,10 @@
         }
       }
       if (event.key === "Escape") {
+        if (isDrawerMode() && (dom.sidebar.classList.contains("open") || dom.properties.classList.contains("open"))) {
+          closeMobilePanels();
+          return;
+        }
         state.connectionOrigin = null;
         state.connectionMode = false;
         dom.connectBtn.classList.remove("active");
@@ -6140,10 +7051,20 @@
       if (window.innerWidth > 1100) {
         dom.sidebar.classList.remove("open");
         dom.properties.classList.remove("open");
+        dom.panelBackdrop?.classList.remove("visible");
+        document.body.style.overflow = "";
       }
+      updatePanelBackdrop();
+      updatePanelToggleState();
     });
 
     function initializeApp() {
+      const leftHidden = safeStorage.get("simuladorBancarioPanelIzquierdoOculto") === "true";
+      const rightHidden = safeStorage.get("simuladorBancarioPanelDerechoOculto") === "true";
+      dom.app.classList.toggle("sidebar-collapsed", leftHidden);
+      dom.app.classList.toggle("properties-collapsed", rightHidden);
+      updatePanelToggleState();
+      updatePanelBackdrop();
       populateScheduleSelectors();
       try {
         const savedScenarios = safeStorage.get("simuladorBancarioNeodatScenariosV13");
