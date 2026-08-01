@@ -2480,6 +2480,221 @@
       .canvas-wrap { top: 140px; }
     }
 
+
+
+    /* Cabecera adaptativa basada en el ancho real del lienzo */
+    .workspace {
+      container-type: inline-size;
+      container-name: simulador-workspace;
+    }
+
+    .canvas-toolbar {
+      top: 10px !important;
+      left: 10px !important;
+      z-index: 25;
+      min-height: 48px;
+      padding: 6px 8px !important;
+      gap: 5px !important;
+      border-radius: 15px !important;
+      background: #ffffff !important;
+      border: 1px solid rgba(24, 39, 62, 0.10) !important;
+      box-shadow: 0 8px 22px rgba(30, 45, 68, 0.12) !important;
+      backdrop-filter: none !important;
+    }
+
+    .canvas-tool {
+      width: 34px !important;
+      height: 34px !important;
+      border-radius: 9px !important;
+    }
+
+    .zoom-label {
+      min-width: 52px !important;
+      font-size: 12px !important;
+      font-weight: 900 !important;
+      color: #30415c !important;
+    }
+
+    .workspace-summary {
+      top: 10px !important;
+      left: 190px !important;
+      right: 10px !important;
+      min-height: 56px !important;
+      display: grid !important;
+      grid-template-columns: minmax(150px, 1fr) auto !important;
+      align-items: center !important;
+      gap: 12px !important;
+      padding: 8px 10px 8px 13px !important;
+      border-radius: 15px !important;
+      border: 1px solid rgba(24, 39, 62, 0.10) !important;
+      border-left: 4px solid var(--primary) !important;
+      background: #ffffff !important;
+      box-shadow: 0 8px 22px rgba(30, 45, 68, 0.10) !important;
+      backdrop-filter: none !important;
+      overflow: hidden;
+    }
+
+    .workspace-summary > div:first-child {
+      min-width: 0 !important;
+      display: block !important;
+    }
+
+    .workspace-kicker {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 7px !important;
+      line-height: 1;
+      letter-spacing: .15em !important;
+      color: #718097 !important;
+    }
+
+    .workspace-summary strong {
+      display: block;
+      margin: 0 !important;
+      max-width: none !important;
+      color: #18253a !important;
+      font-size: 12px !important;
+      line-height: 1.25 !important;
+      font-weight: 800 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .workspace-summary-actions {
+      min-width: 0;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+      flex-wrap: nowrap !important;
+      gap: 6px !important;
+      max-width: none !important;
+    }
+
+    .capital-badge,
+    .ready-badge {
+      min-height: 30px !important;
+      padding: 0 10px !important;
+      border-radius: 999px !important;
+      font-size: 9px !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+    }
+
+    #scheduleBadge {
+      max-width: 255px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #capitalBadge {
+      max-width: 210px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .quick-run-button {
+      min-height: 32px !important;
+      padding: 0 12px !important;
+      border-radius: 10px !important;
+      font-size: 9px !important;
+      white-space: nowrap !important;
+    }
+
+    .canvas-wrap {
+      top: 76px !important;
+    }
+
+    @container simulador-workspace (max-width: 980px) {
+      .workspace-summary {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 7px !important;
+        min-height: 88px !important;
+      }
+
+      .workspace-summary-actions {
+        justify-content: flex-start !important;
+        flex-wrap: wrap !important;
+      }
+
+      .workspace-summary strong {
+        white-space: nowrap !important;
+      }
+
+      .canvas-wrap {
+        top: 108px !important;
+      }
+    }
+
+    @container simulador-workspace (max-width: 700px) {
+      .workspace-summary {
+        top: 66px !important;
+        left: 10px !important;
+        right: 10px !important;
+        min-height: 92px !important;
+        padding: 9px 11px !important;
+      }
+
+      .workspace-summary-actions {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        width: 100%;
+      }
+
+      .capital-badge,
+      .ready-badge,
+      .quick-run-button {
+        width: 100% !important;
+        max-width: none !important;
+        justify-content: center !important;
+      }
+
+      .canvas-wrap {
+        top: 174px !important;
+      }
+    }
+
+    @container simulador-workspace (max-width: 430px) {
+      .workspace-summary-actions {
+        grid-template-columns: minmax(0, 1fr) !important;
+      }
+
+      .workspace-summary {
+        min-height: 158px !important;
+      }
+
+      .canvas-wrap {
+        top: 240px !important;
+      }
+    }
+
+
+    /* El escenario ya se muestra en la cabecera principal: se elimina la franja duplicada */
+    .workspace-summary {
+      display: none !important;
+    }
+
+    .canvas-toolbar {
+      top: 10px !important;
+      left: 10px !important;
+    }
+
+    .canvas-wrap {
+      top: 56px !important;
+    }
+
+    @media (max-width: 920px) {
+      .canvas-wrap {
+        top: 54px !important;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .canvas-wrap {
+        top: 52px !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -3568,7 +3783,7 @@
         : `${simulationLength} ${simulationLength === 1 ? "día" : "días"}`;
       const enabledCount = operatingDays.length;
       if (dom.scheduleBadge) dom.scheduleBadge.textContent = `${formatDisplayDate(parseLocalDate(startDate))}–${formatDisplayDate(parseLocalDate(endDate))} · ${openingTime.replace(":", "h")}–${closingTime.replace(":", "h")} · ${enabledCount} días/sem.`;
-      if (dom.capitalBadge) dom.capitalBadge.textContent = "Capital disponible: " + formatCurrency(state.scenario.currentCapital);
+      if (dom.capitalBadge) { const capitalText = "Capital disponible: " + formatCurrency(state.scenario.currentCapital); dom.capitalBadge.textContent = capitalText; dom.capitalBadge.title = capitalText; }
       if (dom.metricCapital) dom.metricCapital.textContent = compactCurrency(state.scenario.currentCapital);
       if (dom.metricDate) dom.metricDate.textContent = formatDisplayDate(simulationDate());
     }
