@@ -2310,6 +2310,176 @@
       .canvas-wrap { top: 126px; }
     }
 
+
+    /* Refinamiento visual de la cabecera del escenario */
+    .workspace-summary {
+      left: 126px;
+      right: 12px;
+      top: 12px;
+      min-height: 56px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      border: 1px solid rgba(21, 37, 60, 0.08);
+      border-left: 4px solid var(--primary);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 10px 28px rgba(26, 42, 62, 0.10);
+      backdrop-filter: blur(10px);
+    }
+
+    .workspace-summary > div:first-child {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .workspace-kicker {
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      color: #6a7890;
+    }
+
+    .workspace-summary strong {
+      margin-top: 0;
+      font-size: 15px;
+      line-height: 1.12;
+      font-weight: 800;
+      color: #17243a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .workspace-summary-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: nowrap;
+      gap: 8px;
+      max-width: none;
+    }
+
+    .capital-badge,
+    .ready-badge {
+      min-height: 32px;
+      padding: 0 12px;
+      font-size: 10px;
+      font-weight: 800;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .capital-badge {
+      background: #f3f7ff;
+      border: 1px solid rgba(58, 139, 253, 0.18);
+      color: #245ea9;
+    }
+
+    .ready-badge {
+      background: #eefaf5;
+      border: 1px solid rgba(32, 180, 134, 0.20);
+      color: #147557;
+    }
+
+    .ready-badge i {
+      width: 8px;
+      height: 8px;
+      box-shadow: 0 0 0 4px rgba(32, 180, 134, 0.14);
+    }
+
+    .quick-run-button {
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 11px;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 0 8px 18px rgba(23, 111, 229, 0.22);
+    }
+
+    .canvas-toolbar {
+      top: 12px;
+      left: 12px;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.98);
+      box-shadow: 0 10px 28px rgba(26, 42, 62, 0.12);
+    }
+
+    .canvas-tool {
+      width: 34px;
+      height: 34px;
+      font-size: 15px;
+    }
+
+    .zoom-label {
+      min-width: 56px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #42536d;
+    }
+
+    .canvas-wrap { top: 82px; }
+
+    @media (max-width: 1400px) {
+      .workspace-summary { left: 120px; }
+      .workspace-summary strong { font-size: 14px; }
+      .capital-badge, .ready-badge { font-size: 9px; padding: 0 10px; }
+      .quick-run-button { padding: 0 12px; }
+    }
+
+    @media (max-width: 1180px) {
+      .workspace-summary {
+        left: 12px;
+        right: 12px;
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+      }
+      .workspace-summary strong {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+      }
+      .workspace-summary-actions {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+      .canvas-wrap { top: 106px; }
+    }
+
+    @media (max-width: 920px) {
+      .workspace-summary {
+        top: 56px;
+        padding: 10px 12px;
+        gap: 10px;
+      }
+      .workspace-summary strong { font-size: 13px; }
+      .capital-badge, .ready-badge { min-height: 30px; }
+      .quick-run-button { min-height: 32px; }
+      .canvas-wrap { top: 132px; }
+    }
+
+    @media (max-width: 620px) {
+      .workspace-summary {
+        top: 54px;
+        border-radius: 14px;
+      }
+      .workspace-kicker { font-size: 7px; }
+      .workspace-summary strong { font-size: 12px; }
+      .workspace-summary-actions { gap: 6px; }
+      .capital-badge, .ready-badge, .quick-run-button {
+        font-size: 9px;
+      }
+      .canvas-wrap { top: 140px; }
+    }
+
 </style>
 </head>
 <body>
@@ -2766,90 +2936,89 @@
     "use strict";
 
     const TRANSACTION_TYPES = {
-      credit: { label: "Solicitud de crédito", code: "CR", color: "#8b6df6", minAmount: 1000, maxAmount: 120000 },
-      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486", minAmount: 1, maxAmount: 5000 },
-      withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67", minAmount: 1, maxAmount: 2000 },
-      transfer: { label: "Transferencia", code: "TR", color: "#19a7bd", minAmount: 1, maxAmount: 7000 },
-      payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b", minAmount: 1, maxAmount: 600 },
+      credit: { label: "Solicitud de crédito", code: "CR", color: "#8b6df6", minAmount: 200, maxAmount: 80000 },
+      deposit: { label: "Depósito de dinero", code: "DP", color: "#20b486", minAmount: 1, maxAmount: 1500 },
+      withdrawal: { label: "Retiro de dinero", code: "RT", color: "#ef5b67", minAmount: 1, maxAmount: 1000 },
+      transfer: { label: "Transferencia", code: "TR", color: "#19a7bd", minAmount: 1, maxAmount: 3000 },
+      payment: { label: "Pago de servicios", code: "PG", color: "#f2a93b", minAmount: 1, maxAmount: 300 },
       inquiry: { label: "Consulta financiera", code: "CS", color: "#617089", minAmount: 0, maxAmount: 0 },
-      account: { label: "Apertura de cuenta", code: "AP", color: "#2563eb", minAmount: 0, maxAmount: 100 },
-      card: { label: "Tarjeta bancaria", code: "TJ", color: "#db2777", minAmount: 0, maxAmount: 30 },
-      insurance: { label: "Seguro bancario", code: "SG", color: "#0f9f8f", minAmount: 5, maxAmount: 250 },
-      investment: { label: "Inversión o ahorro", code: "IV", color: "#7c3aed", minAmount: 50, maxAmount: 10000 }
+      account: { label: "Apertura de cuenta", code: "AP", color: "#2563eb", minAmount: 0, maxAmount: 50 },
+      card: { label: "Tarjeta bancaria", code: "TJ", color: "#db2777", minAmount: 0, maxAmount: 20 },
+      insurance: { label: "Seguro bancario", code: "SG", color: "#0f9f8f", minAmount: 5, maxAmount: 120 },
+      investment: { label: "Inversión o ahorro", code: "IV", color: "#7c3aed", minAmount: 50, maxAmount: 3000 }
     };
 
     const CREDIT_TYPES = {
-      housing: { label: "Crédito para vivienda", code: "VIV", minAmount: 15000, maxAmount: 120000, defaultRate: 9.5, defaultTerm: 180 },
-      vehicle: { label: "Crédito para vehículo", code: "VEH", minAmount: 5000, maxAmount: 50000, defaultRate: 13.5, defaultTerm: 60 },
-      consumer: { label: "Crédito de consumo", code: "CON", minAmount: 500, maxAmount: 25000, defaultRate: 16.5, defaultTerm: 36 },
-      business: { label: "Crédito para negocio", code: "NEG", minAmount: 1000, maxAmount: 60000, defaultRate: 15.0, defaultTerm: 48 },
-      education: { label: "Crédito educativo", code: "EDU", minAmount: 1000, maxAmount: 30000, defaultRate: 11.5, defaultTerm: 60 }
+      housing: { label: "Crédito para vivienda", code: "VIV", minAmount: 10000, maxAmount: 80000, defaultRate: 9.5, defaultTerm: 180 },
+      vehicle: { label: "Crédito para vehículo", code: "VEH", minAmount: 3000, maxAmount: 30000, defaultRate: 13.5, defaultTerm: 60 },
+      consumer: { label: "Crédito de consumo", code: "CON", minAmount: 200, maxAmount: 10000, defaultRate: 16.5, defaultTerm: 36 },
+      business: { label: "Crédito para negocio", code: "NEG", minAmount: 500, maxAmount: 25000, defaultRate: 15.0, defaultTerm: 48 },
+      education: { label: "Crédito educativo", code: "EDU", minAmount: 300, maxAmount: 12000, defaultRate: 11.5, defaultTerm: 60 }
     };
 
     const DEFAULT_AUTOMATIC_AMOUNT_PROFILES = {
       deposit: [
-        { min: 1, max: 300, weight: 60 },
-        { min: 300.01, max: 800, weight: 25 },
-        { min: 800.01, max: 1500, weight: 10 },
-        { min: 1500.01, max: 3000, weight: 4 },
-        { min: 3000.01, max: 5000, weight: 1 }
+        { min: 1, max: 100, weight: 55 },
+        { min: 100.01, max: 300, weight: 30 },
+        { min: 300.01, max: 700, weight: 12 },
+        { min: 700.01, max: 1500, weight: 3 }
       ],
       withdrawal: [
-        { min: 1, max: 200, weight: 55 },
-        { min: 200.01, max: 500, weight: 30 },
-        { min: 500.01, max: 1000, weight: 12 },
-        { min: 1000.01, max: 2000, weight: 3 }
+        { min: 1, max: 100, weight: 50 },
+        { min: 100.01, max: 300, weight: 35 },
+        { min: 300.01, max: 600, weight: 12 },
+        { min: 600.01, max: 1000, weight: 3 }
       ],
       transfer: [
-        { min: 1, max: 300, weight: 55 },
-        { min: 300.01, max: 1000, weight: 25 },
-        { min: 1000.01, max: 3000, weight: 15 },
-        { min: 3000.01, max: 7000, weight: 5 }
+        { min: 1, max: 200, weight: 45 },
+        { min: 200.01, max: 600, weight: 35 },
+        { min: 600.01, max: 1500, weight: 15 },
+        { min: 1500.01, max: 3000, weight: 5 }
       ],
       payment: [
-        { min: 1, max: 80, weight: 60 },
-        { min: 80.01, max: 250, weight: 30 },
-        { min: 250.01, max: 600, weight: 10 }
+        { min: 1, max: 50, weight: 55 },
+        { min: 50.01, max: 150, weight: 35 },
+        { min: 150.01, max: 300, weight: 10 }
       ],
       account: [
         { min: 0, max: 0, weight: 70 },
-        { min: 5, max: 50, weight: 25 },
-        { min: 50.01, max: 100, weight: 5 }
+        { min: 5, max: 25, weight: 25 },
+        { min: 25.01, max: 50, weight: 5 }
       ],
       card: [
         { min: 0, max: 0, weight: 85 },
-        { min: 5, max: 30, weight: 15 }
+        { min: 5, max: 20, weight: 15 }
       ],
       insurance: [
-        { min: 5, max: 40, weight: 60 },
-        { min: 40.01, max: 100, weight: 30 },
-        { min: 100.01, max: 250, weight: 10 }
+        { min: 5, max: 30, weight: 60 },
+        { min: 30.01, max: 70, weight: 30 },
+        { min: 70.01, max: 120, weight: 10 }
       ],
       investment: [
-        { min: 50, max: 500, weight: 55 },
-        { min: 500.01, max: 1500, weight: 30 },
-        { min: 1500.01, max: 5000, weight: 12 },
-        { min: 5000.01, max: 10000, weight: 3 }
+        { min: 50, max: 300, weight: 55 },
+        { min: 300.01, max: 800, weight: 30 },
+        { min: 800.01, max: 1500, weight: 12 },
+        { min: 1500.01, max: 3000, weight: 3 }
       ]
     };
 
     const DEFAULT_AUTOMATIC_AMOUNT_RANGES = {
-      deposit: { min: 1, max: 5000 },
-      withdrawal: { min: 1, max: 2000 },
-      transfer: { min: 1, max: 7000 },
-      payment: { min: 1, max: 600 },
-      account: { min: 0, max: 100 },
-      card: { min: 0, max: 30 },
-      insurance: { min: 5, max: 250 },
-      investment: { min: 50, max: 10000 }
+      deposit: { min: 1, max: 1500 },
+      withdrawal: { min: 1, max: 1000 },
+      transfer: { min: 1, max: 3000 },
+      payment: { min: 1, max: 300 },
+      account: { min: 0, max: 50 },
+      card: { min: 0, max: 20 },
+      insurance: { min: 5, max: 120 },
+      investment: { min: 50, max: 3000 }
     };
 
     const DEFAULT_CREDIT_AMOUNT_RANGES = {
-      housing: { min: 15000, max: 120000 },
-      vehicle: { min: 5000, max: 50000 },
-      consumer: { min: 500, max: 25000 },
-      business: { min: 1000, max: 60000 },
-      education: { min: 1000, max: 30000 }
+      housing: { min: 10000, max: 80000 },
+      vehicle: { min: 3000, max: 30000 },
+      consumer: { min: 200, max: 10000 },
+      business: { min: 500, max: 25000 },
+      education: { min: 300, max: 12000 }
     };
 
     const NODE_TYPES = {
@@ -2866,9 +3035,9 @@
           transactionMode: "mixed",
           transactionType: "credit",
           amountMode: "automatic",
-          amountFixed: 500,
+          amountFixed: 200,
           amountMin: 20,
-          amountMax: 5000,
+          amountMax: 2000,
           automaticAmountRanges: clone(DEFAULT_AUTOMATIC_AMOUNT_RANGES),
           creditAmountRanges: clone(DEFAULT_CREDIT_AMOUNT_RANGES),
           color: "#20b486",
@@ -6407,8 +6576,117 @@
       reader.readAsText(file);
     }
 
+    function upgradeDirectCashierRouting(payload) {
+      const upgraded = clone(payload);
+      const nodes = Array.isArray(upgraded.nodes) ? upgraded.nodes : [];
+      let edges = Array.isArray(upgraded.edges) ? upgraded.edges : [];
+      const nodeIds = new Set(nodes.map(node => node.id));
+      const hasDefaultFlow = [
+        "source-entry",
+        "queue-reception",
+        "process-reception",
+        "decision-flow",
+        "process-cashier",
+        "sink-success"
+      ].every(id => nodeIds.has(id));
+
+      if (!hasDefaultFlow || nodeIds.has("decision-entry")) {
+        return upgraded;
+      }
+
+      nodes.push({
+        id: "decision-entry",
+        type: "decision",
+        name: "Clasificación inicial",
+        x: 320,
+        y: 320,
+        props: {
+          department: "Ingreso",
+          procedure: "Derivación directa a Caja o Recepción",
+          routingMode: "transaction",
+          color: "#8b6df6"
+        }
+      });
+
+      const positions = {
+        "source-entry": [70, 320],
+        "queue-reception": [570, 320],
+        "process-reception": [820, 320],
+        "decision-flow": [1070, 320],
+        "process-credit": [1330, 110],
+        "process-service": [1330, 310],
+        "process-banking-services": [1330, 510],
+        "process-cashier": [570, 600],
+        "process-archive": [1550, 310],
+        "sink-success": [1710, 310],
+        "sink-exit": [1330, 730]
+      };
+
+      nodes.forEach(node => {
+        if (positions[node.id]) {
+          node.x = positions[node.id][0];
+          node.y = positions[node.id][1];
+        }
+      });
+
+      edges = edges.filter(edge => !(
+        (edge.from === "source-entry" && edge.to === "queue-reception") ||
+        (edge.from === "decision-flow" && edge.to === "process-cashier") ||
+        (edge.from === "process-cashier" && edge.to === "process-archive")
+      ));
+
+      edges.push(
+        { id: "e-entry", from: "source-entry", to: "decision-entry", weight: 1, transactionTypes: [] },
+        { id: "e-entry-cash", from: "decision-entry", to: "process-cashier", weight: 3, transactionTypes: ["deposit", "withdrawal", "payment"] },
+        { id: "e-entry-reception", from: "decision-entry", to: "queue-reception", weight: 7, transactionTypes: ["credit", "transfer", "inquiry", "account", "card", "insurance", "investment"] },
+        { id: "e-cash-finish", from: "process-cashier", to: "sink-success", weight: 1, transactionTypes: [] }
+      );
+
+      upgraded.nodes = nodes;
+      upgraded.edges = edges;
+      upgraded.version = Math.max(14, Number(upgraded.version) || 0);
+      return upgraded;
+    }
+
+    function upgradeNormalDollarRanges(payload) {
+      const upgraded = clone(payload);
+      const legacyAutomaticMax = { deposit: 5000, withdrawal: 2000, transfer: 7000, payment: 600, account: 100, card: 30, insurance: 250, investment: 10000 };
+      const legacyCreditMax = { housing: 120000, vehicle: 50000, consumer: 25000, business: 60000, education: 30000 };
+      const normalAutomatic = clone(DEFAULT_AUTOMATIC_AMOUNT_RANGES);
+      const normalCredit = clone(DEFAULT_CREDIT_AMOUNT_RANGES);
+
+      if (Array.isArray(upgraded.nodes)) {
+        upgraded.nodes.forEach(node => {
+          if (node.type !== "source") return;
+          node.props = node.props || {};
+          const automatic = node.props.automaticAmountRanges || {};
+          Object.keys(normalAutomatic).forEach(type => {
+            const current = automatic[type];
+            if (!current || Number(current.max) === legacyAutomaticMax[type]) {
+              automatic[type] = clone(normalAutomatic[type]);
+            }
+          });
+          node.props.automaticAmountRanges = automatic;
+
+          const credits = node.props.creditAmountRanges || {};
+          Object.keys(normalCredit).forEach(type => {
+            const current = credits[type];
+            if (!current || Number(current.max) === legacyCreditMax[type]) {
+              credits[type] = clone(normalCredit[type]);
+            }
+          });
+          node.props.creditAmountRanges = credits;
+          if (Number(node.props.amountFixed) === 500) node.props.amountFixed = 200;
+          if (Number(node.props.amountMax) === 5000) node.props.amountMax = 2000;
+        });
+      }
+      return upgraded;
+    }
+
     function applyModel(payload) {
       if (!payload || !Array.isArray(payload.nodes) || !Array.isArray(payload.edges)) throw new Error("Formato inválido.");
+      payload = upgradeDirectCashierRouting(payload);
+      payload = upgradeNormalDollarRanges(payload);
       stopSimulation(false);
       state.scenario = {
         businessName: String(payload.scenario?.businessName || "Entidad financiera"),
@@ -6476,7 +6754,7 @@
 
     function loadExampleModel(showNotification = true) {
       const example = {
-        version: 13,
+        version: 14,
         scenario: {
           businessName: "Entidad financiera",
           initialCapital: 1000000,
@@ -6506,7 +6784,7 @@
             id: "source-entry",
             type: "source",
             name: "Ingreso principal",
-            x: 90,
+            x: 70,
             y: 320,
             props: {
               interval: 4,
@@ -6516,9 +6794,9 @@
               transactionMode: "mixed",
               transactionType: "credit",
               amountMode: "automatic",
-              amountFixed: 500,
+              amountFixed: 200,
               amountMin: 20,
-              amountMax: 5000,
+              amountMax: 2000,
               transactionWeights: {
                 credit: 12,
             deposit: 24,
@@ -6541,10 +6819,18 @@
             }
           },
           {
+            id: "decision-entry",
+            type: "decision",
+            name: "Clasificación inicial",
+            x: 320,
+            y: 320,
+            props: { department: "Ingreso", procedure: "Derivación directa a Caja o Recepción", routingMode: "transaction", color: "#8b6df6" }
+          },
+          {
             id: "queue-reception",
             type: "queue",
             name: "Espera recepción",
-            x: 340,
+            x: 570,
             y: 320,
             props: { capacity: 30, department: "Recepción", procedure: "Fila inicial", targetWaitMinutes: 5, angerAfterMinutes: 8, abandonAfterMinutes: 25, abandonProbability: 25 }
           },
@@ -6552,7 +6838,7 @@
             id: "process-reception",
             type: "process",
             name: "Recepción",
-            x: 610,
+            x: 820,
             y: 320,
             props: { serviceTime: 5, capacity: 1, department: "Atención al usuario", procedure: "Registro y orientación", observations: "Punto de entrada", targetWaitMinutes: 5, angerAfterMinutes: 8, abandonAfterMinutes: 25, abandonProbability: 25 }
           },
@@ -6560,7 +6846,7 @@
             id: "decision-flow",
             type: "decision",
             name: "Derivación de trámite",
-            x: 890,
+            x: 1070,
             y: 320,
             props: { department: "Flujo", procedure: "Asignar siguiente área", routingMode: "transaction" }
           },
@@ -6568,8 +6854,8 @@
             id: "process-credit",
             type: "process",
             name: "Crédito",
-            x: 1180,
-            y: 130,
+            x: 1330,
+            y: 110,
             props: {
               serviceTime: 8,
               capacity: 2,
@@ -6596,24 +6882,24 @@
             id: "process-service",
             type: "process",
             name: "Servicio al cliente",
-            x: 1180,
-            y: 320,
+            x: 1330,
+            y: 310,
             props: { serviceTime: 6, capacity: 3, department: "Servicio al cliente", procedure: "Consulta y actualización", observations: "", processRole: "transaction_processing" }
           },
           {
             id: "process-cashier",
             type: "process",
             name: "Caja",
-            x: 1180,
-            y: 510,
+            x: 570,
+            y: 600,
             props: { serviceTime: 4, capacity: 2, department: "Tesorería", procedure: "Pago, depósito, retiro o transferencia", observations: "", processRole: "transaction_processing" }
           },
           {
             id: "process-banking-services",
             type: "process",
             name: "Servicios bancarios",
-            x: 1450,
-            y: 610,
+            x: 1330,
+            y: 510,
             props: {
               serviceTime: 7,
               capacity: 2,
@@ -6632,8 +6918,8 @@
             id: "process-archive",
             type: "process",
             name: "Archivo",
-            x: 1480,
-            y: 320,
+            x: 1550,
+            y: 310,
             props: { serviceTime: 3, capacity: 1, department: "Archivo", procedure: "Cierre y resguardo", observations: "" }
           },
           {
@@ -6641,31 +6927,32 @@
             type: "sink",
             name: "Trámite completado",
             x: 1710,
-            y: 320,
+            y: 310,
             props: { finalStatus: "Completado", department: "Cierre", procedure: "Registro final" }
           },
           {
             id: "sink-exit",
             type: "sink",
             name: "Crédito rechazado / salida alterna",
-            x: 1180,
+            x: 1330,
             y: 730,
             props: { finalStatus: "No completado", department: "Cierre", procedure: "Crédito rechazado o trámite no concluido" }
           }
         ],
         edges: [
-          { id: "e1", from: "source-entry", to: "queue-reception", weight: 1 },
+          { id: "e-entry", from: "source-entry", to: "decision-entry", weight: 1 },
+          { id: "e-entry-cash", from: "decision-entry", to: "process-cashier", weight: 3, transactionTypes: ["deposit", "withdrawal", "payment"] },
+          { id: "e-entry-reception", from: "decision-entry", to: "queue-reception", weight: 7, transactionTypes: ["credit", "transfer", "inquiry", "account", "card", "insurance", "investment"] },
           { id: "e2", from: "queue-reception", to: "process-reception", weight: 1 },
           { id: "e3", from: "process-reception", to: "decision-flow", weight: 1 },
           { id: "e4", from: "decision-flow", to: "process-credit", weight: 4, transactionTypes: ["credit"] },
           { id: "e5", from: "decision-flow", to: "process-service", weight: 3, transactionTypes: ["transfer", "inquiry"] },
-          { id: "e6", from: "decision-flow", to: "process-cashier", weight: 2, transactionTypes: ["deposit", "withdrawal", "payment"] },
           { id: "e6s", from: "decision-flow", to: "process-banking-services", weight: 2, transactionTypes: ["account", "card", "insurance", "investment"] },
           { id: "e7", from: "decision-flow", to: "sink-exit", weight: 1, transactionTypes: [] },
           { id: "e8", from: "process-credit", to: "process-archive", weight: 1, creditOutcomes: ["approved"] },
           { id: "e8r", from: "process-credit", to: "sink-exit", weight: 1, creditOutcomes: ["rejected"] },
           { id: "e9", from: "process-service", to: "process-archive", weight: 1 },
-          { id: "e10", from: "process-cashier", to: "process-archive", weight: 1 },
+          { id: "e10", from: "process-cashier", to: "sink-success", weight: 1 },
           { id: "e10s", from: "process-banking-services", to: "process-archive", weight: 1 },
           { id: "e11", from: "process-archive", to: "sink-success", weight: 1 }
         ]
