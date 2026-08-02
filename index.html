@@ -4135,13 +4135,13 @@
           creditAmountRanges: clone(DEFAULT_CREDIT_AMOUNT_RANGES),
           color: "#20b486",
           transactionWeights: {
-            credit: 12,
-            deposit: 24,
-            withdrawal: 20,
-            transfer: 12,
-            payment: 15,
-            inquiry: 10,
-            account: 3,
+            credit: 7,
+            deposit: 28,
+            withdrawal: 23,
+            transfer: 10,
+            payment: 18,
+            inquiry: 8,
+            account: 2,
             card: 2,
             insurance: 1,
             investment: 1
@@ -5710,19 +5710,19 @@
               <div style="color:var(--muted);font-size:10px;line-height:1.5;margin-bottom:8px;">Los valores funcionan como pesos relativos y no necesitan sumar 100.</div>
             </div>
             <div class="field-row">
-              <div class="field"><label for="weightCredit">Crédito</label><input id="weightCredit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.credit ?? 12)}"></div>
-              <div class="field"><label for="weightDeposit">Depósito</label><input id="weightDeposit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.deposit ?? 24)}"></div>
+              <div class="field"><label for="weightCredit">Crédito</label><input id="weightCredit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.credit ?? 7)}"></div>
+              <div class="field"><label for="weightDeposit">Depósito</label><input id="weightDeposit" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.deposit ?? 28)}"></div>
             </div>
             <div class="field-row">
-              <div class="field"><label for="weightWithdrawal">Retiro</label><input id="weightWithdrawal" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.withdrawal ?? 20)}"></div>
-              <div class="field"><label for="weightTransfer">Transferencia</label><input id="weightTransfer" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.transfer ?? 12)}"></div>
+              <div class="field"><label for="weightWithdrawal">Retiro</label><input id="weightWithdrawal" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.withdrawal ?? 23)}"></div>
+              <div class="field"><label for="weightTransfer">Transferencia</label><input id="weightTransfer" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.transfer ?? 10)}"></div>
             </div>
             <div class="field-row">
-              <div class="field"><label for="weightPayment">Pago</label><input id="weightPayment" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.payment ?? 15)}"></div>
-              <div class="field"><label for="weightInquiry">Consulta</label><input id="weightInquiry" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.inquiry ?? 10)}"></div>
+              <div class="field"><label for="weightPayment">Pago</label><input id="weightPayment" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.payment ?? 18)}"></div>
+              <div class="field"><label for="weightInquiry">Consulta</label><input id="weightInquiry" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.inquiry ?? 8)}"></div>
             </div>
             <div class="field-row">
-              <div class="field"><label for="weightAccount">Apertura cuenta</label><input id="weightAccount" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.account ?? 3)}"></div>
+              <div class="field"><label for="weightAccount">Apertura cuenta</label><input id="weightAccount" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.account ?? 2)}"></div>
               <div class="field"><label for="weightCard">Tarjeta</label><input id="weightCard" type="number" min="0" step="1" value="${Number(node.props.transactionWeights?.card ?? 2)}"></div>
             </div>
             <div class="field-row">
@@ -7769,14 +7769,160 @@
 
       edges.push(
         { id: "e-entry", from: "source-entry", to: "decision-entry", weight: 1, transactionTypes: [] },
-        { id: "e-entry-cash", from: "decision-entry", to: "process-cashier", weight: 3, transactionTypes: ["deposit", "withdrawal", "payment"] },
-        { id: "e-entry-reception", from: "decision-entry", to: "queue-reception", weight: 7, transactionTypes: ["credit", "transfer", "inquiry", "account", "card", "insurance", "investment"] },
+        { id: "e-entry-cash-queue", from: "decision-entry", to: "queue-cashier", weight: 8, transactionTypes: ["deposit", "withdrawal", "transfer", "payment"] },
+          { id: "e-cash-queue-service", from: "queue-cashier", to: "process-cashier", weight: 1 },
+        { id: "e-entry-reception", from: "decision-entry", to: "queue-reception", weight: 2, transactionTypes: ["credit", "inquiry", "account", "card", "insurance", "investment"] },
         { id: "e-cash-finish", from: "process-cashier", to: "sink-success", weight: 1, transactionTypes: [] }
       );
 
       upgraded.nodes = nodes;
       upgraded.edges = edges;
       upgraded.version = Math.max(14, Number(upgraded.version) || 0);
+      return upgraded;
+    }
+
+    function upgradeRealisticCashierFlow(payload) {
+      const upgraded = clone(payload);
+      const nodes = Array.isArray(upgraded.nodes) ? upgraded.nodes : [];
+      let edges = Array.isArray(upgraded.edges) ? upgraded.edges : [];
+      const nodeById = new Map(nodes.map(node => [node.id, node]));
+      const source = nodeById.get("source-entry");
+      const entryDecision = nodeById.get("decision-entry");
+      const cashier = nodeById.get("process-cashier");
+      const receptionQueue = nodeById.get("queue-reception");
+
+      const oldDefaultWeights = {
+        credit: 12,
+        deposit: 24,
+        withdrawal: 20,
+        transfer: 12,
+        payment: 15,
+        inquiry: 10,
+        account: 3,
+        card: 2,
+        insurance: 1,
+        investment: 1
+      };
+      const realisticWeights = {
+        credit: 7,
+        deposit: 28,
+        withdrawal: 23,
+        transfer: 10,
+        payment: 18,
+        inquiry: 8,
+        account: 2,
+        card: 2,
+        insurance: 1,
+        investment: 1
+      };
+
+      if (source) {
+        source.props = source.props || {};
+        const current = source.props.transactionWeights || {};
+        const usesOldDefaults = Object.keys(oldDefaultWeights).every(key =>
+          Number(current[key] ?? oldDefaultWeights[key]) === oldDefaultWeights[key]
+        );
+        if (!source.props.transactionWeights || usesOldDefaults) {
+          source.props.transactionWeights = clone(realisticWeights);
+        }
+      }
+
+      if (!entryDecision || !cashier || !receptionQueue) {
+        upgraded.nodes = nodes;
+        upgraded.edges = edges;
+        return upgraded;
+      }
+
+      entryDecision.props = entryDecision.props || {};
+      entryDecision.props.routingMode = "transaction";
+      entryDecision.props.procedure = "Derivación directa: operaciones de caja o atención especializada";
+
+      let cashierQueue = nodeById.get("queue-cashier");
+      if (!cashierQueue) {
+        cashierQueue = {
+          id: "queue-cashier",
+          type: "queue",
+          name: "Espera Caja",
+          x: 570,
+          y: 620,
+          props: {
+            capacity: 50,
+            department: "Caja",
+            procedure: "Fila para depósitos, retiros, pagos y transferencias",
+            targetWaitMinutes: 4,
+            angerAfterMinutes: 10,
+            abandonAfterMinutes: 30,
+            abandonProbability: 20,
+            color: "#f2a93b"
+          }
+        };
+        nodes.push(cashierQueue);
+        nodeById.set(cashierQueue.id, cashierQueue);
+      } else {
+        cashierQueue.name = cashierQueue.name || "Espera Caja";
+        cashierQueue.props = {
+          capacity: 50,
+          department: "Caja",
+          procedure: "Fila para depósitos, retiros, pagos y transferencias",
+          targetWaitMinutes: 4,
+          angerAfterMinutes: 10,
+          abandonAfterMinutes: 30,
+          abandonProbability: 20,
+          color: "#f2a93b",
+          ...(cashierQueue.props || {})
+        };
+      }
+
+      cashierQueue.x = 570;
+      cashierQueue.y = 620;
+      cashier.x = 820;
+      cashier.y = 620;
+      cashier.props = cashier.props || {};
+      cashier.props.department = cashier.props.department || "Tesorería";
+      cashier.props.procedure = "Depósitos, retiros, pagos y transferencias";
+      cashier.props.processRole = "transaction_processing";
+      if (Number(cashier.props.capacity) === 2) cashier.props.capacity = 4;
+      if (Number(cashier.props.serviceTime) === 4) cashier.props.serviceTime = 3;
+
+      edges = edges.filter(edge => !(
+        (edge.from === "decision-entry" && (edge.to === "process-cashier" || edge.to === "queue-cashier")) ||
+        (edge.from === "queue-cashier" && edge.to === "process-cashier")
+      ));
+
+      const receptionEdge = edges.find(edge => edge.from === "decision-entry" && edge.to === "queue-reception");
+      if (receptionEdge) {
+        receptionEdge.weight = 2;
+        receptionEdge.transactionTypes = ["credit", "inquiry", "account", "card", "insurance", "investment"];
+      } else {
+        edges.push({
+          id: "e-entry-reception",
+          from: "decision-entry",
+          to: "queue-reception",
+          weight: 2,
+          transactionTypes: ["credit", "inquiry", "account", "card", "insurance", "investment"]
+        });
+      }
+
+      edges.push(
+        {
+          id: "e-entry-cash-queue",
+          from: "decision-entry",
+          to: "queue-cashier",
+          weight: 8,
+          transactionTypes: ["deposit", "withdrawal", "transfer", "payment"]
+        },
+        {
+          id: "e-cash-queue-service",
+          from: "queue-cashier",
+          to: "process-cashier",
+          weight: 1,
+          transactionTypes: []
+        }
+      );
+
+      upgraded.nodes = nodes;
+      upgraded.edges = edges;
+      upgraded.version = Math.max(16, Number(upgraded.version) || 0);
       return upgraded;
     }
 
@@ -7818,6 +7964,7 @@
     function applyModel(payload) {
       if (!payload || !Array.isArray(payload.nodes) || !Array.isArray(payload.edges)) throw new Error("Formato inválido.");
       payload = upgradeDirectCashierRouting(payload);
+      payload = upgradeRealisticCashierFlow(payload);
       payload = upgradeNormalDollarRanges(payload);
       stopSimulation(false);
       state.scenario = {
@@ -7886,7 +8033,7 @@
 
     function loadExampleModel(showNotification = true) {
       const example = {
-        version: 14,
+        version: 16,
         scenario: {
           businessName: "Entidad financiera",
           initialCapital: 1000000,
@@ -7930,16 +8077,16 @@
               amountMin: 20,
               amountMax: 2000,
               transactionWeights: {
-                credit: 12,
-            deposit: 24,
-            withdrawal: 20,
-            transfer: 12,
-            payment: 15,
-            inquiry: 10,
-            account: 3,
-            card: 2,
-            insurance: 1,
-            investment: 1
+                credit: 7,
+                deposit: 28,
+                withdrawal: 23,
+                transfer: 10,
+                payment: 18,
+                inquiry: 8,
+                account: 2,
+                card: 2,
+                insurance: 1,
+                investment: 1
               },
               creditTypeWeights: {
                 housing: 18,
@@ -7956,7 +8103,7 @@
             name: "Clasificación inicial",
             x: 320,
             y: 320,
-            props: { department: "Ingreso", procedure: "Derivación directa a Caja o Recepción", routingMode: "transaction", color: "#8b6df6" }
+            props: { department: "Ingreso", procedure: "Derivación directa: operaciones de caja o atención especializada", routingMode: "transaction", color: "#8b6df6" }
           },
           {
             id: "queue-reception",
@@ -8019,12 +8166,20 @@
             props: { serviceTime: 6, capacity: 3, department: "Servicio al cliente", procedure: "Consulta y actualización", observations: "", processRole: "transaction_processing" }
           },
           {
+            id: "queue-cashier",
+            type: "queue",
+            name: "Espera Caja",
+            x: 570,
+            y: 620,
+            props: { capacity: 50, department: "Caja", procedure: "Fila para depósitos, retiros, pagos y transferencias", targetWaitMinutes: 4, angerAfterMinutes: 10, abandonAfterMinutes: 30, abandonProbability: 20, color: "#f2a93b" }
+          },
+          {
             id: "process-cashier",
             type: "process",
             name: "Caja",
-            x: 570,
-            y: 600,
-            props: { serviceTime: 4, capacity: 2, department: "Tesorería", procedure: "Pago, depósito, retiro o transferencia", observations: "", processRole: "transaction_processing" }
+            x: 820,
+            y: 620,
+            props: { serviceTime: 3, capacity: 4, department: "Tesorería", procedure: "Depósitos, retiros, pagos y transferencias", observations: "", processRole: "transaction_processing" }
           },
           {
             id: "process-banking-services",
@@ -8078,7 +8233,7 @@
           { id: "e2", from: "queue-reception", to: "process-reception", weight: 1 },
           { id: "e3", from: "process-reception", to: "decision-flow", weight: 1 },
           { id: "e4", from: "decision-flow", to: "process-credit", weight: 4, transactionTypes: ["credit"] },
-          { id: "e5", from: "decision-flow", to: "process-service", weight: 3, transactionTypes: ["transfer", "inquiry"] },
+          { id: "e5", from: "decision-flow", to: "process-service", weight: 3, transactionTypes: ["inquiry"] },
           { id: "e6s", from: "decision-flow", to: "process-banking-services", weight: 2, transactionTypes: ["account", "card", "insurance", "investment"] },
           { id: "e7", from: "decision-flow", to: "sink-exit", weight: 1, transactionTypes: [] },
           { id: "e8", from: "process-credit", to: "process-archive", weight: 1, creditOutcomes: ["approved"] },
