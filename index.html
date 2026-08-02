@@ -7344,6 +7344,8 @@
         minute: eventData.time,
         clock: eventData.clock
       });
+      // Guarda cada cambio de etapa en Supabase sin esperar al cierre.
+      supabaseSync.requestSync();
     }
 
     function acceptEntity(nodeId, entity) {
@@ -7524,6 +7526,8 @@
       runtime.busy += 1;
       entity.totalServiceMinutes = (Number(entity.totalServiceMinutes) || 0) + serviceTime;
       scheduleEvent(state.simTime + serviceTime, "processComplete", { nodeId: node.id, entity });
+      // Registra inmediatamente el inicio de la atención.
+      supabaseSync.requestSync();
     }
 
     function completeProcess(nodeId, entity) {
@@ -7572,6 +7576,8 @@
         minute: Number(state.simTime.toFixed(1)),
         clock: simulationClock()
       });
+      // Registra inmediatamente la finalización del proceso.
+      supabaseSync.requestSync();
       routeFromNode(node, entity);
 
       while (runtime.queue.length > 0 && processHasCapacity(node)) {
