@@ -3106,6 +3106,465 @@
       }
     }
 
+
+
+    /* =========================================================
+       RESPONSIVE FINAL: EXPERIENCIA TIPO COMPUTADOR EN MÓVIL
+       ========================================================= */
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      min-height: 100dvh;
+      overflow: hidden !important;
+      overscroll-behavior: none;
+      background: #eaf0f7;
+    }
+
+    body,
+    body.force-landscape,
+    body.mobile-portrait,
+    body.mobile-landscape {
+      position: static !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100dvh !important;
+      transform: none !important;
+      transform-origin: initial !important;
+      overflow: hidden !important;
+    }
+
+    body.force-landscape .app,
+    body.mobile-portrait .app,
+    body.mobile-landscape .app {
+      position: static !important;
+      inset: auto !important;
+      width: 100% !important;
+      height: 100dvh !important;
+      transform: none !important;
+      transform-origin: initial !important;
+    }
+
+    .app {
+      width: 100%;
+      height: 100dvh;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .canvas-wrap {
+      overflow: auto !important;
+      touch-action: pan-x pan-y !important;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(63, 82, 111, .34) transparent;
+    }
+
+    .canvas,
+    .nodes-layer,
+    .entity-layer {
+      touch-action: pan-x pan-y;
+    }
+
+    .node {
+      touch-action: none !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* La navegación móvil duplicada se elimina: se mantienen los controles superiores. */
+    .mobile-dock {
+      display: none !important;
+    }
+
+    @media (max-width: 1100px) {
+      :root {
+        --topbar-height: 62px;
+        --statusbar-height: 30px;
+      }
+
+      .app,
+      .app.sidebar-collapsed,
+      .app.properties-collapsed,
+      .app.sidebar-collapsed.properties-collapsed {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-template-rows: var(--topbar-height) minmax(0, 1fr) var(--statusbar-height) !important;
+      }
+
+      .topbar {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        display: grid !important;
+        grid-template-columns: 116px minmax(0, 1fr) auto !important;
+        align-items: center;
+        min-width: 0;
+        min-height: var(--topbar-height);
+        padding: env(safe-area-inset-top, 0px) 6px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, .10);
+        background: linear-gradient(90deg, #0a1830 0%, #0c203b 55%, #0a172a 100%);
+        box-shadow: 0 7px 22px rgba(16, 31, 52, .22);
+      }
+
+      .brand {
+        grid-column: 1 !important;
+        display: flex !important;
+        width: 116px !important;
+        min-width: 116px !important;
+        height: 100%;
+        padding: 6px 8px !important;
+        border-right: 1px solid rgba(255, 255, 255, .10);
+      }
+
+      .brand-logo-link {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      .brand-logo {
+        display: block;
+        width: 100px !important;
+        max-width: 100% !important;
+        max-height: 43px !important;
+        object-fit: contain;
+      }
+
+      .toolbar {
+        grid-column: 2 !important;
+        display: flex !important;
+        align-items: center;
+        min-width: 0;
+        height: 100%;
+        gap: 6px !important;
+        padding: 0 7px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .toolbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .toolbar-group,
+      .speed-control,
+      .toolbar-divider {
+        flex: 0 0 auto;
+      }
+
+      .toolbar .tool-button {
+        width: 38px !important;
+        min-width: 38px !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        padding: 0 !important;
+        border-radius: 10px;
+      }
+
+      .toolbar .tool-button .label {
+        display: none !important;
+      }
+
+      .toolbar-divider {
+        height: 26px;
+        margin: 0 1px;
+      }
+
+      .speed-control {
+        height: 38px !important;
+        min-width: 83px;
+        padding: 0 8px !important;
+        border-radius: 10px;
+      }
+
+      .speed-control span {
+        display: none !important;
+      }
+
+      .speed-control select {
+        width: 100%;
+        text-align: center;
+        font-size: 11px;
+      }
+
+      .top-actions {
+        grid-column: 3 !important;
+        display: flex !important;
+        align-items: center;
+        gap: 4px !important;
+        height: 100%;
+        padding: 0 6px !important;
+        border-left: 1px solid rgba(255, 255, 255, .10);
+      }
+
+      .top-actions .tool-button {
+        width: 38px !important;
+        min-width: 38px !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        padding: 0 !important;
+      }
+
+      .top-actions .action-label {
+        display: none !important;
+      }
+
+      .workspace {
+        grid-column: 1 !important;
+        grid-row: 2 !important;
+        min-width: 0;
+        min-height: 0;
+        background: #edf2f8;
+      }
+
+      .canvas-wrap {
+        top: 52px !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        padding: 0 0 18px 0;
+      }
+
+      .canvas-toolbar {
+        top: 8px !important;
+        left: 10px !important;
+        z-index: 55 !important;
+        gap: 5px;
+        padding: 5px 7px;
+        border: 1px solid rgba(31, 51, 78, .12);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, .98);
+        box-shadow: 0 8px 22px rgba(24, 43, 68, .14);
+      }
+
+      .canvas-tool {
+        width: 34px !important;
+        height: 34px !important;
+        border-radius: 9px;
+      }
+
+      .zoom-label {
+        min-width: 52px !important;
+        font-size: 11px !important;
+        font-weight: 900;
+      }
+
+      .sidebar,
+      .properties,
+      .app.sidebar-collapsed .sidebar,
+      .app.properties-collapsed .properties {
+        position: fixed !important;
+        top: calc(var(--topbar-height) + env(safe-area-inset-top, 0px)) !important;
+        bottom: calc(var(--statusbar-height) + env(safe-area-inset-bottom, 0px)) !important;
+        display: block !important;
+        width: min(370px, 88vw) !important;
+        max-width: 88vw !important;
+        height: auto !important;
+        z-index: 100 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        box-shadow: 0 22px 55px rgba(15, 29, 49, .30);
+        transition: transform .22s ease !important;
+      }
+
+      .sidebar {
+        left: 0 !important;
+        right: auto !important;
+        transform: translateX(-105%) !important;
+        border-right: 1px solid rgba(255, 255, 255, .10);
+      }
+
+      .properties {
+        right: 0 !important;
+        left: auto !important;
+        transform: translateX(105%) !important;
+        border-left: 1px solid rgba(24, 39, 62, .10);
+      }
+
+      .sidebar.open,
+      .properties.open,
+      .app.sidebar-collapsed .sidebar.open,
+      .app.properties-collapsed .properties.open {
+        transform: translateX(0) !important;
+      }
+
+      .panel-backdrop {
+        position: fixed !important;
+        inset: calc(var(--topbar-height) + env(safe-area-inset-top, 0px)) 0 calc(var(--statusbar-height) + env(safe-area-inset-bottom, 0px)) 0 !important;
+        z-index: 90 !important;
+        background: rgba(8, 20, 36, .26) !important;
+        backdrop-filter: blur(2px);
+      }
+
+      .panel-head {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+
+      .statusbar,
+      .app.sidebar-collapsed .statusbar,
+      .app.properties-collapsed .statusbar,
+      .app.sidebar-collapsed.properties-collapsed .statusbar {
+        grid-column: 1 !important;
+        grid-row: 3 !important;
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr) auto !important;
+        min-height: var(--statusbar-height);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      .status-left,
+      .status-center,
+      .status-right {
+        min-width: 0;
+        padding: 0 9px !important;
+      }
+
+      .status-center {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    @media (max-width: 700px) {
+      :root {
+        --topbar-height: 58px;
+        --statusbar-height: 28px;
+      }
+
+      .topbar {
+        grid-template-columns: 82px minmax(0, 1fr) !important;
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+
+      .brand {
+        width: 82px !important;
+        min-width: 82px !important;
+        padding: 5px !important;
+      }
+
+      .brand-logo {
+        width: 72px !important;
+        max-height: 36px !important;
+      }
+
+      .toolbar {
+        grid-column: 2 !important;
+        padding: 0 5px !important;
+        gap: 4px !important;
+      }
+
+      .toolbar .tool-button {
+        width: 36px !important;
+        min-width: 36px !important;
+        height: 36px !important;
+        min-height: 36px !important;
+      }
+
+      .speed-control {
+        height: 36px !important;
+        min-width: 72px;
+      }
+
+      .top-actions {
+        display: none !important;
+      }
+
+      .canvas-wrap {
+        top: 50px !important;
+      }
+
+      .sidebar,
+      .properties,
+      .app.sidebar-collapsed .sidebar,
+      .app.properties-collapsed .properties {
+        width: min(350px, 92vw) !important;
+        max-width: 92vw !important;
+      }
+
+      .properties .field-row,
+      .sidebar .field-row {
+        grid-template-columns: 1fr !important;
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .panel-section {
+        padding: 14px !important;
+      }
+
+      .status-left,
+      .status-right {
+        display: none !important;
+      }
+
+      .statusbar,
+      .app.sidebar-collapsed .statusbar,
+      .app.properties-collapsed .statusbar,
+      .app.sidebar-collapsed.properties-collapsed .statusbar {
+        grid-template-columns: minmax(0, 1fr) !important;
+      }
+
+      .status-center {
+        grid-column: 1 !important;
+        justify-content: space-between;
+      }
+    }
+
+    @media (min-width: 701px) and (max-width: 1100px) {
+      .sidebar,
+      .properties,
+      .app.sidebar-collapsed .sidebar,
+      .app.properties-collapsed .properties {
+        width: min(390px, 48vw) !important;
+        max-width: 48vw !important;
+      }
+    }
+
+    @media (max-width: 920px) and (orientation: landscape) {
+      :root {
+        --topbar-height: 56px;
+        --statusbar-height: 28px;
+      }
+
+      .topbar {
+        grid-template-columns: 96px minmax(0, 1fr) auto !important;
+      }
+
+      .brand {
+        width: 96px !important;
+        min-width: 96px !important;
+      }
+
+      .brand-logo {
+        width: 84px !important;
+      }
+
+      .top-actions {
+        display: flex !important;
+      }
+
+      .canvas-wrap {
+        top: 48px !important;
+      }
+
+      .sidebar,
+      .properties,
+      .app.sidebar-collapsed .sidebar,
+      .app.properties-collapsed .properties {
+        width: min(360px, 44vw) !important;
+        max-width: 44vw !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -3524,7 +3983,7 @@
       <button type="button" id="mobileDockEdit" aria-label="Editar bloque seleccionado"><span>⚙</span><small>Editar</small></button>
       <button type="button" id="mobileDockRun" class="primary" aria-label="Iniciar o pausar simulación"><span>▶</span><small>Ejecutar</small></button>
       <button type="button" id="mobileDockReset" aria-label="Reiniciar simulación"><span>↺</span><small>Reiniciar</small></button>
-      <button type="button" id="mobileDockLandscape" aria-label="Intentar vista horizontal"><span>↔</span><small>Horizontal</small></button>
+      <button type="button" id="mobileDockLandscape" aria-label="Centrar modelo"><span>⌗</span><small>Centrar</small></button>
     </nav>
 
     <footer class="statusbar">
@@ -8032,19 +8491,9 @@
     }
 
     async function requestLandscapeMode() {
-      try {
-        if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-        }
-        if (screen.orientation && typeof screen.orientation.lock === "function") {
-          await screen.orientation.lock("landscape");
-          showToast("Vista horizontal activada.");
-          return;
-        }
-      } catch (error) {
-        /* Algunos navegadores móviles no permiten fijar la orientación. */
-      }
-      showToast("Gire el teléfono para ampliar el lienzo. La edición también funciona en vertical.", "warning");
+      document.body.classList.remove("force-landscape");
+      fitView();
+      showToast("Modelo centrado. Puede desplazarse y editarlo con normalidad.");
     }
 
     window.addEventListener("resize", () => {
