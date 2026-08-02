@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1d36">
+  <title>Monitor en tiempo real | FlowSim Financiero</title>
+  <style>
+    :root {
+      --bg:#eef3f8; --panel:#fff; --text:#172237; --muted:#67768b;
+      --line:#dbe3ed; --primary:#176fe5; --success:#13805f; --danger:#c43f4d;
+      --warning:#9a6512; --shadow:0 14px 36px rgba(20,42,72,.10);
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    header{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;background:#0b1d36;color:#fff;box-shadow:0 8px 24px rgba(10,25,46,.2)}
+    header h1{margin:0;font-size:16px} header p{margin:4px 0 0;color:#c7d5e6;font-size:11px}
+    .status{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid rgba(255,255,255,.18);border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+    .dot{width:9px;height:9px;border-radius:50%;background:#8a98aa}.status.live .dot{background:#2bd49b;box-shadow:0 0 0 5px rgba(43,212,155,.14)}.status.error .dot{background:#ff6875}
+    main{width:min(1500px,calc(100% - 24px));margin:18px auto 34px}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .run{font-size:12px;color:var(--muted)} .run strong{color:var(--text)}
+    button,a.button{min-height:38px;padding:0 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text);font-weight:800;font-size:11px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+    button.primary{background:var(--primary);border-color:var(--primary);color:#fff} button.danger{color:var(--danger)}
+    .grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+    .card{min-width:0;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow)}
+    .card span{display:block;color:var(--muted);font-size:10px}.card strong{display:block;margin-top:6px;font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .card.money strong{font-size:18px;color:#0f4fa8}.card.good strong{color:var(--success)}
+    .tables{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}
+    section{min-width:0;border:1px solid var(--line);border-radius:15px;background:#fff;box-shadow:var(--shadow);overflow:hidden}
+    section header{position:static;padding:13px 15px;background:#fff;color:var(--text);box-shadow:none;border-bottom:1px solid var(--line)}
+    section header h2{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.08em}section header p{color:var(--muted)}
+    .table-wrap{overflow:auto;max-height:430px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{padding:10px 11px;border-bottom:1px solid #edf1f5;text-align:left;white-space:nowrap}th{position:sticky;top:0;background:#f6f8fb;color:#506078;font-size:9px;text-transform:uppercase;letter-spacing:.05em}td.money{text-align:right;font-variant-numeric:tabular-nums}
+    .empty{padding:26px;color:var(--muted);font-size:12px;text-align:center}.notice{margin-top:14px;padding:12px 14px;border:1px solid #ead7ad;border-left:4px solid #d89a24;border-radius:11px;background:#fffaf0;color:#72511a;font-size:11px;line-height:1.5}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}.footer{margin-top:12px;color:var(--muted);font-size:10px;text-align:right}
+    @media(max-width:1100px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.tables{grid-template-columns:1fr}}
+    @media(max-width:620px){header{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card strong{font-size:18px}.toolbar{align-items:stretch}.actions{width:100%}.actions>*{flex:1}}
+  </style>
+  <script src="./supabase-config.js?v=20260802-2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Monitor en tiempo real · FlowSim Financiero</h1>
+      <p>Actualización por Supabase Realtime y consulta de respaldo cada segundo.</p>
+    </div>
+    <div id="realtimeStatus" class="status"><i class="dot"></i><span>Conectando…</span></div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="run">Ejecución actual: <strong id="runLabel">Buscando…</strong><br>Última lectura: <span id="lastRead">—</span></div>
+      <div class="actions">
+        <a class="button" href="./index.html">Abrir simulador</a>
+        <button id="refreshBtn" class="primary">Actualizar ahora</button>
+        <button id="clearLocalBtn" class="danger">Limpiar cola local</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <article class="card"><span>Personas ingresadas</span><strong id="peopleEntered">0</strong></article>
+      <article class="card"><span>Personas en Supabase</span><strong id="peopleStored">0</strong></article>
+      <article class="card"><span>Eventos guardados</span><strong id="eventsStored">0</strong></article>
+      <article class="card"><span>Movimientos financieros</span><strong id="movementsStored">0</strong></article>
+      <article class="card"><span>Sincronizaciones</span><strong id="syncsStored">0</strong></article>
+      <article class="card money"><span>Capital disponible</span><strong id="capital">$0.00</strong></article>
+    </div>
+
+    <div class="tables">
+      <section>
+        <header><div><h2>Personas actualizadas recientemente</h2><p>Las filas cambian sin recargar la página.</p></div></header>
+        <div class="table-wrap"><table><thead><tr><th>Persona</th><th>Trámite</th><th>Monto USD</th><th>Estado</th><th>Actualizado</th></tr></thead><tbody id="peopleBody"></tbody></table><div id="peopleEmpty" class="empty">Todavía no hay personas para la ejecución actual.</div></div>
+      </section>
+      <section>
+        <header><div><h2>Movimientos recientes</h2><p>El monto de operación se mantiene separado de los saldos.</p></div></header>
+        <div class="table-wrap"><table><thead><tr><th>Persona</th><th>Movimiento</th><th>Monto USD</th><th>Efecto USD</th><th>Hora</th></tr></thead><tbody id="movementsBody"></tbody></table><div id="movementsEmpty" class="empty">Todavía no hay movimientos financieros.</div></div>
+      </section>
+    </div>
+
+    <div class="notice"><strong>Importante:</strong> el Table Editor del panel de Supabase no se refresca automáticamente. Esta página sí escucha INSERT y UPDATE mediante Realtime. El botón “Limpiar cola local” solo elimina sesiones pendientes del navegador; para borrar datos históricos de la base ejecute <code>BORRAR_HISTORIAL.sql</code> en SQL Editor.</div>
+    <div class="footer">Datos sintéticos del simulador. No use esta configuración pública para información bancaria real.</div>
+  </main>
+
+  <script>
+    "use strict";
+    (() => {
+      const cfg = window.SUPABASE_CONFIG || {};
+      const status = document.getElementById("realtimeStatus");
+      const statusText = status.querySelector("span");
+      let currentRunId = "";
+      let refreshTimer = null;
+      let refreshing = false;
+
+      const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const dateTime = new Intl.DateTimeFormat("es-EC", { dateStyle: "short", timeStyle: "medium" });
+      const esc = value => String(value ?? "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch]));
+      const fmtDate = value => { if (!value) return "—"; const d = new Date(value); return Number.isNaN(d.getTime()) ? esc(value) : dateTime.format(d); };
+
+      function setStatus(text, kind = "") {
+        status.className = "status" + (kind ? " " + kind : "");
+        statusText.textContent = text;
+      }
+
+      if (!window.supabase || !cfg.url || !cfg.publishableKey || cfg.publishableKey.includes("PEGUE_AQUI")) {
+        setStatus("Configuración incompleta", "error");
+        document.getElementById("runLabel").textContent = "Coloque la Publishable key en supabase-config.js";
+        return;
+      }
+
+      const client = window.supabase.createClient(cfg.url, cfg.publishableKey, {
+        realtime: { params: { eventsPerSecond: 20 } },
+        auth: { persistSession: false, autoRefreshToken: false }
+      });
+
+      async function count(table, runId) {
+        const { count: total, error } = await client.from(table).select("*", { count: "exact", head: true }).eq("simulacion_id", runId);
+        if (error) throw error;
+        return total || 0;
+      }
+
+      function scheduleRefresh(delay = 100) {
+        clearTimeout(refreshTimer);
+        refreshTimer = setTimeout(() => void refresh(), delay);
+      }
+
+      async function refresh() {
+        if (refreshing) return;
+        refreshing = true;
+        try {
+          const { data: simulations, error: simError } = await client
+            .from("simulaciones")
+            .select("id,nombre,estado,capital_actual_usd,updated_at")
+            .order("updated_at", { ascending: false })
+            .limit(1);
+          if (simError) throw simError;
+
+          const simulation = simulations?.[0];
+          if (!simulation) {
+            currentRunId = "";
+            document.getElementById("runLabel").textContent = "No existen simulaciones guardadas";
+            ["peopleEntered","peopleStored","eventsStored","movementsStored","syncsStored"].forEach(id => document.getElementById(id).textContent = "0");
+            document.getElementById("capital").textContent = money.format(0);
+            renderPeople([]); renderMovements([]);
+            setStatus("Conectado · sin datos", "live");
+            return;
+          }
+
+          currentRunId = simulation.id;
+          document.getElementById("runLabel").textContent = `${simulation.nombre || "Simulación"} · ${simulation.estado || "—"} · ${simulation.id}`;
+
+          const [peopleCount, eventsCount, movementCount, syncCount, peopleResult, movementsResult, metricResult] = await Promise.all([
+            count("personas_simuladas", currentRunId),
+            count("eventos_simulacion", currentRunId),
+            count("movimientos_financieros", currentRunId),
+            count("sincronizaciones_simulador", currentRunId),
+            client.from("personas_simuladas").select("persona_codigo,tramite_nombre,monto_usd,estado_final,updated_at").eq("simulacion_id", currentRunId).order("updated_at", { ascending: false }).limit(30),
+            client.from("movimientos_financieros").select("persona_codigo,tipo_movimiento,monto_usd,efecto_capital_usd,fecha_hora,created_at").eq("simulacion_id", currentRunId).order("id", { ascending: false }).limit(30),
+            client.from("metricas_simulacion").select("personas_ingresadas,capital_disponible_usd,fecha_hora_real").eq("simulacion_id", currentRunId).order("id", { ascending: false }).limit(1)
+          ]);
+
+          if (peopleResult.error) throw peopleResult.error;
+          if (movementsResult.error) throw movementsResult.error;
+          if (metricResult.error) throw metricResult.error;
+
+          const metric = metricResult.data?.[0] || {};
+          document.getElementById("peopleEntered").textContent = metric.personas_ingresadas ?? peopleCount;
+          document.getElementById("peopleStored").textContent = peopleCount;
+          document.getElementById("eventsStored").textContent = eventsCount;
+          document.getElementById("movementsStored").textContent = movementCount;
+          document.getElementById("syncsStored").textContent = syncCount;
+          document.getElementById("capital").textContent = money.format(Number(metric.capital_disponible_usd ?? simulation.capital_actual_usd ?? 0));
+          renderPeople(peopleResult.data || []);
+          renderMovements(movementsResult.data || []);
+          document.getElementById("lastRead").textContent = dateTime.format(new Date());
+          setStatus("Realtime conectado", "live");
+        } catch (error) {
+          console.error(error);
+          setStatus("Error: " + (error.message || "consulta fallida"), "error");
+        } finally {
+          refreshing = false;
+        }
+      }
+
+      function renderPeople(rows) {
+        const body = document.getElementById("peopleBody");
+        const empty = document.getElementById("peopleEmpty");
+        body.innerHTML = rows.map(row => `<tr><td><strong>${esc(row.persona_codigo)}</strong></td><td>${esc(row.tramite_nombre || "—")}</td><td class="money">${row.monto_usd == null ? "—" : money.format(Number(row.monto_usd))}</td><td>${esc(row.estado_final || "En proceso")}</td><td>${fmtDate(row.updated_at)}</td></tr>`).join("");
+        empty.style.display = rows.length ? "none" : "block";
+      }
+
+      function renderMovements(rows) {
+        const body = document.getElementById("movementsBody");
+        const empty = document.getElementById("movementsEmpty");
+        body.innerHTML = rows.map(row => `<tr><td>${esc(row.persona_codigo || "—")}</td><td>${esc(row.tipo_movimiento || "—")}</td><td class="money">${money.format(Number(row.monto_usd || 0))}</td><td class="money">${money.format(Number(row.efecto_capital_usd || 0))}</td><td>${fmtDate(row.fecha_hora || row.created_at)}</td></tr>`).join("");
+        empty.style.display = rows.length ? "none" : "block";
+      }
+
+      const channel = client.channel("flowsim-live-monitor")
+        .on("postgres_changes", { event: "*", schema: "public", table: "simulaciones" }, () => scheduleRefresh())
+        .on("postgres_changes", { event: "*", schema: "public", table: "sincronizaciones_simulador" }, () => scheduleRefresh())
+        .on("postgres_changes", { event: "*", schema: "public", table: "personas_simuladas" }, payload => { if (!currentRunId || payload.new?.simulacion_id === currentRunId || payload.old?.simulacion_id === currentRunId) scheduleRefresh(); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "eventos_simulacion" }, payload => { if (!currentRunId || payload.new?.simulacion_id === currentRunId) scheduleRefresh(); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "movimientos_financieros" }, payload => { if (!currentRunId || payload.new?.simulacion_id === currentRunId) scheduleRefresh(); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "metricas_simulacion" }, payload => { if (!currentRunId || payload.new?.simulacion_id === currentRunId) scheduleRefresh(); })
+        .subscribe(state => {
+          if (state === "SUBSCRIBED") setStatus("Realtime conectado", "live");
+          else if (["CHANNEL_ERROR", "TIMED_OUT", "CLOSED"].includes(state)) setStatus("Realtime no disponible · usando consulta cada segundo", "error");
+        });
+
+      document.getElementById("refreshBtn").addEventListener("click", () => void refresh());
+      document.getElementById("clearLocalBtn").addEventListener("click", async () => {
+        const accepted = window.confirm("Se eliminarán únicamente la sesión y la cola de sincronización guardadas en este navegador. No se borrarán las tablas de Supabase ni el modelo del simulador. ¿Continuar?");
+        if (!accepted) return;
+        try {
+          localStorage.removeItem("flowsimSupabaseSessionV2");
+          Object.keys(localStorage).filter(key => key.startsWith("flowsimSupabaseOutboxV2:")).forEach(key => localStorage.removeItem(key));
+          await new Promise(resolve => {
+            const request = indexedDB.deleteDatabase("flowsimSupabaseOutboxV2");
+            request.onsuccess = request.onerror = request.onblocked = () => resolve();
+          });
+          alert("Cola local eliminada. Puede iniciar una ejecución nueva sin recuperar lotes anteriores.");
+        } catch (error) {
+          alert("No se pudo limpiar la cola local: " + error.message);
+        }
+      });
+
+      void refresh();
+      setInterval(() => void refresh(), 1000);
+      window.addEventListener("beforeunload", () => { void client.removeChannel(channel); });
+    })();
+  </script>
+</body>
+</html>
