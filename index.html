@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0b1220">
   <title>FlowSim Trámites | Simulador por áreas y departamentos</title>
 
@@ -2781,6 +2781,331 @@
       }
     }
 
+
+
+    /* ===== CORRECCIÓN MÓVIL INTERACTIVA ===== */
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      min-height: 100dvh;
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+
+    .app {
+      width: 100%;
+      height: 100dvh;
+      min-height: 0;
+    }
+
+    /* Neutraliza cualquier rotación automática de versiones anteriores. */
+    body.force-landscape,
+    body.force-landscape .app {
+      position: static !important;
+      inset: auto !important;
+      top: auto !important;
+      left: auto !important;
+      width: 100% !important;
+      height: 100dvh !important;
+      transform: none !important;
+      transform-origin: initial !important;
+    }
+
+    body.force-landscape .sidebar,
+    body.force-landscape .properties {
+      top: var(--topbar-height) !important;
+      bottom: var(--statusbar-height) !important;
+      max-width: none !important;
+    }
+
+    .canvas-wrap {
+      overflow: auto !important;
+      touch-action: pan-x pan-y;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .canvas,
+    .nodes-layer,
+    .entity-layer {
+      touch-action: pan-x pan-y;
+    }
+
+    .node {
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-dock {
+      display: none;
+    }
+
+    @media (max-width: 1100px) {
+      :root {
+        --topbar-height: 58px;
+        --statusbar-height: 32px;
+      }
+
+      .app {
+        grid-template-rows: var(--topbar-height) minmax(0, 1fr) var(--statusbar-height);
+      }
+
+      .topbar {
+        grid-template-columns: 116px minmax(0, 1fr) auto !important;
+        min-width: 0;
+        padding-top: env(safe-area-inset-top, 0px);
+      }
+
+      .brand {
+        grid-column: 1;
+        width: 116px;
+        min-width: 116px;
+        padding: 5px 7px;
+      }
+
+      .brand-logo {
+        width: 100px;
+        max-height: 40px;
+      }
+
+      .toolbar {
+        grid-column: 2;
+        min-width: 0;
+        padding: 0 7px;
+        gap: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .toolbar-group,
+      .speed-control {
+        flex: 0 0 auto;
+      }
+
+      .top-actions {
+        grid-column: 3 !important;
+        padding: 0 7px;
+        gap: 4px;
+      }
+
+      .sidebar,
+      .properties {
+        position: fixed;
+        top: calc(var(--topbar-height) + env(safe-area-inset-top, 0px));
+        bottom: calc(var(--statusbar-height) + env(safe-area-inset-bottom, 0px));
+        width: min(420px, 92vw);
+        max-width: 92vw;
+        z-index: 90;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .sidebar.open,
+      .properties.open {
+        transform: translateX(0) !important;
+      }
+
+      .panel-backdrop.visible {
+        z-index: 80;
+      }
+
+      .workspace {
+        min-width: 0;
+        min-height: 0;
+      }
+
+      .canvas-wrap {
+        top: 48px !important;
+        bottom: 0;
+      }
+
+      .canvas-toolbar {
+        top: 7px !important;
+        left: 8px !important;
+        z-index: 50;
+      }
+
+      .mobile-dock {
+        position: fixed;
+        left: 50%;
+        bottom: calc(var(--statusbar-height) + 8px + env(safe-area-inset-bottom, 0px));
+        z-index: 70;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(48px, 1fr));
+        width: min(430px, calc(100vw - 18px));
+        padding: 6px;
+        gap: 4px;
+        border: 1px solid rgba(33, 51, 77, 0.12);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 12px 34px rgba(20, 36, 58, 0.20);
+        backdrop-filter: blur(14px);
+        transform: translateX(-50%);
+      }
+
+      .mobile-dock button {
+        min-width: 0;
+        min-height: 46px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        border: 0;
+        border-radius: 11px;
+        background: transparent;
+        color: #263650;
+        cursor: pointer;
+      }
+
+      .mobile-dock button span {
+        font-size: 16px;
+        line-height: 1;
+        font-weight: 900;
+      }
+
+      .mobile-dock button small {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 8px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .mobile-dock button.primary {
+        background: linear-gradient(145deg, var(--primary), var(--primary-strong));
+        color: #ffffff;
+        box-shadow: 0 7px 16px rgba(23, 111, 229, 0.24);
+      }
+
+      .statusbar {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+    }
+
+    @media (max-width: 620px) {
+      :root {
+        --topbar-height: 56px;
+        --statusbar-height: 30px;
+      }
+
+      .topbar {
+        grid-template-columns: 82px minmax(0, 1fr) !important;
+      }
+
+      .brand {
+        width: 82px;
+        min-width: 82px;
+        padding: 5px;
+      }
+
+      .brand-logo {
+        width: 72px;
+        max-height: 36px;
+      }
+
+      .toolbar {
+        grid-column: 2;
+        padding: 0 5px;
+        gap: 4px;
+      }
+
+      .toolbar .tool-button {
+        width: 34px;
+        min-width: 34px;
+        height: 34px;
+        min-height: 34px;
+      }
+
+      .speed-control {
+        height: 34px;
+        padding: 0 7px;
+      }
+
+      .top-actions {
+        display: none !important;
+      }
+
+      .canvas-wrap {
+        top: 46px !important;
+      }
+
+      .canvas-toolbar {
+        top: 6px !important;
+        left: 6px !important;
+      }
+
+      .sidebar,
+      .properties {
+        width: 100vw;
+        max-width: 100vw;
+      }
+
+      .properties .field-row,
+      .sidebar .field-row,
+      .metrics-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      .panel-section {
+        padding: 14px;
+      }
+
+      .mobile-dock {
+        width: calc(100vw - 12px);
+        bottom: calc(var(--statusbar-height) + 5px + env(safe-area-inset-bottom, 0px));
+        border-radius: 14px;
+      }
+
+      .mobile-dock button {
+        min-height: 43px;
+      }
+
+      .mobile-dock button small {
+        font-size: 7.5px;
+      }
+    }
+
+    @media (max-width: 920px) and (orientation: landscape) {
+      :root {
+        --topbar-height: 52px;
+        --statusbar-height: 28px;
+      }
+
+      .topbar {
+        grid-template-columns: 100px minmax(0, 1fr) auto !important;
+      }
+
+      .brand {
+        width: 100px;
+        min-width: 100px;
+      }
+
+      .brand-logo {
+        width: 88px;
+        max-height: 34px;
+      }
+
+      .canvas-wrap {
+        top: 44px !important;
+      }
+
+      .mobile-dock {
+        left: auto;
+        right: 8px;
+        bottom: calc(var(--statusbar-height) + 6px + env(safe-area-inset-bottom, 0px));
+        width: auto;
+        grid-template-columns: repeat(5, 54px);
+        transform: none;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -3193,6 +3518,14 @@
         <div id="recordsList" class="records-list"></div>
       </section>
     </aside>
+
+    <nav class="mobile-dock" id="mobileDock" aria-label="Controles móviles">
+      <button type="button" id="mobileDockConfig" aria-label="Abrir configuración"><span>☰</span><small>Config.</small></button>
+      <button type="button" id="mobileDockEdit" aria-label="Editar bloque seleccionado"><span>⚙</span><small>Editar</small></button>
+      <button type="button" id="mobileDockRun" class="primary" aria-label="Iniciar o pausar simulación"><span>▶</span><small>Ejecutar</small></button>
+      <button type="button" id="mobileDockReset" aria-label="Reiniciar simulación"><span>↺</span><small>Reiniciar</small></button>
+      <button type="button" id="mobileDockLandscape" aria-label="Intentar vista horizontal"><span>↔</span><small>Horizontal</small></button>
+    </nav>
 
     <footer class="statusbar">
       <div class="status-left">
@@ -5598,6 +5931,24 @@
         event.dataTransfer.setData("application/x-simulator-node", item.dataset.type);
         event.dataTransfer.effectAllowed = "copy";
       });
+
+      /* En pantallas táctiles, un toque agrega el bloque al centro visible. */
+      item.addEventListener("click", () => {
+        if (window.innerWidth > 1100) return;
+        const type = item.dataset.type;
+        if (!NODE_TYPES[type]) return;
+
+        const visibleCenterX = (dom.canvasWrap.scrollLeft + dom.canvasWrap.clientWidth / 2) / state.zoom;
+        const visibleCenterY = (dom.canvasWrap.scrollTop + dom.canvasWrap.clientHeight / 2) / state.zoom;
+        const offset = state.nodes.length % 5;
+        createNode(
+          type,
+          clamp(visibleCenterX - 94 + offset * 18, 0, 2400 - 188),
+          clamp(visibleCenterY - 54 + offset * 18, 0, 1400 - 108)
+        );
+        closeMobilePanels();
+        showToast("Bloque agregado. Tóquelo para editar sus características.");
+      });
     });
 
     dom.canvas.addEventListener("dragover", event => {
@@ -7664,8 +8015,15 @@
     function updateAutomaticLandscape() {
       const smallScreen = Math.min(window.innerWidth, window.innerHeight) <= 920;
       const portrait = window.innerHeight > window.innerWidth;
-      const shouldRotate = smallScreen && portrait;
-      document.body.classList.toggle("force-landscape", shouldRotate);
+
+      /*
+        No se rota todo el documento con CSS: esa técnica bloquea el desplazamiento,
+        los formularios y la selección en varios navegadores móviles. La interfaz
+        permanece interactiva en vertical y aprovecha más espacio al girar el equipo.
+      */
+      document.body.classList.remove("force-landscape");
+      document.body.classList.toggle("mobile-portrait", smallScreen && portrait);
+      document.body.classList.toggle("mobile-landscape", smallScreen && !portrait);
 
       window.requestAnimationFrame(() => {
         updatePanelBackdrop();
@@ -7673,15 +8031,20 @@
       });
     }
 
-    async function tryNativeLandscapeLock() {
-      if (Math.min(window.innerWidth, window.innerHeight) > 920) return;
+    async function requestLandscapeMode() {
       try {
+        if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        }
         if (screen.orientation && typeof screen.orientation.lock === "function") {
           await screen.orientation.lock("landscape");
+          showToast("Vista horizontal activada.");
+          return;
         }
       } catch (error) {
-        /* La rotación CSS mantiene la vista horizontal cuando el navegador no permite bloquearla. */
+        /* Algunos navegadores móviles no permiten fijar la orientación. */
       }
+      showToast("Gire el teléfono para ampliar el lienzo. La edición también funciona en vertical.", "warning");
     }
 
     window.addEventListener("resize", () => {
@@ -7690,13 +8053,38 @@
         dom.sidebar.classList.remove("open");
         dom.properties.classList.remove("open");
         dom.panelBackdrop?.classList.remove("visible");
-        if (!document.body.classList.contains("force-landscape")) {
-          document.body.style.overflow = "";
-        }
+        document.body.style.overflow = "";
       }
       updatePanelBackdrop();
       updatePanelToggleState();
     });
+
+    document.getElementById("mobileDockConfig")?.addEventListener("click", () => {
+      dom.properties.classList.remove("open");
+      dom.sidebar.classList.toggle("open");
+      updatePanelBackdrop();
+    });
+
+    document.getElementById("mobileDockEdit")?.addEventListener("click", () => {
+      dom.sidebar.classList.remove("open");
+      if (!state.selected) {
+        showToast("Toque un bloque o una conexión para editarlo.", "warning");
+        return;
+      }
+      dom.properties.classList.add("open");
+      updatePanelBackdrop();
+    });
+
+    document.getElementById("mobileDockRun")?.addEventListener("click", () => {
+      if (state.running && !state.paused) {
+        pauseSimulation();
+      } else {
+        startSimulation();
+      }
+    });
+
+    document.getElementById("mobileDockReset")?.addEventListener("click", resetSimulation);
+    document.getElementById("mobileDockLandscape")?.addEventListener("click", requestLandscapeMode);
 
     function initializeApp() {
       updateAutomaticLandscape();
@@ -7732,7 +8120,6 @@
       showToast("Simulador cargado correctamente.");
     }
 
-    document.addEventListener("pointerdown", tryNativeLandscapeLock, { once: true, passive: true });
     window.addEventListener("orientationchange", () => {
       window.setTimeout(() => {
         updateAutomaticLandscape();
