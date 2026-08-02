@@ -3565,6 +3565,44 @@
       }
     }
 
+
+    /* Estado de sincronización con Supabase */
+    .supabase-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 0 8px;
+      border: 1px solid #d7e0ea;
+      border-radius: 999px;
+      background: #f7f9fc;
+      color: #64748b;
+      font-size: 9px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .supabase-status.connected {
+      border-color: rgba(32, 180, 134, 0.28);
+      background: #eefaf5;
+      color: #147557;
+    }
+
+    .supabase-status.syncing {
+      border-color: rgba(58, 139, 253, 0.28);
+      background: #eef5ff;
+      color: #1764c0;
+    }
+
+    .supabase-status.error {
+      border-color: rgba(239, 91, 103, 0.30);
+      background: #fff4f5;
+      color: #bf3c48;
+    }
+
+    @media (max-width: 700px) {
+      .supabase-status { display: none; }
+    }
+
 </style>
 </head>
 <body>
@@ -3995,6 +4033,7 @@
       <div class="status-center">
         <span id="statusMessage">Modelo listo.</span>
         <span id="statusSelection">0 bloques · 0 conexiones</span>
+        <span id="supabaseStatus" class="supabase-status" title="Estado de sincronización con Supabase">Supabase: sin configurar</span>
         <a class="developer-credit" href="https://neodat.net" target="_blank" rel="noopener noreferrer" aria-label="Visitar NeoDat Consultores">
           Desarrollado por <strong>NeoDat Consultores</strong> ↗
         </a>
@@ -4024,6 +4063,9 @@
   </div>
 
   <div class="toast-container" id="toastContainer"></div>
+
+  <script src="supabase-config.js"></script>
+  <script src="supabase-sync.js"></script>
 
   <script>
     "use strict";
@@ -4113,6 +4155,91 @@
       business: { min: 500, max: 25000 },
       education: { min: 300, max: 12000 }
     };
+
+    /* Límites operativos de seguridad. Evitan que configuraciones antiguas o
+       valores mal ingresados conviertan una transacción individual en un saldo
+       de cientos de miles o millones de USD. */
+    const TRANSACTION_AMOUNT_LIMITS = Object.freeze({
+      credit: { min: 200, max: 200000 },
+      deposit: { min: 1, max: 5000 },
+      withdrawal: { min: 1, max: 3000 },
+      transfer: { min: 1, max: 15000 },
+      payment: { min: 1, max: 1500 },
+      inquiry: { min: 0, max: 0 },
+      account: { min: 0, max: 500 },
+      card: { min: 0, max: 200 },
+      insurance: { min: 5, max: 1000 },
+      investment: { min: 50, max: 25000 }
+    });
+
+    const CREDIT_AMOUNT_LIMITS = Object.freeze({
+      housing: { min: 10000, max: 200000 },
+      vehicle: { min: 3000, max: 80000 },
+      consumer: { min: 200, max: 40000 },
+      business: { min: 500, max: 150000 },
+      education: { min: 300, max: 50000 }
+    });
+
+    function roundUsd(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return 0;
+      const sign = number < 0 ? -1 : 1;
+      return Math.round((number + sign * Number.EPSILON) * 100) / 100;
+    }
+
+    function transactionLimit(type, creditType = "") {
+      if (type === "credit" && CREDIT_AMOUNT_LIMITS[creditType]) {
+        return CREDIT_AMOUNT_LIMITS[creditType];
+      }
+      return TRANSACTION_AMOUNT_LIMITS[type] || { min: 0, max: 200000 };
+    }
+
+    function sanitizeTransactionAmount(type, value, creditType = "") {
+      const limit = transactionLimit(type, creditType);
+      const number = Number(value);
+      if (!Number.isFinite(number)) return roundUsd(limit.min);
+      return roundUsd(clamp(number, limit.min, limit.max));
+    }
+
+    function rangeLimit(collectionName, type) {
+      if (collectionName === "creditAmountRanges") {
+        return CREDIT_AMOUNT_LIMITS[type] || { min: 0, max: 200000 };
+      }
+      return TRANSACTION_AMOUNT_LIMITS[type] || { min: 0, max: 200000 };
+    }
+
+    function sanitizeSourceAmountConfiguration(node) {
+      if (!node || node.type !== "source") return;
+      node.props = node.props || {};
+
+      const automaticConfigured = node.props.automaticAmountRanges || {};
+      node.props.automaticAmountRanges = {};
+      Object.entries(DEFAULT_AUTOMATIC_AMOUNT_RANGES).forEach(([type, fallback]) => {
+        const limit = transactionLimit(type);
+        node.props.automaticAmountRanges[type] = normalizeConfiguredRange(
+          automaticConfigured[type],
+          fallback,
+          Math.max(fallback.min, limit.min),
+          limit.max
+        );
+      });
+
+      const creditConfigured = node.props.creditAmountRanges || {};
+      node.props.creditAmountRanges = {};
+      Object.entries(DEFAULT_CREDIT_AMOUNT_RANGES).forEach(([type, fallback]) => {
+        const limit = CREDIT_AMOUNT_LIMITS[type];
+        node.props.creditAmountRanges[type] = normalizeConfiguredRange(
+          creditConfigured[type],
+          fallback,
+          limit.min,
+          limit.max
+        );
+      });
+
+      node.props.amountFixed = roundUsd(clamp(Number(node.props.amountFixed) || 0, 0, TRANSACTION_AMOUNT_LIMITS.credit.max));
+      node.props.amountMin = roundUsd(clamp(Number(node.props.amountMin) || 0, 0, TRANSACTION_AMOUNT_LIMITS.credit.max));
+      node.props.amountMax = roundUsd(clamp(Number(node.props.amountMax) || node.props.amountMin, node.props.amountMin, TRANSACTION_AMOUNT_LIMITS.credit.max));
+    }
 
     const NODE_TYPES = {
       source: {
@@ -4444,6 +4571,7 @@
       set(key, value) { try { window.localStorage.setItem(key, value); return true; } catch (error) { return false; } },
       remove(key) { try { window.localStorage.removeItem(key); return true; } catch (error) { return false; } }
     };
+
 
     function uid(prefix) {
       if (window.crypto && typeof window.crypto.randomUUID === "function") {
@@ -5027,9 +5155,14 @@
       return randomAmount(lastBand.min, lastBand.max);
     }
 
-    function normalizeConfiguredRange(config, fallback, minimumAllowed = 0) {
-      const min = Math.max(minimumAllowed, Number(config?.min ?? fallback.min) || 0);
-      const max = Math.max(min, Number(config?.max ?? fallback.max) || min);
+    function normalizeConfiguredRange(config, fallback, minimumAllowed = 0, maximumAllowed = Number.POSITIVE_INFINITY) {
+      const safeMaximum = Number.isFinite(Number(maximumAllowed)) ? Math.max(minimumAllowed, Number(maximumAllowed)) : Number.POSITIVE_INFINITY;
+      const fallbackMin = clamp(Number(fallback?.min) || minimumAllowed, minimumAllowed, safeMaximum);
+      const fallbackMax = clamp(Number(fallback?.max) || fallbackMin, fallbackMin, safeMaximum);
+      const configuredMin = Number(config?.min);
+      const configuredMax = Number(config?.max);
+      const min = roundUsd(clamp(Number.isFinite(configuredMin) ? configuredMin : fallbackMin, minimumAllowed, safeMaximum));
+      const max = roundUsd(clamp(Number.isFinite(configuredMax) ? configuredMax : fallbackMax, min, safeMaximum));
       return { min, max };
     }
 
@@ -5062,35 +5195,42 @@
 
       const fallbackRange = DEFAULT_AUTOMATIC_AMOUNT_RANGES[type];
       const profile = DEFAULT_AUTOMATIC_AMOUNT_PROFILES[type];
+      const limit = transactionLimit(type);
 
       if (fallbackRange && profile) {
-        const minimumAllowed = type === "deposit" ? 1 : 0;
         const configuredRange = normalizeConfiguredRange(
           props.automaticAmountRanges?.[type],
           fallbackRange,
-          minimumAllowed
+          limit.min,
+          limit.max
         );
-        return weightedAmount(scaleAmountProfile(profile, configuredRange));
+        return sanitizeTransactionAmount(type, weightedAmount(scaleAmountProfile(profile, configuredRange)));
       }
 
       const transaction = getTransactionConfig(type);
-      return randomAmount(transaction.minAmount, transaction.maxAmount);
+      return sanitizeTransactionAmount(type, randomAmount(transaction.minAmount, transaction.maxAmount));
     }
 
     function chooseTransactionAmount(type, props) {
       const mode = props.amountMode || "automatic";
+      const limit = transactionLimit(type);
       let amount = 0;
 
       if (mode === "fixed") {
-        amount = Math.max(0, Number(props.amountFixed) || 0);
+        amount = Number(props.amountFixed) || 0;
       } else if (mode === "random") {
-        amount = randomAmount(props.amountMin, props.amountMax);
+        const configuredRange = normalizeConfiguredRange(
+          { min: props.amountMin, max: props.amountMax },
+          { min: limit.min, max: Math.min(limit.max, Math.max(limit.min, Number(props.amountMax) || limit.max)) },
+          limit.min,
+          limit.max
+        );
+        amount = randomAmount(configuredRange.min, configuredRange.max);
       } else {
         amount = normalAutomaticAmount(type, props);
       }
 
-      if (type === "deposit") amount = Math.max(1, amount);
-      return Math.round(amount * 100) / 100;
+      return sanitizeTransactionAmount(type, amount);
     }
 
     function amountConfigurationSummary(props) {
@@ -6192,36 +6332,23 @@
     }
 
     function ensureSourceAmountRanges(node) {
-      const configured = node.props.automaticAmountRanges || {};
-      node.props.automaticAmountRanges = {};
-      Object.entries(DEFAULT_AUTOMATIC_AMOUNT_RANGES).forEach(([type, fallback]) => {
-        node.props.automaticAmountRanges[type] = {
-          ...fallback,
-          ...(configured[type] || {})
-        };
-      });
-
-      const creditConfigured = node.props.creditAmountRanges || {};
-      node.props.creditAmountRanges = {};
-      Object.entries(DEFAULT_CREDIT_AMOUNT_RANGES).forEach(([type, fallback]) => {
-        node.props.creditAmountRanges[type] = {
-          ...fallback,
-          ...(creditConfigured[type] || {})
-        };
-      });
+      sanitizeSourceAmountConfiguration(node);
     }
 
     function bindRangePair(node, prefix, collectionName, type, minimumAllowed = 0) {
       const minId = prefix + "Min";
       const maxId = prefix + "Max";
+      const limit = rangeLimit(collectionName, type);
+      const effectiveMinimum = Math.max(minimumAllowed, limit.min);
       bindNumericInput(minId, value => {
         const range = node.props[collectionName][type];
-        range.min = Math.max(minimumAllowed, value);
+        range.min = roundUsd(clamp(value, effectiveMinimum, limit.max));
         if ((Number(range.max) || 0) < range.min) range.max = range.min;
+        range.max = roundUsd(clamp(range.max, range.min, limit.max));
       });
       bindNumericInput(maxId, value => {
         const range = node.props[collectionName][type];
-        range.max = Math.max(Number(range.min) || minimumAllowed, value);
+        range.max = roundUsd(clamp(value, Number(range.min) || effectiveMinimum, limit.max));
       });
     }
 
@@ -6443,6 +6570,7 @@
     }
 
     function initializeRuntime() {
+      state.nodes.filter(node => node.type === "source").forEach(sanitizeSourceAmountConfiguration);
       state.nodeRuntime.clear();
       state.sourceSchedule.clear();
       state.nodes.forEach(node => {
@@ -6516,6 +6644,7 @@
       if (state.running && state.paused) {
         state.paused = false;
         state.lastFrame = performance.now();
+        supabaseSync.markStatus("ejecutando");
         updateRunStatus();
         requestAnimationFrame(simulationFrame);
         return;
@@ -6531,6 +6660,7 @@
       }
       if (!validateModel()) return;
       initializeRuntime();
+      supabaseSync.beginRun();
       state.running = true;
       state.paused = false;
       state.lastFrame = performance.now();
@@ -6542,11 +6672,13 @@
     function pauseSimulation() {
       if (!state.running) { showToast("La simulación no está en ejecución.", "warning"); return; }
       state.paused = true;
+      supabaseSync.markStatus("pausada");
       updateRunStatus();
       updateStatus("Simulación pausada.");
     }
 
     function stopSimulation(resetTime = false) {
+      if (supabaseSync.runId) void supabaseSync.finishRun(resetTime ? "reiniciada" : "detenida");
       state.running = false;
       state.paused = false;
       state.lastFrame = 0;
@@ -6628,16 +6760,19 @@
           const amountUsd = chooseTransactionAmount(transactionType, node.props);
           const creditType = transactionType === "credit" ? chooseCreditType(node.props) : "";
           const creditConfig = creditType ? CREDIT_TYPES[creditType] : null;
+          const creditLimit = transactionType === "credit" ? transactionLimit("credit", creditType) : null;
           const configuredCreditRange = transactionType === "credit"
             ? normalizeConfiguredRange(
                 node.props.creditAmountRanges?.[creditType],
                 DEFAULT_CREDIT_AMOUNT_RANGES[creditType] || { min: creditConfig.minAmount, max: creditConfig.maxAmount },
-                0
+                creditLimit.min,
+                creditLimit.max
               )
             : null;
-          const effectiveAmount = transactionType === "credit" && (node.props.amountMode || "automatic") === "automatic"
+          const rawEffectiveAmount = transactionType === "credit" && (node.props.amountMode || "automatic") === "automatic"
             ? randomAmount(configuredCreditRange.min, configuredCreditRange.max)
             : amountUsd;
+          const effectiveAmount = sanitizeTransactionAmount(transactionType, rawEffectiveAmount, creditType);
           const creditProfile = transactionType === "credit" ? createCreditProfile() : null;
           const entity = {
             id: state.nextEntityId++,
@@ -6727,10 +6862,10 @@
 
     function postCapitalMovement(entity, amount, movementType, description) {
       if (entity.financialPosted) return true;
-      const effect = Number(amount) || 0;
-      const before = Math.max(0, Number(state.scenario.currentCapital) || 0);
-      if (effect < 0 && before + effect < 0) return false;
-      const after = Math.max(0, before + effect);
+      const effect = roundUsd(Number(amount) || 0);
+      const before = roundUsd(Math.max(0, Number(state.scenario.currentCapital) || 0));
+      if (effect < 0 && roundUsd(before + effect) < 0) return false;
+      const after = roundUsd(Math.max(0, before + effect));
       state.scenario.currentCapital = after;
       entity.financialPosted = true;
       entity.capitalEffect = effect;
@@ -6764,12 +6899,14 @@
       });
       updateScenarioUi();
       updateMetrics();
+      supabaseSync.requestSync();
       return true;
     }
 
     function processFinancialTransaction(entity, node) {
       if (entity.financialPosted || entity.transactionType === "credit" || entity.transactionType === "inquiry" || entity.transactionType === "account" || entity.transactionType === "card") return;
-      const amount = Math.max(0, Number(entity.amountUsd) || 0);
+      const amount = sanitizeTransactionAmount(entity.transactionType, entity.amountUsd, entity.creditType);
+      entity.amountUsd = amount;
       let effect = 0;
       let description = entity.transactionLabel || "Transacción";
 
@@ -6867,6 +7004,7 @@
       const creditType = CREDIT_TYPES[entity.creditType] ? entity.creditType : "consumer";
       const annualRate = clamp(Number(node.props.creditRates?.[creditType] ?? CREDIT_TYPES[creditType].defaultRate), 0, 100);
       const termMonths = clamp(Math.floor(Number(node.props.creditTerms?.[creditType] ?? CREDIT_TYPES[creditType].defaultTerm)), 1, 360);
+      entity.amountUsd = sanitizeTransactionAmount("credit", entity.amountUsd, entity.creditType);
       const terms = calculateCreditTerms(entity.amountUsd, annualRate, termMonths);
 
       entity.creditAnnualInterestRate = terms.annualRate;
@@ -6937,6 +7075,7 @@
         totalPayable: Number(terms.totalPayable.toFixed(2)),
         projectedDebtRatio: Number(projectedDebtRatio.toFixed(2))
       });
+      supabaseSync.requestSync();
     }
 
     function finalizeAtClosing() {
@@ -6977,6 +7116,7 @@
       });
       state.running = false;
       state.paused = false;
+      void supabaseSync.finishRun("finalizada");
       updateRunStatus();
       renderNodes();
       updateMetrics();
@@ -7285,7 +7425,7 @@
         transactionType: entity.transactionType,
         transactionLabel: entity.transactionLabel || getTransactionConfig(entity.transactionType).label,
         transactionCode: entity.transactionCode || getTransactionConfig(entity.transactionType).code,
-        amountUsd: Math.max(0, Number(entity.amountUsd) || 0),
+        amountUsd: sanitizeTransactionAmount(entity.transactionType, entity.amountUsd, entity.creditType),
         creditType: entity.creditType || "",
         creditTypeLabel: entity.creditTypeLabel || "",
         startTime: startMinute,
@@ -7333,6 +7473,7 @@
       // El panel visual muestra solo los últimos ocho, pero la exportación incluye el historial completo.
       state.records.unshift(record);
       renderRecords();
+      supabaseSync.requestSync();
     }
 
     function attemptDispatchQueue(queueNode) {
@@ -7928,36 +8069,14 @@
 
     function upgradeNormalDollarRanges(payload) {
       const upgraded = clone(payload);
-      const legacyAutomaticMax = { deposit: 5000, withdrawal: 2000, transfer: 7000, payment: 600, account: 100, card: 30, insurance: 250, investment: 10000 };
-      const legacyCreditMax = { housing: 120000, vehicle: 50000, consumer: 25000, business: 60000, education: 30000 };
-      const normalAutomatic = clone(DEFAULT_AUTOMATIC_AMOUNT_RANGES);
-      const normalCredit = clone(DEFAULT_CREDIT_AMOUNT_RANGES);
-
       if (Array.isArray(upgraded.nodes)) {
         upgraded.nodes.forEach(node => {
           if (node.type !== "source") return;
-          node.props = node.props || {};
-          const automatic = node.props.automaticAmountRanges || {};
-          Object.keys(normalAutomatic).forEach(type => {
-            const current = automatic[type];
-            if (!current || Number(current.max) === legacyAutomaticMax[type]) {
-              automatic[type] = clone(normalAutomatic[type]);
-            }
-          });
-          node.props.automaticAmountRanges = automatic;
-
-          const credits = node.props.creditAmountRanges || {};
-          Object.keys(normalCredit).forEach(type => {
-            const current = credits[type];
-            if (!current || Number(current.max) === legacyCreditMax[type]) {
-              credits[type] = clone(normalCredit[type]);
-            }
-          });
-          node.props.creditAmountRanges = credits;
-          if (Number(node.props.amountFixed) === 500) node.props.amountFixed = 200;
-          if (Number(node.props.amountMax) === 5000) node.props.amountMax = 2000;
+          node.props = { ...clone(NODE_TYPES.source.props), ...(node.props || {}) };
+          sanitizeSourceAmountConfiguration(node);
         });
       }
+      upgraded.version = Math.max(17, Number(upgraded.version) || 0);
       return upgraded;
     }
 
@@ -8006,6 +8125,10 @@
           y: clamp(Number(node.y) || 0, 0, 1400 - 108),
           props: { ...clone(NODE_TYPES[node.type].props), ...(node.props || {}) }
         }));
+
+      state.nodes.forEach(node => {
+        if (node.type === "source") sanitizeSourceAmountConfiguration(node);
+      });
 
       const validNodeIds = new Set(state.nodes.map(node => node.id));
       state.edges = payload.edges
@@ -8691,6 +8814,7 @@
     document.getElementById("mobileDockLandscape")?.addEventListener("click", requestLandscapeMode);
 
     function initializeApp() {
+      supabaseSync.initialize();
       updateAutomaticLandscape();
       const leftHidden = safeStorage.get("simuladorBancarioPanelIzquierdoOculto") === "true";
       const rightHidden = safeStorage.get("simuladorBancarioPanelDerechoOculto") === "true";
@@ -8744,7 +8868,8 @@
       exportRecords,
       saveScenarioSnapshot,
       compareScenarios: () => { renderScenarioComparison(); dom.comparisonModal?.classList.add("open"); },
-      loadExample: loadExampleModel
+      loadExample: loadExampleModel,
+      supabase: supabaseSync
     };
   </script>
 </body>
