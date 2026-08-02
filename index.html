@@ -660,8 +660,8 @@
 
     .canvas {
       position: relative;
-      width: 1900px;
-      height: 1100px;
+      width: 2400px;
+      height: 1400px;
       transform-origin: top left;
       background-color: var(--canvas);
       background-image:
@@ -2695,6 +2695,92 @@
       }
     }
 
+
+
+    /* Vista horizontal automática y lienzo ampliado */
+    .workspace {
+      background: #eef3f9;
+    }
+
+    .canvas-wrap {
+      top: 48px !important;
+    }
+
+    .canvas-toolbar {
+      top: 7px !important;
+      left: 9px !important;
+      z-index: 25;
+    }
+
+    .canvas {
+      width: 2400px !important;
+      height: 1400px !important;
+    }
+
+    body.force-landscape {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden !important;
+      background: #07101f;
+    }
+
+    body.force-landscape .app {
+      position: absolute;
+      top: 0;
+      left: 100vw;
+      width: 100vh;
+      height: 100vw;
+      transform: rotate(90deg);
+      transform-origin: top left;
+      --topbar-height: 52px;
+      --statusbar-height: 30px;
+    }
+
+    body.force-landscape .topbar {
+      min-height: 52px;
+    }
+
+    body.force-landscape .toolbar {
+      padding: 0 8px;
+    }
+
+    body.force-landscape .statusbar {
+      min-height: 30px;
+    }
+
+    body.force-landscape .workspace {
+      min-width: 0;
+      min-height: 0;
+    }
+
+    body.force-landscape .canvas-wrap {
+      top: 46px !important;
+    }
+
+    body.force-landscape .canvas-toolbar {
+      top: 6px !important;
+      left: 8px !important;
+    }
+
+    body.force-landscape .sidebar,
+    body.force-landscape .properties {
+      top: var(--topbar-height);
+      bottom: var(--statusbar-height);
+      max-width: min(340px, 72vh);
+    }
+
+    @media (max-width: 920px) and (orientation: landscape) {
+      .canvas-wrap {
+        top: 46px !important;
+      }
+
+      .canvas-toolbar {
+        top: 6px !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -3001,7 +3087,7 @@
 
       <div class="canvas-wrap" id="canvasWrap">
         <div class="canvas" id="canvas">
-          <svg class="connections" id="connectionsSvg" viewBox="0 0 1900 1100" preserveAspectRatio="none">
+          <svg class="connections" id="connectionsSvg" viewBox="0 0 2400 1400" preserveAspectRatio="none">
             <defs>
               <marker id="arrow" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"></path>
@@ -4303,8 +4389,8 @@
         id: uid("node"),
         type,
         name: custom.name || config.defaultName,
-        x: clamp(Number(x) || 0, 0, 1900 - 188),
-        y: clamp(Number(y) || 0, 0, 1100 - 108),
+        x: clamp(Number(x) || 0, 0, 2400 - 188),
+        y: clamp(Number(y) || 0, 0, 1400 - 108),
         props: { ...clone(config.props), ...(custom.props || {}) }
       };
 
@@ -5438,8 +5524,8 @@
       }
 
       const point = clientToCanvas(event.clientX, event.clientY);
-      node.x = clamp(point.x - state.dragOffset.x, 0, 1900 - 188);
-      node.y = clamp(point.y - state.dragOffset.y, 0, 1100 - 108);
+      node.x = clamp(point.x - state.dragOffset.x, 0, 2400 - 188);
+      node.y = clamp(point.y - state.dragOffset.y, 0, 1400 - 108);
 
       const element = dom.nodesLayer.querySelector(`[data-node-id="${node.id}"]`);
       if (element) {
@@ -5482,8 +5568,29 @@
     });
 
     function clientToCanvas(clientX, clientY) {
+      if (typeof dom.canvas.getBoxQuads === "function") {
+        const quad = dom.canvas.getBoxQuads()[0];
+        if (quad) {
+          const horizontal = { x: quad.p2.x - quad.p1.x, y: quad.p2.y - quad.p1.y };
+          const vertical = { x: quad.p4.x - quad.p1.x, y: quad.p4.y - quad.p1.y };
+          const point = { x: clientX - quad.p1.x, y: clientY - quad.p1.y };
+          const horizontalLength = horizontal.x * horizontal.x + horizontal.y * horizontal.y;
+          const verticalLength = vertical.x * vertical.x + vertical.y * vertical.y;
+
+          if (horizontalLength > 0 && verticalLength > 0) {
+            return {
+              x: ((point.x * horizontal.x + point.y * horizontal.y) / horizontalLength) * dom.canvas.offsetWidth,
+              y: ((point.x * vertical.x + point.y * vertical.y) / verticalLength) * dom.canvas.offsetHeight
+            };
+          }
+        }
+      }
+
       const rect = dom.canvas.getBoundingClientRect();
-      return { x: (clientX - rect.left) / state.zoom, y: (clientY - rect.top) / state.zoom };
+      return {
+        x: (clientX - rect.left) / state.zoom,
+        y: (clientY - rect.top) / state.zoom
+      };
     }
 
     document.querySelectorAll(".palette-item").forEach(item => {
@@ -6938,8 +7045,8 @@
           id: node.id || uid("node"),
           type: node.type,
           name: node.name || NODE_TYPES[node.type].defaultName,
-          x: clamp(Number(node.x) || 0, 0, 1900 - 188),
-          y: clamp(Number(node.y) || 0, 0, 1100 - 108),
+          x: clamp(Number(node.x) || 0, 0, 2400 - 188),
+          y: clamp(Number(node.y) || 0, 0, 1400 - 108),
           props: { ...clone(NODE_TYPES[node.type].props), ...(node.props || {}) }
         }));
 
@@ -7191,8 +7298,8 @@
       const minimumZoom = 0.10;
       state.zoom = clamp(value, minimumZoom, 1.6);
       dom.canvas.style.transform = `scale(${state.zoom})`;
-      dom.canvasWrap.firstElementChild.style.marginRight = ((state.zoom - 1) * 1900) + "px";
-      dom.canvasWrap.firstElementChild.style.marginBottom = ((state.zoom - 1) * 1100) + "px";
+      dom.canvasWrap.firstElementChild.style.marginRight = ((state.zoom - 1) * 2400) + "px";
+      dom.canvasWrap.firstElementChild.style.marginBottom = ((state.zoom - 1) * 1400) + "px";
       dom.zoomLabel.textContent = Math.round(state.zoom * 100) + "%";
     }
 
@@ -7210,7 +7317,10 @@
       const maxY = Math.max(...state.nodes.map(node => node.y + 108));
       const modelWidth = Math.max(420, maxX - minX + 160);
       const modelHeight = Math.max(260, maxY - minY + 160);
-      const readableZoom = window.innerWidth <= 620 ? 0.28 : (window.innerWidth <= 1100 ? 0.34 : 0.40);
+      const effectiveWidth = document.body.classList.contains("force-landscape")
+        ? window.innerHeight
+        : window.innerWidth;
+      const readableZoom = effectiveWidth <= 700 ? 0.58 : (effectiveWidth <= 1100 ? 0.66 : 0.74);
       const zoom = Math.max(
         readableZoom,
         Math.min(1.2, availableWidth / modelWidth, availableHeight / modelHeight)
@@ -7549,18 +7659,47 @@
       }
     });
 
+
+
+    function updateAutomaticLandscape() {
+      const smallScreen = Math.min(window.innerWidth, window.innerHeight) <= 920;
+      const portrait = window.innerHeight > window.innerWidth;
+      const shouldRotate = smallScreen && portrait;
+      document.body.classList.toggle("force-landscape", shouldRotate);
+
+      window.requestAnimationFrame(() => {
+        updatePanelBackdrop();
+        updatePanelToggleState();
+      });
+    }
+
+    async function tryNativeLandscapeLock() {
+      if (Math.min(window.innerWidth, window.innerHeight) > 920) return;
+      try {
+        if (screen.orientation && typeof screen.orientation.lock === "function") {
+          await screen.orientation.lock("landscape");
+        }
+      } catch (error) {
+        /* La rotación CSS mantiene la vista horizontal cuando el navegador no permite bloquearla. */
+      }
+    }
+
     window.addEventListener("resize", () => {
-      if (window.innerWidth > 1100) {
+      updateAutomaticLandscape();
+      if (Math.max(window.innerWidth, window.innerHeight) > 1100) {
         dom.sidebar.classList.remove("open");
         dom.properties.classList.remove("open");
         dom.panelBackdrop?.classList.remove("visible");
-        document.body.style.overflow = "";
+        if (!document.body.classList.contains("force-landscape")) {
+          document.body.style.overflow = "";
+        }
       }
       updatePanelBackdrop();
       updatePanelToggleState();
     });
 
     function initializeApp() {
+      updateAutomaticLandscape();
       const leftHidden = safeStorage.get("simuladorBancarioPanelIzquierdoOculto") === "true";
       const rightHidden = safeStorage.get("simuladorBancarioPanelDerechoOculto") === "true";
       dom.app.classList.toggle("sidebar-collapsed", leftHidden);
@@ -7592,6 +7731,14 @@
       updateStatus("Modelo de demostración listo para ejecutar.");
       showToast("Simulador cargado correctamente.");
     }
+
+    document.addEventListener("pointerdown", tryNativeLandscapeLock, { once: true, passive: true });
+    window.addEventListener("orientationchange", () => {
+      window.setTimeout(() => {
+        updateAutomaticLandscape();
+        fitView();
+      }, 180);
+    });
 
     initializeApp();
 
