@@ -3603,6 +3603,281 @@
       .supabase-status { display: none; }
     }
 
+
+    /* ===== DATOS DE SUPABASE DENTRO DEL MISMO INDEX.HTML ===== */
+    .supabase-live-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 260;
+      display: none;
+      align-items: stretch;
+      justify-content: flex-end;
+      background: rgba(7, 16, 31, .52);
+      backdrop-filter: blur(4px);
+    }
+
+    .supabase-live-overlay.open {
+      display: flex;
+    }
+
+    .supabase-live-panel {
+      width: min(1120px, 94vw);
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto auto auto minmax(0, 1fr);
+      background: #f7f9fc;
+      color: #172237;
+      box-shadow: -24px 0 70px rgba(0, 0, 0, .28);
+      overflow: hidden;
+    }
+
+    .supabase-live-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-bottom: 1px solid #dde5ef;
+      background: #ffffff;
+    }
+
+    .supabase-live-title {
+      min-width: 0;
+    }
+
+    .supabase-live-title h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #172237;
+    }
+
+    .supabase-live-title p {
+      margin: 4px 0 0;
+      color: #6a7890;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .supabase-live-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .supabase-live-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 32px;
+      padding: 0 11px;
+      border: 1px solid #cfe7dc;
+      border-radius: 999px;
+      background: #eefaf5;
+      color: #147557;
+      font-size: 9px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .supabase-live-status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #20b486;
+      box-shadow: 0 0 0 4px rgba(32, 180, 134, .14);
+    }
+
+    .supabase-live-status.error {
+      border-color: #f1c7cc;
+      background: #fff4f5;
+      color: #bf3c48;
+    }
+
+    .supabase-live-status.error::before {
+      background: #ef5b67;
+      box-shadow: 0 0 0 4px rgba(239, 91, 103, .14);
+    }
+
+    .supabase-live-close {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #d8e0eb;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #26364d;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .supabase-live-summary {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      padding: 12px 18px;
+      border-bottom: 1px solid #e1e7ef;
+      background: #f7f9fc;
+    }
+
+    .supabase-live-kpi {
+      min-width: 0;
+      padding: 11px 12px;
+      border: 1px solid #dfe6ef;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 4px 13px rgba(25, 43, 70, .05);
+    }
+
+    .supabase-live-kpi span {
+      display: block;
+      color: #718096;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .supabase-live-kpi strong {
+      display: block;
+      margin-top: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #172237;
+      font-size: 18px;
+      white-space: nowrap;
+    }
+
+    .supabase-live-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 18px;
+      border-bottom: 1px solid #e1e7ef;
+      background: #ffffff;
+    }
+
+    .supabase-live-tabs {
+      display: flex;
+      gap: 6px;
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .supabase-live-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .supabase-live-tab {
+      flex: 0 0 auto;
+      min-height: 32px;
+      padding: 0 11px;
+      border: 1px solid #d8e0eb;
+      border-radius: 9px;
+      background: #ffffff;
+      color: #526177;
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .supabase-live-tab.active {
+      border-color: rgba(58, 139, 253, .42);
+      background: #eaf3ff;
+      color: #1764c0;
+    }
+
+    .supabase-live-meta {
+      flex: 0 0 auto;
+      color: #6c7a8f;
+      font-size: 9px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .supabase-live-table-wrap {
+      min-height: 0;
+      overflow: auto;
+      background: #ffffff;
+    }
+
+    .supabase-live-table {
+      width: 100%;
+      min-width: 900px;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 10px;
+    }
+
+    .supabase-live-table th,
+    .supabase-live-table td {
+      padding: 9px 10px;
+      border-right: 1px solid #e6ebf2;
+      border-bottom: 1px solid #e6ebf2;
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    .supabase-live-table th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #f4f7fb;
+      color: #43536a;
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .035em;
+    }
+
+    .supabase-live-table td {
+      color: #26364d;
+      background: #ffffff;
+    }
+
+    .supabase-live-table tbody tr:hover td {
+      background: #f8fbff;
+    }
+
+    .supabase-live-empty {
+      display: grid;
+      place-items: center;
+      min-height: 280px;
+      padding: 30px;
+      color: #718096;
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .supabase-live-money {
+      color: #0f6f55;
+      font-weight: 900;
+    }
+
+    @media (max-width: 900px) {
+      .supabase-live-panel {
+        width: 100vw;
+      }
+
+      .supabase-live-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .supabase-live-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .supabase-live-meta {
+        white-space: normal;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -3653,6 +3928,11 @@
         <button class="tool-button" id="saveBtn" title="Guardar modelo" aria-label="Guardar modelo"><span class="action-icon">💾</span><span class="action-label">Guardar</span></button>
         <button class="tool-button" id="exportBtn" title="Exportar modelo" aria-label="Exportar modelo"><span class="action-icon">⇩</span><span class="action-label">Exportar</span></button>
         <button class="tool-button" id="exportRecordsBtn" title="Exportar registros" aria-label="Exportar registros"><span class="action-icon">▤</span><span class="action-label">Registros</span></button>
+
+        <button class="tool-button" id="liveSupabaseBtn" title="Ver datos guardados en Supabase" aria-label="Ver datos guardados en Supabase">
+          <span class="action-icon">◉</span><span class="action-label">Datos en vivo</span>
+        </button>
+
         
       </div>
     </header>
@@ -4044,6 +4324,46 @@
         <span id="clockStatus">08:00 h</span>
       </div>
     </footer>
+  </div>
+
+
+
+  <div class="supabase-live-overlay" id="supabaseLiveOverlay" aria-hidden="true">
+    <section class="supabase-live-panel" role="dialog" aria-modal="true" aria-labelledby="supabaseLiveTitle">
+      <header class="supabase-live-header">
+        <div class="supabase-live-title">
+          <h3 id="supabaseLiveTitle">Datos guardados en Supabase</h3>
+          <p>La información se consulta directamente desde PostgreSQL y se actualiza automáticamente cada segundo.</p>
+        </div>
+        <div class="supabase-live-header-actions">
+          <span class="supabase-live-status" id="supabaseLiveStatus">Conectando</span>
+          <button class="supabase-live-close" id="closeSupabaseLiveBtn" type="button" aria-label="Cerrar datos en vivo">×</button>
+        </div>
+      </header>
+
+      <div class="supabase-live-summary">
+        <div class="supabase-live-kpi"><span>Personas</span><strong id="liveCountPersons">0</strong></div>
+        <div class="supabase-live-kpi"><span>Eventos</span><strong id="liveCountEvents">0</strong></div>
+        <div class="supabase-live-kpi"><span>Movimientos</span><strong id="liveCountMovements">0</strong></div>
+        <div class="supabase-live-kpi"><span>Métricas</span><strong id="liveCountMetrics">0</strong></div>
+        <div class="supabase-live-kpi"><span>Sincronizaciones</span><strong id="liveCountSyncs">0</strong></div>
+      </div>
+
+      <div class="supabase-live-toolbar">
+        <div class="supabase-live-tabs" role="tablist" aria-label="Tablas de Supabase">
+          <button class="supabase-live-tab active" type="button" data-live-table="personas">Personas</button>
+          <button class="supabase-live-tab" type="button" data-live-table="eventos">Eventos</button>
+          <button class="supabase-live-tab" type="button" data-live-table="movimientos">Movimientos</button>
+          <button class="supabase-live-tab" type="button" data-live-table="metricas">Métricas</button>
+          <button class="supabase-live-tab" type="button" data-live-table="sincronizaciones">Sincronizaciones</button>
+        </div>
+        <div class="supabase-live-meta" id="supabaseLiveMeta">Esperando datos…</div>
+      </div>
+
+      <div class="supabase-live-table-wrap" id="supabaseLiveTableWrap">
+        <div class="supabase-live-empty">Abra una simulación para ver los datos almacenados automáticamente.</div>
+      </div>
+    </section>
   </div>
 
 
@@ -8878,5 +9198,387 @@
       supabase: supabaseSync
     };
   </script>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const POLL_MS = 1000;
+      const stateLive = {
+        open: false,
+        table: "personas",
+        timer: null,
+        loading: false,
+        lastRunId: ""
+      };
+
+      const tableDefinitions = {
+        personas: {
+          table: "personas_simuladas",
+          select: "id,persona_codigo,tipo_usuario,con_cita,tramite_nombre,monto_usd,moneda,estado_final,fecha_ingreso,fecha_salida,updated_at",
+          order: "updated_at.desc",
+          columns: [
+            ["persona_codigo", "Persona"],
+            ["tipo_usuario", "Usuario"],
+            ["con_cita", "Con cita"],
+            ["tramite_nombre", "Trámite"],
+            ["monto_usd", "Monto USD"],
+            ["estado_final", "Estado"],
+            ["fecha_ingreso", "Ingreso"],
+            ["fecha_salida", "Salida"],
+            ["updated_at", "Actualizado"]
+          ]
+        },
+        eventos: {
+          table: "eventos_simulacion",
+          select: "id,persona_codigo,evento,area,departamento,procedimiento,fecha_hora,minuto_simulado,created_at",
+          order: "id.desc",
+          columns: [
+            ["id", "ID"],
+            ["persona_codigo", "Persona"],
+            ["evento", "Evento"],
+            ["area", "Área"],
+            ["departamento", "Departamento"],
+            ["procedimiento", "Procedimiento"],
+            ["fecha_hora", "Fecha y hora"],
+            ["minuto_simulado", "Minuto"]
+          ]
+        },
+        movimientos: {
+          table: "movimientos_financieros",
+          select: "id,persona_codigo,tipo_movimiento,descripcion,moneda,monto_usd,efecto_capital_usd,capital_antes_usd,capital_despues_usd,fecha_hora",
+          order: "id.desc",
+          columns: [
+            ["id", "ID"],
+            ["persona_codigo", "Persona"],
+            ["tipo_movimiento", "Movimiento"],
+            ["descripcion", "Descripción"],
+            ["monto_usd", "Monto USD"],
+            ["efecto_capital_usd", "Efecto USD"],
+            ["capital_antes_usd", "Capital antes"],
+            ["capital_despues_usd", "Capital después"],
+            ["fecha_hora", "Fecha y hora"]
+          ]
+        },
+        metricas: {
+          table: "metricas_simulacion",
+          select: "id,minuto_simulado,personas_ingresadas,personas_finalizadas,personas_en_sistema,cola_maxima,espera_promedio_minutos,capital_disponible_usd,creditos_aprobados,creditos_rechazados,fecha_hora,created_at",
+          order: "id.desc",
+          columns: [
+            ["id", "ID"],
+            ["minuto_simulado", "Minuto"],
+            ["personas_ingresadas", "Ingresadas"],
+            ["personas_finalizadas", "Finalizadas"],
+            ["personas_en_sistema", "En sistema"],
+            ["cola_maxima", "Cola máxima"],
+            ["espera_promedio_minutos", "Espera promedio"],
+            ["capital_disponible_usd", "Capital USD"],
+            ["creditos_aprobados", "Créditos aprobados"],
+            ["creditos_rechazados", "Créditos rechazados"],
+            ["fecha_hora", "Fecha y hora"]
+          ]
+        },
+        sincronizaciones: {
+          table: "sincronizaciones_simulador",
+          select: "sync_id,estado,es_snapshot_completo,filas_personas,filas_pasos,filas_eventos,filas_movimientos,filas_creditos,filas_cartera,filas_variables,filas_metricas,created_at,completed_at",
+          order: "created_at.desc",
+          columns: [
+            ["sync_id", "Sincronización"],
+            ["estado", "Estado"],
+            ["es_snapshot_completo", "Snapshot"],
+            ["filas_personas", "Personas"],
+            ["filas_pasos", "Pasos"],
+            ["filas_eventos", "Eventos"],
+            ["filas_movimientos", "Movimientos"],
+            ["filas_creditos", "Créditos"],
+            ["filas_metricas", "Métricas"],
+            ["completed_at", "Completada"]
+          ]
+        }
+      };
+
+      const domLive = {
+        button: document.getElementById("liveSupabaseBtn"),
+        overlay: document.getElementById("supabaseLiveOverlay"),
+        close: document.getElementById("closeSupabaseLiveBtn"),
+        status: document.getElementById("supabaseLiveStatus"),
+        meta: document.getElementById("supabaseLiveMeta"),
+        tableWrap: document.getElementById("supabaseLiveTableWrap"),
+        countPersons: document.getElementById("liveCountPersons"),
+        countEvents: document.getElementById("liveCountEvents"),
+        countMovements: document.getElementById("liveCountMovements"),
+        countMetrics: document.getElementById("liveCountMetrics"),
+        countSyncs: document.getElementById("liveCountSyncs"),
+        tabs: [...document.querySelectorAll("[data-live-table]")]
+      };
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function money(value) {
+        const number = Number(value);
+        if (!Number.isFinite(number)) return "—";
+        return new Intl.NumberFormat("es-EC", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(number);
+      }
+
+      function dateTime(value) {
+        if (!value) return "—";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+        return new Intl.DateTimeFormat("es-EC", {
+          dateStyle: "short",
+          timeStyle: "medium"
+        }).format(date);
+      }
+
+      function currentRunId() {
+        return String(window.FlowSimTramites?.supabase?.runId || "");
+      }
+
+      function configReady() {
+        const config = window.SUPABASE_CONFIG || {};
+        return Boolean(
+          config.url &&
+          config.publishableKey &&
+          !String(config.publishableKey).includes("PEGUE_AQUI")
+        );
+      }
+
+      function apiHeaders(count = false) {
+        const headers = {
+          apikey: window.SUPABASE_CONFIG.publishableKey,
+          Accept: "application/json"
+        };
+        if (count) headers.Prefer = "count=exact";
+        return headers;
+      }
+
+      async function resolveRunId() {
+        const activeRun = currentRunId();
+        if (activeRun) return activeRun;
+
+        const url = new URL(
+          `${window.SUPABASE_CONFIG.url.replace(/\/$/, "")}/rest/v1/simulaciones`
+        );
+        url.searchParams.set("select", "id");
+        url.searchParams.set("order", "created_at.desc");
+        url.searchParams.set("limit", "1");
+
+        const response = await fetch(url, { headers: apiHeaders(false), cache: "no-store" });
+        if (!response.ok) throw new Error(`No se pudo obtener la simulación (${response.status}).`);
+        const rows = await response.json();
+        return String(rows?.[0]?.id || "");
+      }
+
+      async function fetchRows(definition, runId, limit = 100) {
+        const base = window.SUPABASE_CONFIG.url.replace(/\/$/, "");
+        const url = new URL(`${base}/rest/v1/${definition.table}`);
+        url.searchParams.set("select", definition.select);
+        url.searchParams.set("simulacion_id", `eq.${runId}`);
+        url.searchParams.set("order", definition.order);
+        url.searchParams.set("limit", String(limit));
+
+        const response = await fetch(url, {
+          headers: apiHeaders(false),
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          const detail = await response.text();
+          throw new Error(`${definition.table}: ${response.status} ${detail}`);
+        }
+
+        return response.json();
+      }
+
+      async function fetchCount(table, runId) {
+        const base = window.SUPABASE_CONFIG.url.replace(/\/$/, "");
+        const url = new URL(`${base}/rest/v1/${table}`);
+        url.searchParams.set("select", "simulacion_id");
+        url.searchParams.set("simulacion_id", `eq.${runId}`);
+        url.searchParams.set("limit", "1");
+
+        const response = await fetch(url, {
+          headers: {
+            ...apiHeaders(true),
+            Range: "0-0"
+          },
+          cache: "no-store"
+        });
+
+        if (!response.ok) return 0;
+        const contentRange = response.headers.get("content-range") || "";
+        const total = contentRange.split("/")[1];
+        return total && total !== "*" ? Number(total) || 0 : 0;
+      }
+
+      function formatCell(key, value) {
+        if (value === null || value === undefined || value === "") return "—";
+        if (key.endsWith("_usd") || key === "monto_usd" || key === "capital_disponible_usd") {
+          return `<span class="supabase-live-money">${escapeHtml(money(value))}</span>`;
+        }
+        if (
+          key.includes("fecha") ||
+          key.endsWith("_at") ||
+          key === "completed_at" ||
+          key === "created_at" ||
+          key === "updated_at"
+        ) {
+          return escapeHtml(dateTime(value));
+        }
+        if (typeof value === "boolean") return value ? "Sí" : "No";
+        if (typeof value === "object") return escapeHtml(JSON.stringify(value));
+        return escapeHtml(value);
+      }
+
+      function renderTable(definition, rows) {
+        if (!rows.length) {
+          domLive.tableWrap.innerHTML =
+            '<div class="supabase-live-empty">Todavía no existen registros para esta tabla en la ejecución seleccionada.</div>';
+          return;
+        }
+
+        const head = definition.columns
+          .map(([, label]) => `<th>${escapeHtml(label)}</th>`)
+          .join("");
+
+        const body = rows
+          .map(row => {
+            const cells = definition.columns
+              .map(([key]) => `<td>${formatCell(key, row[key])}</td>`)
+              .join("");
+            return `<tr>${cells}</tr>`;
+          })
+          .join("");
+
+        domLive.tableWrap.innerHTML = `
+          <table class="supabase-live-table">
+            <thead><tr>${head}</tr></thead>
+            <tbody>${body}</tbody>
+          </table>
+        `;
+      }
+
+      async function refreshLiveData() {
+        if (!stateLive.open || stateLive.loading) return;
+        if (!configReady()) {
+          domLive.status.textContent = "Supabase sin configurar";
+          domLive.status.classList.add("error");
+          domLive.meta.textContent = "Coloque la Publishable key en supabase-config.js.";
+          return;
+        }
+
+        stateLive.loading = true;
+        try {
+          const runId = await resolveRunId();
+          if (!runId) {
+            domLive.status.textContent = "Sin ejecución";
+            domLive.status.classList.add("error");
+            domLive.meta.textContent = "Inicie la simulación para crear una ejecución.";
+            domLive.tableWrap.innerHTML =
+              '<div class="supabase-live-empty">No se encontró una simulación guardada.</div>';
+            return;
+          }
+
+          stateLive.lastRunId = runId;
+          const definition = tableDefinitions[stateLive.table];
+
+          const [rows, persons, events, movements, metrics, syncs] = await Promise.all([
+            fetchRows(definition, runId, 100),
+            fetchCount("personas_simuladas", runId),
+            fetchCount("eventos_simulacion", runId),
+            fetchCount("movimientos_financieros", runId),
+            fetchCount("metricas_simulacion", runId),
+            fetchCount("sincronizaciones_simulador", runId)
+          ]);
+
+          domLive.countPersons.textContent = persons.toLocaleString("es-EC");
+          domLive.countEvents.textContent = events.toLocaleString("es-EC");
+          domLive.countMovements.textContent = movements.toLocaleString("es-EC");
+          domLive.countMetrics.textContent = metrics.toLocaleString("es-EC");
+          domLive.countSyncs.textContent = syncs.toLocaleString("es-EC");
+
+          renderTable(definition, rows);
+
+          const now = new Intl.DateTimeFormat("es-EC", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+          }).format(new Date());
+
+          domLive.status.textContent = "Actualización automática";
+          domLive.status.classList.remove("error");
+          domLive.meta.textContent =
+            `Ejecución ${runId.slice(0, 8)}… · ${rows.length} filas visibles · actualizado ${now}`;
+        } catch (error) {
+          console.error("Error al consultar Supabase:", error);
+          domLive.status.textContent = "Error de lectura";
+          domLive.status.classList.add("error");
+          domLive.meta.textContent = error.message || "No se pudo consultar Supabase.";
+        } finally {
+          stateLive.loading = false;
+        }
+      }
+
+      function startPolling() {
+        window.clearInterval(stateLive.timer);
+        stateLive.timer = window.setInterval(refreshLiveData, POLL_MS);
+        void refreshLiveData();
+      }
+
+      function stopPolling() {
+        window.clearInterval(stateLive.timer);
+        stateLive.timer = null;
+      }
+
+      function openPanel() {
+        stateLive.open = true;
+        domLive.overlay.classList.add("open");
+        domLive.overlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        startPolling();
+      }
+
+      function closePanel() {
+        stateLive.open = false;
+        domLive.overlay.classList.remove("open");
+        domLive.overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        stopPolling();
+      }
+
+      domLive.button?.addEventListener("click", openPanel);
+      domLive.close?.addEventListener("click", closePanel);
+      domLive.overlay?.addEventListener("click", event => {
+        if (event.target === domLive.overlay) closePanel();
+      });
+
+      domLive.tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          stateLive.table = tab.dataset.liveTable;
+          domLive.tabs.forEach(item => item.classList.toggle("active", item === tab));
+          domLive.tableWrap.innerHTML =
+            '<div class="supabase-live-empty">Consultando Supabase…</div>';
+          void refreshLiveData();
+        });
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && stateLive.open) closePanel();
+      });
+    })();
+  </script>
+
 </body>
 </html>
