@@ -3933,6 +3933,10 @@
           <span class="action-icon">◉</span><span class="action-label">Datos en vivo</span>
         </button>
 
+        <button class="tool-button danger" id="deleteStoredDataBtn" title="Borrar todos los datos guardados en Supabase" aria-label="Borrar todos los datos guardados en Supabase">
+          <span class="action-icon">⌫</span><span class="action-label">Borrar datos</span>
+        </button>
+
         
       </div>
     </header>
@@ -6705,7 +6709,7 @@
         showToast("No hay ningún elemento seleccionado.", "warning");
         return;
       }
-      stopSimulation(false);
+      stopSimulation(false, false);
 
       if (state.selected.kind === "node") {
         const nodeId = state.selected.id;
@@ -6966,26 +6970,46 @@
         state.lastFrame = performance.now();
         supabaseSync.markStatus("ejecutando");
         updateRunStatus();
+        updateStatus("Simulación reanudada.");
         requestAnimationFrame(simulationFrame);
         return;
       }
+
       if (state.running) return;
+
       if (sessionEndMinutes() <= sessionStartMinutes()) {
         showToast("La hora de finalización debe ser posterior a la hora de entrada.", "warning");
         return;
       }
+
       if (simulationDaysCount() <= 0) {
         showToast("El rango de fechas no contiene ningún día habilitado para simular.", "warning");
         return;
       }
+
       if (!validateModel()) return;
-      initializeRuntime();
-      supabaseSync.beginRun();
+
+      const continueExistingRun = Boolean(supabaseSync.runId);
+
+      if (continueExistingRun) {
+        // Continúa exactamente desde el minuto, colas, personas y capital actuales.
+        // No reinicia el runtime ni crea otro simulacion_id.
+        supabaseSync.markStatus("ejecutando");
+      } else {
+        // Solo una ejecución realmente nueva reinicia el runtime y obtiene UUID nuevo.
+        initializeRuntime();
+        supabaseSync.beginRun();
+      }
+
       state.running = true;
       state.paused = false;
       state.lastFrame = performance.now();
       updateRunStatus();
-      updateStatus("Simulación en ejecución.");
+      updateStatus(
+        continueExistingRun
+          ? "Simulación continuada desde el punto donde fue detenida."
+          : "Simulación en ejecución."
+      );
       requestAnimationFrame(simulationFrame);
     }
 
@@ -6997,17 +7021,38 @@
       updateStatus("Simulación pausada.");
     }
 
-    function stopSimulation(resetTime = false) {
-      if (supabaseSync.runId) void supabaseSync.finishRun(resetTime ? "reiniciada" : "detenida");
+    function stopSimulation(resetTime = false, preserveRun = true) {
       state.running = false;
       state.paused = false;
       state.lastFrame = 0;
+
+      if (supabaseSync.runId) {
+        if (preserveRun && !resetTime) {
+          // Detener no borra ni cierra la ejecución.
+          // Guarda el estado actual y permite continuar con el mismo UUID.
+          supabaseSync.markStatus("detenida");
+        } else {
+          // Reiniciar o sustituir el modelo cierra la ejecución actual,
+          // pero sus datos permanecen en Supabase.
+          void supabaseSync.finishRun(resetTime ? "reiniciada" : "detenida");
+        }
+      }
+
       if (resetTime) initializeRuntime();
+
       updateRunStatus();
-      updateStatus(resetTime ? "Simulación reiniciada." : "Simulación detenida.");
+      updateStatus(
+        resetTime
+          ? "Simulación reiniciada. La ejecución anterior permanece guardada."
+          : preserveRun
+            ? "Simulación detenida. Puede continuar sin perder información."
+            : "Simulación detenida y guardada."
+      );
     }
 
-    function resetSimulation() { stopSimulation(true); }
+    function resetSimulation() {
+      stopSimulation(true, false);
+    }
 
     function updateRunStatus() {
       if (state.running && !state.paused) {
@@ -8411,7 +8456,7 @@
       payload = upgradeDirectCashierRouting(payload);
       payload = upgradeRealisticCashierFlow(payload);
       payload = upgradeNormalDollarRanges(payload);
-      stopSimulation(false);
+      stopSimulation(false, false);
       state.scenario = {
         businessName: String(payload.scenario?.businessName || "Entidad financiera"),
         initialCapital: Math.max(0, Number(payload.scenario?.initialCapital ?? 1000000) || 0),
@@ -8698,7 +8743,7 @@
     }
 
     function clearModel() {
-      stopSimulation(false);
+      stopSimulation(false, false);
       state.nodes = [];
       state.edges = [];
       state.selected = null;
@@ -9576,6 +9621,143 @@
 
       document.addEventListener("keydown", event => {
         if (event.key === "Escape" && stateLive.open) closePanel();
+      });
+    })();
+  </script>
+
+
+  <script>
+    (() => {
+      "use strict";
+
+      const button = document.getElementById("deleteStoredDataBtn");
+
+      function configured() {
+        const config = window.SUPABASE_CONFIG || {};
+        return Boolean(
+          config.url &&
+          config.publishableKey &&
+          !String(config.publishableKey).includes("PEGUE_AQUI")
+        );
+      }
+
+      function setButtonBusy(busy) {
+        if (!button) return;
+        button.disabled = busy;
+        button.style.opacity = busy ? ".58" : "";
+        button.style.cursor = busy ? "wait" : "";
+      }
+
+      function clearLivePanel() {
+        [
+          "liveCountPersons",
+          "liveCountEvents",
+          "liveCountMovements",
+          "liveCountMetrics",
+          "liveCountSyncs"
+        ].forEach(id => {
+          const element = document.getElementById(id);
+          if (element) element.textContent = "0";
+        });
+
+        const meta = document.getElementById("supabaseLiveMeta");
+        if (meta) meta.textContent = "No existen datos guardados.";
+
+        const wrap = document.getElementById("supabaseLiveTableWrap");
+        if (wrap) {
+          wrap.innerHTML =
+            '<div class="supabase-live-empty">Todos los datos de FlowSim fueron eliminados de Supabase.</div>';
+        }
+
+        const status = document.getElementById("supabaseLiveStatus");
+        if (status) {
+          status.textContent = "Base limpia";
+          status.classList.remove("error");
+        }
+      }
+
+      async function deleteStoredData() {
+        if (!configured()) {
+          window.alert("Supabase no está configurado. Revise supabase-config.js.");
+          return;
+        }
+
+        const confirmed = window.confirm(
+          "Se eliminarán TODAS las ejecuciones, personas, eventos, movimientos, créditos y métricas guardadas por FlowSim.\n\nLas tablas, vistas y configuración permanecerán intactas.\n\n¿Desea continuar?"
+        );
+        if (!confirmed) return;
+
+        const phrase = window.prompt(
+          'Para confirmar, escriba exactamente: BORRAR TODO'
+        );
+        if (phrase !== "BORRAR TODO") {
+          window.alert("La confirmación no coincide. No se eliminó información.");
+          return;
+        }
+
+        const adminKey = window.prompt(
+          "Ingrese la clave administrativa de borrado:"
+        );
+        if (!adminKey) return;
+
+        setButtonBusy(true);
+
+        try {
+          // Detiene cualquier reenvío pendiente antes de borrar PostgreSQL.
+          await window.FlowSimTramites?.supabase?.discardAllLocalData?.();
+
+          // Reinicia el simulador local sin generar una sincronización final.
+          window.FlowSimTramites?.reset?.();
+
+          const config = window.SUPABASE_CONFIG;
+          const endpoint =
+            `${String(config.url).replace(/\/$/, "")}/rest/v1/rpc/borrar_datos_flowsim`;
+
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              apikey: config.publishableKey,
+              "Content-Type": "application/json",
+              Accept: "application/json"
+            },
+            body: JSON.stringify({
+              p_clave: adminKey,
+              p_confirmacion: "BORRAR TODO"
+            })
+          });
+
+          const responseText = await response.text();
+          let result = null;
+          try {
+            result = responseText ? JSON.parse(responseText) : null;
+          } catch (error) {}
+
+          if (!response.ok || result?.ok === false) {
+            const message =
+              result?.message ||
+              result?.details ||
+              result?.hint ||
+              responseText ||
+              `Error HTTP ${response.status}`;
+            throw new Error(message);
+          }
+
+          clearLivePanel();
+          window.alert(
+            "Los datos guardados por FlowSim fueron eliminados correctamente.\n\nLa estructura de Supabase permanece disponible para una nueva ejecución."
+          );
+        } catch (error) {
+          console.error("No se pudieron borrar los datos de Supabase:", error);
+          window.alert(
+            `No se pudieron borrar los datos.\n\n${error.message || error}`
+          );
+        } finally {
+          setButtonBusy(false);
+        }
+      }
+
+      button?.addEventListener("click", () => {
+        void deleteStoredData();
       });
     })();
   </script>
