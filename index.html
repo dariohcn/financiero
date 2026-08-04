@@ -5056,7 +5056,7 @@
         <div>
           <span class="delete-data-kicker">Administración de Supabase</span>
           <h3 id="deleteDataTitle">Borrar datos guardados</h3>
-          <p>La operación elimina los registros de FlowSim, pero mantiene las tablas, vistas, funciones y configuración del proyecto.</p>
+          <p>La operación elimina los registros de FlowSim, pero mantiene las tablas, vistas, funciones y configuración del proyecto. No se solicitará contraseña.</p>
         </div>
         <button class="delete-data-close" id="closeDeleteDataBtn" type="button" aria-label="Cerrar">×</button>
       </header>
@@ -5070,16 +5070,6 @@
         <span>Confirmación</span>
         <input id="deleteConfirmationInput" type="text" autocomplete="off" placeholder="Escriba BORRAR TODO">
         <small>Escriba exactamente <strong>BORRAR TODO</strong>.</small>
-      </label>
-
-      <label class="delete-data-field">
-        <span>Clave administrativa</span>
-        <input id="deleteAdminKeyInput" type="password" autocomplete="current-password" placeholder="Ingrese la clave administrativa">
-      </label>
-
-      <label class="delete-data-remember">
-        <input id="rememberDeleteKey" type="checkbox">
-        <span>Recordar la clave únicamente en este navegador</span>
       </label>
 
       <div class="delete-data-error" id="deleteDataError" role="alert" hidden></div>
@@ -10354,7 +10344,6 @@
     (() => {
       "use strict";
 
-      const DELETE_KEY_STORAGE = "flowsimDeleteAdminKey";
       const dom = {
         toolsButton: document.getElementById("toolsMenuBtn"),
         toolsMenu: document.getElementById("toolsMenu"),
@@ -10364,8 +10353,6 @@
         cancelButton: document.getElementById("cancelDeleteDataBtn"),
         confirmButton: document.getElementById("confirmDeleteDataBtn"),
         confirmation: document.getElementById("deleteConfirmationInput"),
-        adminKey: document.getElementById("deleteAdminKeyInput"),
-        rememberKey: document.getElementById("rememberDeleteKey"),
         error: document.getElementById("deleteDataError")
       };
 
@@ -10401,14 +10388,7 @@
         closeToolsMenu();
         showDeleteError("");
 
-        let storedKey = "";
-        try {
-          storedKey = window.localStorage.getItem(DELETE_KEY_STORAGE) || "";
-        } catch (error) {}
-
         dom.confirmation.value = "";
-        dom.adminKey.value = storedKey;
-        dom.rememberKey.checked = Boolean(storedKey);
         dom.overlay.classList.add("open");
         dom.overlay.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
@@ -10427,8 +10407,6 @@
         dom.confirmButton.disabled = deleting;
         dom.confirmButton.classList.toggle("loading", deleting);
         dom.confirmation.disabled = deleting;
-        dom.adminKey.disabled = deleting;
-        dom.rememberKey.disabled = deleting;
         dom.cancelButton.disabled = deleting;
         dom.closeButton.disabled = deleting;
       }
@@ -10475,13 +10453,6 @@
           return;
         }
 
-        const adminKey = dom.adminKey.value.trim();
-        if (!adminKey) {
-          showDeleteError("Ingrese la clave administrativa.");
-          dom.adminKey.focus();
-          return;
-        }
-
         setDeleting(true);
         const syncApi = window.FlowSimTramites?.supabase;
 
@@ -10503,7 +10474,6 @@
             mode: "cors",
             cache: "no-store",
             body: JSON.stringify({
-              p_clave: adminKey,
               p_confirmacion: "BORRAR TODO"
             })
           });
@@ -10523,16 +10493,6 @@
               responseText ||
               `Supabase respondió con el estado ${response.status}.`;
             throw new Error(message);
-          }
-
-          if (dom.rememberKey.checked) {
-            try {
-              window.localStorage.setItem(DELETE_KEY_STORAGE, adminKey);
-            } catch (error) {}
-          } else {
-            try {
-              window.localStorage.removeItem(DELETE_KEY_STORAGE);
-            } catch (error) {}
           }
 
           await syncApi?.discardAllLocalData?.();
@@ -10555,8 +10515,6 @@
           if (/function.*does not exist|404|PGRST202/i.test(message)) {
             message =
               "La función de borrado no está instalada. Ejecute ACTIVAR_BORRADO_DEFINITIVO.sql en Supabase SQL Editor.";
-          } else if (/clave administrativa incorrecta/i.test(message)) {
-            message = "La clave administrativa es incorrecta.";
           }
 
           showDeleteError(message);
